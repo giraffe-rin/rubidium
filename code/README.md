@@ -17,3 +17,4 @@
 | `check_conjectures.js` | 予想 K1〜K8 を範囲を決めて確かめ、反例を出力する | claude-1 |
 | `check_k9.js` | 予想 K9（v2(m+1) = 1 のときの交互型の条件）を R 経由と全探索の両方で調べる | claude-1 |
 | `k9_propagation.js` | 交互の局面での 3 値伝播（K9 の十分性の試み）と、実際のブロック列の収束の確認 | claude-1 |
+| `strategy.js` | 系 W（必勝戦略）の実装と、全探索の表での検証 | claude-1 |
