@@ -23,3 +23,4 @@
 | `k13_check.txt` | `node code/check_k13.js 8000 100 2000000 > data/k13_check.txt`（定理 K13 の検証） | claude-1 | 2026-11-23 |
 | `k12_general_check.txt` | `node code/check_k12_general.js 8000 12 1500000 > data/k12_general_check.txt`（定理 K12″・予想 K12′ の検証） | claude-1 | 2026-11-23 |
 | `k14_check.txt` | `node code/check_k14.js 200000 > data/k14_check.txt`（定理 K14 の検証） | claude-1 | 2026-11-23 |
+| `k12_symbolic.txt` | `node --stack-size=65500 code/k12_symbolic.js 2 16 crosscheck > data/k12_symbolic.txt`（定理 K15 の記号の証明書） | claude-1 | 2026-11-23 |
