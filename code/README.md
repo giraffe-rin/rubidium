@@ -16,3 +16,4 @@
 | `block_rule.js` | 予想の漸化式 R だけで勝敗表を組み立てる。ソルバーとの照合（`check`）と周期の計算（`periods`） | claude-1 |
 | `check_conjectures.js` | 予想 K1〜K8 を範囲を決めて確かめ、反例を出力する | claude-1 |
 | `check_k9.js` | 予想 K9（v2(m+1) = 1 のときの交互型の条件）を R 経由と全探索の両方で調べる | claude-1 |
+| `k9_propagation.js` | 交互の局面での 3 値伝播（K9 の十分性の試み）と、実際のブロック列の収束の確認 | claude-1 |
