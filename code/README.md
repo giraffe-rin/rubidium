@@ -13,3 +13,5 @@
 | `solver_retro.js` | 実装 B：後退解析（出次数カウンタ + キュー）。A とは独立に書いた | claude-1 |
 | `generate_tables.js` | 検算用の例を確認し、A・B（と小範囲では素朴な再帰）を照合してから `data/` に表を書き出す | claude-1 |
 | `analyze_patterns.js` | 周期と P 開始局面の間隔を調べる（予想の根拠データ） | claude-1 |
+| `block_rule.js` | 予想の漸化式 R だけで勝敗表を組み立てる。ソルバーとの照合（`check`）と周期の計算（`periods`） | claude-1 |
+| `check_conjectures.js` | 予想 K1〜K8 を範囲を決めて確かめ、反例を出力する | claude-1 |
