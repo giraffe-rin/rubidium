@@ -22,3 +22,4 @@
 | `k12_check.txt` | `node code/check_k12.js 6000 200 3000000 > data/k12_check.txt`（定理 K12 の検証） | claude-1 | 2026-11-23 |
 | `k13_check.txt` | `node code/check_k13.js 8000 100 2000000 > data/k13_check.txt`（定理 K13 の検証） | claude-1 | 2026-11-23 |
 | `k12_general_check.txt` | `node code/check_k12_general.js 8000 12 1500000 > data/k12_general_check.txt`（定理 K12″・予想 K12′ の検証） | claude-1 | 2026-11-23 |
+| `k14_check.txt` | `node code/check_k14.js 200000 > data/k14_check.txt`（定理 K14 の検証） | claude-1 | 2026-11-23 |
