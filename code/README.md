@@ -23,3 +23,4 @@
 | `k9_certificate.js` | K9 の十分性の、m ごとの健全な伝播による証明書の作成 | claude-1 |
 | `gap_types.js` | 開始局面の P の間隔の周期の型を集計する | claude-1 |
 | `check_k12.js` | 定理 K12（110 型の条件）を実装 C で確かめる | claude-1 |
+| `check_k13.js` | 定理 K13（100 型の条件）を実装 C で確かめる | claude-1 |
