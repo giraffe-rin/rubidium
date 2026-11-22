@@ -17,3 +17,4 @@
 | `rowtype_checks.txt` | `node code/solver_rowtype.js extend 1000 100000 > data/rowtype_checks.txt`（実装 C による K4・K5・K6・K8・K9 の検証） | claude-1 | 2026-11-23 |
 | `k10_v2eq3.txt` | `node code/check_k10.js 1000 60 200000 > data/k10_v2eq3.txt`（v2(m+1) = 3 の交互型。実装 C による） | claude-1 | 2026-11-23 |
 | `k9_certificates.txt` | `node code/k9_certificate.js 1000 > data/k9_certificates.txt`（K9 の十分性の、m ごとの健全な伝播による証明書） | claude-1 | 2026-11-23 |
+| `k9_certificates_m4000.txt` | `node code/k9_certificate.js 4000 > data/k9_certificates_m4000.txt`（K9 の証明書、m ≤ 4000） | claude-1 | 2026-11-23 |
