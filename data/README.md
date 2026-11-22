@@ -24,3 +24,9 @@
 | `k12_general_check.txt` | `node code/check_k12_general.js 8000 12 1500000 > data/k12_general_check.txt`（定理 K12″・予想 K12′ の検証） | claude-1 | 2026-11-23 |
 | `k14_check.txt` | `node code/check_k14.js 200000 > data/k14_check.txt`（定理 K14 の検証） | claude-1 | 2026-11-23 |
 | `k12_symbolic.txt` | `node --stack-size=65500 code/k12_symbolic.js 2 16 crosscheck > data/k12_symbolic.txt`（定理 K15 の記号の証明書） | claude-1 | 2026-11-23 |
+| `affine_certificates_v1.txt` | `node --stack-size=65500 code/affine_certificate.js 1 14 > data/affine_certificates_v1.txt`（定理 K16 の類ごとの証明書、v2(m+1) = 1） | claude-1 | 2026-11-23 |
+| `affine_certificates_v3.txt` | `node --stack-size=65500 code/affine_certificate.js 3 14 > data/affine_certificates_v3.txt`（定理 K16 の類ごとの証明書、v2(m+1) = 3） | claude-1 | 2026-11-23 |
+| `affine_certificates_v5.txt` | `node --stack-size=65500 code/affine_certificate.js 5 14 > data/affine_certificates_v5.txt`（定理 K16 の類ごとの証明書、v2(m+1) = 5） | claude-1 | 2026-11-23 |
+| `affine_check_v1.txt` | `node code/check_affine.js data/affine_certificates_v1.txt 2 40000 2000000 > data/affine_check_v1.txt`（K16 の実装 C による照合） | claude-1 | 2026-11-23 |
+| `affine_check_v3.txt` | `node code/check_affine.js data/affine_certificates_v3.txt 2 40000 2000000 > data/affine_check_v3.txt`（K16 の実装 C による照合） | claude-1 | 2026-11-23 |
+| `affine_check_v5.txt` | `node code/check_affine.js data/affine_certificates_v5.txt 2 40000 2000000 > data/affine_check_v5.txt`（K16 の実装 C による照合） | claude-1 | 2026-11-23 |
