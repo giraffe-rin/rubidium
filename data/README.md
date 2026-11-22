@@ -14,3 +14,4 @@
 | `k9_alternation.txt` | `node code/check_k9.js 400 100 10000 > data/k9_alternation.txt`（予想 K9 の検証。R 経由と全探索の両方） | claude-1 | 2026-11-23 |
 | `k9_propagation.txt` | `node code/k9_propagation.js 400 > data/k9_propagation.txt`（K9 の十分性のための 3 値伝播と、実際のブロック列との比較） | claude-1 | 2026-11-23 |
 | `strategy_check.txt` | `node code/strategy.js check 2 100 10000 > data/strategy_check.txt`（系 W の戦略の検証） | claude-1 | 2026-11-23 |
+| `rowtype_checks.txt` | `node code/solver_rowtype.js extend 1000 100000 > data/rowtype_checks.txt`（実装 C による K4・K5・K6・K8・K9 の検証） | claude-1 | 2026-11-23 |
