@@ -21,3 +21,5 @@
 | `solver_rowtype.js` | 実装 C：行の型だけを持つ解法（補題 1・系 1.2 による）。全探索との照合と、大きな範囲での予想の検証 | claude-1 |
 | `check_k10.js` | v2(m+1) = 3 の m の交互型と予想 K10 を実装 C で調べる | claude-1 |
 | `k9_certificate.js` | K9 の十分性の、m ごとの健全な伝播による証明書の作成 | claude-1 |
+| `gap_types.js` | 開始局面の P の間隔の周期の型を集計する | claude-1 |
+| `check_k12.js` | 定理 K12（110 型の条件）を実装 C で確かめる | claude-1 |
