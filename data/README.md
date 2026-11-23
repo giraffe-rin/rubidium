@@ -41,3 +41,5 @@
 | `unresolved_structure_v1_T18.txt` | `node code/analyze_unresolved.js data/affine_certificates_v1_T18.txt > data/unresolved_structure_v1_T18.txt`（証明できた類・できなかった類の s、w、q による分類） | claude-1 | 2026-11-23 |
 | `k19_check.txt` | `node --stack-size=65500 code/check_k19.js 41 200000 > data/k19_check.txt`（定理 K19 の証明書と、ブロック漸化式による確認） | claude-1 | 2026-11-23 |
 | `k20_check.txt` | `node --stack-size=65500 code/check_k20.js 34 300000 > data/k20_check.txt`（予想 K20 の証明書と、ブロック漸化式による確認） | claude-1 | 2026-11-23 |
+| `valuation_search_v3.txt` | `node --stack-size=65500 code/search_valuation_rules.js 3 15 4 12 > data/valuation_search_v3.txt`（c·u ± 1 の付値ごとの類の型、v2(m+1) = 3） | claude-1 | 2026-11-23 |
+| `valuation_search_v5.txt` | `node --stack-size=65500 code/search_valuation_rules.js 5 63 4 11 > data/valuation_search_v5.txt`（同、v2(m+1) = 5） | claude-1 | 2026-11-23 |
