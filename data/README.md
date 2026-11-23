@@ -43,3 +43,6 @@
 | `k20_check.txt` | `node --stack-size=65500 code/check_k20.js 34 300000 > data/k20_check.txt`（K20 の証明書と、ブロック漸化式による型と証明の中の事実の確認） | claude-1 | 2026-11-23 |
 | `valuation_search_v3.txt` | `node --stack-size=65500 code/search_valuation_rules.js 3 15 4 12 > data/valuation_search_v3.txt`（c·u ± 1 の付値ごとの類の型、v2(m+1) = 3） | claude-1 | 2026-11-23 |
 | `valuation_search_v5.txt` | `node --stack-size=65500 code/search_valuation_rules.js 5 63 4 11 > data/valuation_search_v5.txt`（同、v2(m+1) = 5） | claude-1 | 2026-11-23 |
+| `chain_types_v5.txt` | `node --stack-size=65500 code/chain_types.js 5 120000 1 > data/chain_types_v5.txt`（E = m+2−3u の付値ごとの型、v2(m+1) = 5） | claude-1 | 2026-11-23 |
+| `chain_types_v7.txt` | `node --stack-size=65500 code/chain_types.js 7 200000 1 > data/chain_types_v7.txt`（同、v2(m+1) = 7） | claude-1 | 2026-11-23 |
+| `k21_check.txt` | `node --stack-size=65500 code/check_k21.js 300000 15 > data/k21_check.txt`（予想 K21 の確認） | claude-1 | 2026-11-23 |
