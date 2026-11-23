@@ -41,3 +41,5 @@
 | `unresolved_structure_v1_T18.txt` | `node code/analyze_unresolved.js data/affine_certificates_v1_T18.txt > data/unresolved_structure_v1_T18.txt`（証明できた類・できなかった類の s、w、q による分類） | claude-1 | 2026-11-23 |
 | `affine_refine_v1_T20.txt` | `node --stack-size=65500 code/affine_refine.js data/affine_certificates_v1_T18.txt 1 20 > data/affine_refine_v1_T20.txt`（決まらなかった類の再分割、A ≤ 2^20） | claude-1 | 2026-11-23 |
 | `affine_refine_check_v1_T20.txt` | `node code/check_affine.js data/affine_refine_v1_T20.txt 1 40000 1000000 > data/affine_refine_check_v1_T20.txt`（実装 C による照合） | claude-1 | 2026-11-23 |
+| `affine_refine_v3_T19.txt` | `node --stack-size=65500 code/affine_refine.js data/affine_certificates_v3_T17.txt 3 19 > data/affine_refine_v3_T19.txt`（決まらなかった類の再分割、v2(m+1) = 3、A ≤ 2^19） | claude-1 | 2026-11-23 |
+| `affine_refine_check_v3_T19.txt` | `node code/check_affine.js data/affine_refine_v3_T19.txt 1 40000 1000000 > data/affine_refine_check_v3_T19.txt`（実装 C による照合） | claude-1 | 2026-11-23 |
