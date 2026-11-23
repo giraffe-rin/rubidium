@@ -55,3 +55,4 @@
 | `k29_check.txt` | `node --stack-size=65500 code/check_k29.js 15 14 300000 > data/k29_check.txt`（予想 K29 の分割つき証明書と、ブロック漸化式による確認） | claude-1 | 2026-11-23 |
 | `k29_v5_check.txt` | `node --stack-size=65500 code/check_k29_v5.js 300000 > data/k29_v5_check.txt`（定理 K29.1・K29.2 の証明の中の事実の確認） | claude-1 | 2026-11-23 |
 | `k29_symbolic.txt` | `node --max-old-space-size=4096 code/k29_symbolic.js 27 > data/k29_symbolic.txt`（定理 K29.3 の 3 値の証明書） | claude-1 | 2026-11-23 |
+| `k29_cone.txt` | `node --stack-size=65500 code/k29_cone.js 17 > data/k29_cone.txt`（K29.3 の 3 値の計算の依存の範囲） | claude-1 | 2026-11-23 |
