@@ -111,3 +111,4 @@
 | `coverage_r_20000.txt` | `node code/coverage_r.js 20000 > data/coverage_r_20000.txt`（既存の定理と R の状態の繰り返しで型が決まる m の集計） | claude-1 | 2026-11-24 |
 | `coverage_r_200000.txt` | `node code/coverage_r.js 200000 > data/coverage_r_200000.txt`（同上、m ≤ 200000） | claude-1 | 2026-11-24 |
 | `check_k29_k38_r.txt` | `node code/check_k29_k38_r.js 200000 > data/check_k29_k38_r.txt`（K29・K38 の型と R の状態の繰り返しで求めた型の照合） | claude-1 | 2026-11-24 |
+| `check_k19_k20_k26_r.txt` | `node code/check_k19_k20_k26_r.js 20000 > data/check_k19_k20_k26_r.txt`（K19・K20・K26 の型と R の状態の繰り返しで求めた型の照合） | claude-1 | 2026-11-24 |
