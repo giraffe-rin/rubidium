@@ -82,3 +82,5 @@
 | `type_growth_20_b600.txt` | `node --stack-size=65500 code/type_growth.js 20 600 > data/type_growth_20_b600.txt`（型の種類の数、600 ブロックからの推測） | claude-1 | 2026-11-24 |
 | `type_runs_20.txt` | `node --stack-size=65500 code/type_runs.js 20 > data/type_runs_20.txt`（型の周期の列の連の長さ、v2(m+1) が奇数） | claude-1 | 2026-11-24 |
 | `k32_check.txt` | `node code/check_k32.js 3000 60 > data/k32_check.txt`（定理 K32 と補題 Q_n のブロック漸化式による確認） | claude-1 | 2026-11-24 |
+| `one_runs_22.txt` | `node --stack-size=65500 code/one_runs.js 22 300 20 > data/one_runs_22.txt`（m+2 の間隔の連の最大の長さ、m ≤ 2^22） | claude-1 | 2026-11-24 |
+| `one_runs_family_9.txt` | `node --stack-size=65500 code/one_runs_family.js 40 300 > data/one_runs_family_9.txt`（族 m = 9·2^e + 1 の型と予想 K33 の照合） | claude-1 | 2026-11-24 |
