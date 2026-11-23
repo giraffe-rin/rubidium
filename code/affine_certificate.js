@@ -12,11 +12,12 @@
  *   周期の始まりの節点 p は、2 通りの前のブロック（p−1 と p+L−1、p = 0 なら K3 と L−1）から同じ値になることを確かめる。
  *   これが成り立てば、t ≥ t_min のすべての m（m ≥ M_min = A·t_min + B）について、
  *   間隔の列は「前周期 p の後、周期 L で繰り返す」ことが、ブロック漸化式から従う（ログの補題を参照）。
- *   (p, L) は類の代表の m で数値から推測する（推測が誤っていれば証明書が失敗するだけ）。
+ *   (p, L) は類の代表の m（類の中で 3000 以上の最小の m）で数値から推測する（推測が誤っていれば証明書が失敗するだけ）。
  *   周期の始まりで一致しなければ、周期を推測値の 2, 3, 4, 6 倍に、前周期を推測値 + (1, 2, 4, 8)·L にして試す。
  *   それでも失敗したら類を 2 つ（t の偶奇）に分けて、A ≤ 2^T まで繰り返す。
  *
  *   出力: v2(m+1) = v ごとに、証明できた類（m ≡ B (mod A)、M_min、間隔の型）と、証明できなかった類、密度の合計。
+ *   さらに、T′ ≤ T ごとに「A ≤ 2^T′ の類で証明できた割合」を出す（分け方は T によらないので、T′ で止めた場合の割合に等しい）。
  *
  * 実行方法（リポジトリのルートで）:
  *   node --stack-size=65500 code/affine_certificate.js 1 14 > data/affine_certificates_v1.txt
@@ -117,7 +118,7 @@ if (require.main === module) {
   const queue = [[2 ** (v + 1), 2 ** v - 1]];
   while (queue.length) {
     const [A, B] = queue.shift();
-    const t = Math.max(2, Math.ceil((MREP - B) / A)), m = A * t + B;
+    const t = Math.max(0, Math.ceil((MREP - B) / A)), m = A * t + B;   // 類の中で MREP 以上の最小の m
     const pl = guess(m, 600);
     let res = null, why = '';
     if (!pl) why = '周期を推測できない';
@@ -138,7 +139,9 @@ if (require.main === module) {
     `# 型の表記: 前周期の間隔 | 周期の間隔（間隔 − (m+1)）。M_min 以上のこの類のすべての m で成り立つ。`,
     `証明できた類: ${done.length} 個（v2(m+1) = ${v} の m の中の割合 ${dens(done).toFixed(6)}）`,
     `証明できなかった類: ${open.length} 個（割合 ${dens(open).toFixed(6)}）`, '',
-    '## 証明できた類: m ≡ B (mod A) | M_min | 型 | 事実の個数'];
+    '## T′ ごとの証明できた割合（A ≤ 2^T′ の類だけを数えたもの）'];
+  for (let T2 = v + 1; T2 <= T; T2++) out.push(`T′=${T2}: ${dens(done.filter(c => c.A <= 2 ** T2)).toFixed(6)}`);
+  out.push('', '## 証明できた類: m ≡ B (mod A) | M_min | 型 | 事実の個数');
   done.sort((x, y) => x.A - y.A || x.B - y.B);
   for (const c of done) {
     const g = c.gaps.join('');

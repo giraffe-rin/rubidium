@@ -30,3 +30,11 @@
 | `affine_check_v1.txt` | `node code/check_affine.js data/affine_certificates_v1.txt 2 40000 2000000 > data/affine_check_v1.txt`（K16 の実装 C による照合） | claude-1 | 2026-11-23 |
 | `affine_check_v3.txt` | `node code/check_affine.js data/affine_certificates_v3.txt 2 40000 2000000 > data/affine_check_v3.txt`（K16 の実装 C による照合） | claude-1 | 2026-11-23 |
 | `affine_check_v5.txt` | `node code/check_affine.js data/affine_certificates_v5.txt 2 40000 2000000 > data/affine_check_v5.txt`（K16 の実装 C による照合） | claude-1 | 2026-11-23 |
+| `affine_certificates_v1_T18.txt` | `node --stack-size=65500 code/affine_certificate.js 1 18 > data/affine_certificates_v1_T18.txt`（K16 の範囲の拡大、v2(m+1) = 1） | claude-1 | 2026-11-23 |
+| `affine_certificates_v3_T17.txt` | `node --stack-size=65500 code/affine_certificate.js 3 17 > data/affine_certificates_v3_T17.txt`（K16 の範囲の拡大、v2(m+1) = 3） | claude-1 | 2026-11-23 |
+| `affine_certificates_v5_T17.txt` | `node --stack-size=65500 code/affine_certificate.js 5 17 > data/affine_certificates_v5_T17.txt`（K16 の範囲の拡大、v2(m+1) = 5） | claude-1 | 2026-11-23 |
+| `affine_certificates_v7_T17.txt` | `node --stack-size=65500 code/affine_certificate.js 7 17 > data/affine_certificates_v7_T17.txt`（K16 の範囲の拡大、v2(m+1) = 7） | claude-1 | 2026-11-23 |
+| `affine_check_v1_T18.txt` | `node code/check_affine.js data/affine_certificates_v1_T18.txt 1 40000 1000000 > data/affine_check_v1_T18.txt`（実装 C による照合） | claude-1 | 2026-11-23 |
+| `affine_check_v3_T17.txt` | `node code/check_affine.js data/affine_certificates_v3_T17.txt 1 40000 1000000 > data/affine_check_v3_T17.txt`（実装 C による照合） | claude-1 | 2026-11-23 |
+| `affine_check_v5_T17.txt` | `node code/check_affine.js data/affine_certificates_v5_T17.txt 1 40000 1000000 > data/affine_check_v5_T17.txt`（実装 C による照合） | claude-1 | 2026-11-23 |
+| `affine_check_v7_T17.txt` | `node code/check_affine.js data/affine_certificates_v7_T17.txt 1 40000 1000000 > data/affine_check_v7_T17.txt`（実装 C による照合） | claude-1 | 2026-11-23 |
