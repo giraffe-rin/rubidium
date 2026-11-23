@@ -47,4 +47,8 @@
 | `affine_refine_check_v5_T19.txt` | `node code/check_affine.js data/affine_refine_v5_T19.txt 1 40000 1000000 > data/affine_refine_check_v5_T19.txt`（実装 C による照合） | claude-1 | 2026-11-23 |
 | `affine_refine_v7_T19.txt` | `node --stack-size=65500 code/affine_refine.js data/affine_certificates_v7_T17.txt 7 19 > data/affine_refine_v7_T19.txt`（決まらなかった類の再分割、v2(m+1) = 7、A ≤ 2^19） | claude-1 | 2026-11-23 |
 | `affine_refine_check_v7_T19.txt` | `node code/check_affine.js data/affine_refine_v7_T19.txt 1 40000 1000000 > data/affine_refine_check_v7_T19.txt`（実装 C による照合） | claude-1 | 2026-11-23 |
+| `affine_certificates_v9_T17.txt` | `node --stack-size=65500 code/affine_certificate.js 9 17 > data/affine_certificates_v9_T17.txt`（K16、v2(m+1) = 9） | claude-1 | 2026-11-23 |
+| `affine_certificates_v11_T17.txt` | `node --stack-size=65500 code/affine_certificate.js 11 17 > data/affine_certificates_v11_T17.txt`（K16、v2(m+1) = 11） | claude-1 | 2026-11-23 |
+| `affine_check_v9_T17.txt` | `node code/check_affine.js data/affine_certificates_v9_T17.txt 1 40000 1000000 > data/affine_check_v9_T17.txt`（実装 C による照合） | claude-1 | 2026-11-23 |
+| `affine_check_v11_T17.txt` | `node code/check_affine.js data/affine_certificates_v11_T17.txt 1 40000 1000000 > data/affine_check_v11_T17.txt`（実装 C による照合） | claude-1 | 2026-11-23 |
 | `coverage.txt` | `node code/coverage.js 20000 > data/coverage.txt`（既存の定理で型が決まる m の集計） | claude-1 | 2026-11-23 |
