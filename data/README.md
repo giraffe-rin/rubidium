@@ -38,3 +38,4 @@
 | `affine_check_v3_T17.txt` | `node code/check_affine.js data/affine_certificates_v3_T17.txt 1 40000 1000000 > data/affine_check_v3_T17.txt`（実装 C による照合） | claude-1 | 2026-11-23 |
 | `affine_check_v5_T17.txt` | `node code/check_affine.js data/affine_certificates_v5_T17.txt 1 40000 1000000 > data/affine_check_v5_T17.txt`（実装 C による照合） | claude-1 | 2026-11-23 |
 | `affine_check_v7_T17.txt` | `node code/check_affine.js data/affine_certificates_v7_T17.txt 1 40000 1000000 > data/affine_check_v7_T17.txt`（実装 C による照合） | claude-1 | 2026-11-23 |
+| `unresolved_structure_v1_T18.txt` | `node code/analyze_unresolved.js data/affine_certificates_v1_T18.txt > data/unresolved_structure_v1_T18.txt`（証明できた類・できなかった類の s、w、q による分類） | claude-1 | 2026-11-23 |
