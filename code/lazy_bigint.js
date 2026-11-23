@@ -17,7 +17,7 @@
  *   node code/lazy_bigint.js k35 60 > data/k35_bigint.txt
  */
 'use strict';
-function gapsBig(m, J) {
+function gapsBig(m, J, cap = Infinity) {   // cap：評価する事実の数の上限（超えたら例外）
   const h = (m + 1n) / 2n, odd = m % 2n === 1n;
   const memo = new Map(), gm = [];
   const key = (j, d) => j + ':' + d;
@@ -28,6 +28,7 @@ function gapsBig(m, J) {
     const stack = [{ j: j0, d: d0, st: 0 }];
     let ret;
     while (stack.length) {
+      if (memo.size > cap) throw new Error('事実が多すぎる');
       const f = stack[stack.length - 1]; const k = key(f.j, f.d);
       if (memo.has(k)) { ret = memo.get(k); stack.pop(); continue; }
       if (f.j === 0) { const r = v2even(f.d); memo.set(k, r); stack.pop(); ret = r; continue; }
