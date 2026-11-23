@@ -48,3 +48,4 @@
 | `k21_check.txt` | `node --stack-size=65500 code/check_k21.js 300000 15 > data/k21_check.txt`（K21 の間隔と証明の中の事実の確認） | claude-1 | 2026-11-23 |
 | `k22_check.txt` | `node --stack-size=65500 code/check_k22.js 300000 > data/k22_check.txt`（定理 K22 の確認） | claude-1 | 2026-11-23 |
 | `k23_check.txt` | `node --stack-size=65500 code/check_k23.js 300000 > data/k23_check.txt`（定理 K23 の確認） | claude-1 | 2026-11-23 |
+| `k23_termination.txt` | `node code/check_k23_termination.js 1000000 2000000 > data/k23_termination.txt`（K23 の再帰の停止の調査） | claude-1 | 2026-11-23 |
