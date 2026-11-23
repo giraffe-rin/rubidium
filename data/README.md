@@ -94,3 +94,5 @@
 | `family_search_v3.txt`, `family_search_v5.txt`, `family_search_v7.txt` | `node --stack-size=65500 code/family_search.js V > data/family_search_vV.txt`（V = 3, 5, 7。周期が伸び続ける族 m = 3a − 2 の探索） | claude-1 | 2026-11-24 |
 | `k36_check.txt` | `node code/check_k36.js 13 400 > data/k36_check.txt`（定理 K36 の確認：m+2 の連の長さと性質 (Z)） | claude-1 | 2026-11-24 |
 | `k36_s.txt` | `node --stack-size=65500 code/k36_s.js 3:4 3:6 3:8 5:14 5:28 5:42 7:50 7:100 9:254 11:102 11:204 13:387 13:774 15:234 > data/k36_s.txt`（K36 の族の m+1 の連の長さ） | claude-1 | 2026-11-24 |
+| `u_class_symbolic2.txt` | `node code/u_class_symbolic2.js 5 21 6 > data/u_class_symbolic2.txt`（u の合同類ごとの 3 値の証明書、K3 と補題 Q_s を使う版） | claude-1 | 2026-11-24 |
+| `u_class_symbolic2_check.txt` | `node code/check_u_class2.js 5 21 6 20 > data/u_class_symbolic2_check.txt`（上の証明書と実際の m の型の照合） | claude-1 | 2026-11-24 |
