@@ -86,3 +86,5 @@
 | `one_runs_family_9.txt` | `node --stack-size=65500 code/one_runs_family.js 40 300 > data/one_runs_family_9.txt`（族 m = 9·2^e + 1 の型と予想 K33 の照合） | claude-1 | 2026-11-24 |
 | `family_v3.txt` | `node --stack-size=65500 code/family_v3.js 300 > data/family_v3.txt`（族 m = 8(36·16^k − 1)/5 − 1 の型と予想 K34 の照合） | claude-1 | 2026-11-24 |
 | `k33a_check.txt` | `node code/check_k33a.js 20 > data/k33a_check.txt`（定理 K33a の証明の各段階のブロック漸化式による確認） | claude-1 | 2026-11-24 |
+| `k33_bigint.txt` | `node code/lazy_bigint.js k33 200 > data/k33_bigint.txt`（予想 K33 の BigInt 版の遅延評価による照合） | claude-1 | 2026-11-24 |
+| `k34_bigint.txt` | `node code/lazy_bigint.js k34 50 > data/k34_bigint.txt`（予想 K34 の BigInt 版の遅延評価による照合） | claude-1 | 2026-11-24 |
