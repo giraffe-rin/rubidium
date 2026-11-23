@@ -76,3 +76,4 @@
 | `affine3_refine_check_v1.txt` | `node code/check_affine_blockrule.js data/affine3_refine_v1.txt 3 3000000 > data/affine3_refine_check_v1.txt`（ブロック漸化式による照合） | claude-1 | 2026-11-24 |
 | `affine3_diag_v7.txt` | `node --stack-size=65500 code/affine3_diag.js data/affine3_refine_v7.txt > data/affine3_diag_v7.txt`（3 値の証明書で間隔が不明になる原因の分類、v2(m+1) = 7） | claude-1 | 2026-11-24 |
 | `meet_preperiod_v7.txt` | `node --stack-size=65500 code/meet_preperiod.js data/affine3_refine_v7.txt 80 3 > data/meet_preperiod_v7.txt`（meet で止まる類の (p, L) の t による変化） | claude-1 | 2026-11-24 |
+| `cause_type_variation_v7.txt` | `node --stack-size=65500 code/meet_preperiod.js data/affine3_refine_v7.txt 120 5 all > data/cause_type_variation_v7.txt`（止まる類の (p, L) の t による変化、原因ごと） | claude-1 | 2026-11-24 |
