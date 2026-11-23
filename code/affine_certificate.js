@@ -109,7 +109,7 @@ function guess(m, blocks) {
   return null;
 }
 
-module.exports = { certify, guess };
+module.exports = { certify, guess, Split, Fail };
 
 if (require.main === module) {
   const v = +(process.argv[2] || 1), T = +(process.argv[3] || 12);
