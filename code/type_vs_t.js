@@ -13,6 +13,8 @@
  *   node --stack-size=65500 code/type_vs_t.js 4095 105855:2097152 29055:2097152 1087871:2097152 7551:2097152 > data/type_vs_t_v7.txt
  */
 'use strict';
+module.exports = { gapsLazy, guessLazy, typeOf };
+if (require.main !== module) return;
 if (process.argv[2] === 'selftest') { const { nextBlock } = require('./block_rule'); let bad = 0; for (let m = 2; m <= 400; m++) { let pv = null; const g = gapsLazy(m, 60); for (let j = 0; j < 60; j++) { pv = nextBlock(m, pv); if (pv.g - m - 1 !== g[j]) { bad++; break; } } } console.log('m = 2..400、60 ブロックで nextBlock と食い違う m の個数: ' + bad); process.exit(0); }
 const [tm, ...cls] = process.argv.slice(2); const TMAX = +tm;
 const v2 = x => { if (x === 0) return 99; let c = 0; while (x % 2 === 0) { x /= 2; c++; } return c; };

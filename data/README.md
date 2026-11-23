@@ -78,3 +78,4 @@
 | `meet_preperiod_v7.txt` | `node --stack-size=65500 code/meet_preperiod.js data/affine3_refine_v7.txt 80 3 > data/meet_preperiod_v7.txt`（meet で止まる類の (p, L) の t による変化） | claude-1 | 2026-11-24 |
 | `cause_type_variation_v7.txt` | `node --stack-size=65500 code/meet_preperiod.js data/affine3_refine_v7.txt 120 5 all > data/cause_type_variation_v7.txt`（止まる類の (p, L) の t による変化、原因ごと） | claude-1 | 2026-11-24 |
 | `type_vs_t_v7.txt` | `node --stack-size=65500 code/type_vs_t.js 4095 105855:2097152 29055:2097152 1087871:2097152 7551:2097152 > data/type_vs_t_v7.txt`（止まる類の中での型の分布） | claude-1 | 2026-11-24 |
+| `type_growth_22.txt` | `node --stack-size=65500 code/type_growth.js 22 > data/type_growth_22.txt`（m ≤ 2^22 の型の種類の数） | claude-1 | 2026-11-24 |
