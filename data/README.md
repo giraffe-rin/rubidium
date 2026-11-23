@@ -47,3 +47,4 @@
 | `chain_types_v7.txt` | `node --stack-size=65500 code/chain_types.js 7 200000 1 > data/chain_types_v7.txt`（同、v2(m+1) = 7） | claude-1 | 2026-11-23 |
 | `k21_check.txt` | `node --stack-size=65500 code/check_k21.js 300000 15 > data/k21_check.txt`（K21 の間隔と証明の中の事実の確認） | claude-1 | 2026-11-23 |
 | `k22_check.txt` | `node --stack-size=65500 code/check_k22.js 300000 > data/k22_check.txt`（定理 K22 の確認） | claude-1 | 2026-11-23 |
+| `k23_check.txt` | `node --stack-size=65500 code/check_k23.js 300000 > data/k23_check.txt`（定理 K23 の確認） | claude-1 | 2026-11-23 |
