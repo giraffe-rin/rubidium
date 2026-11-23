@@ -98,3 +98,4 @@
 | `u_class_symbolic2_check.txt` | `node code/check_u_class2.js 5 21 6 20 > data/u_class_symbolic2_check.txt`（上の証明書と実際の m の型の照合） | claude-1 | 2026-11-24 |
 | `u_class_symbolic2_k9.txt` | `node code/u_class_symbolic2.js 7 15 9 > data/u_class_symbolic2_k9.txt`（上の証明書を K ≤ 9 で） | claude-1 | 2026-11-24 |
 | `u_w_table.txt` | `node --stack-size=65500 code/u_w_table.js 5 15 4096 > data/u_w_table.txt`（w = v2(u+1) ごとの型の分布） | claude-1 | 2026-11-24 |
+| `k38_check.txt` | `node code/check_k38.js 2048 > data/k38_check.txt`（定理 K38 の証明の各段階のブロック漸化式による確認） | claude-1 | 2026-11-24 |
