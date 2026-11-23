@@ -103,3 +103,4 @@
 | `deep_classes.txt` | `node --stack-size=65500 code/deep_classes.js 16384 200000 > data/deep_classes.txt`（型が簡単な規則で決まらない類の調査） | claude-1 | 2026-11-24 |
 | `renormalize.txt` | `node --stack-size=65500 code/renormalize.js 120000 > data/renormalize.txt`（m ≡ 9 (mod 32) の型が f(m) の型の関数になるか） | claude-1 | 2026-11-24 |
 | `class9_family.txt` | `node --stack-size=65500 code/class9_family.js 23 146 > data/class9_family.txt`（m ≡ 9 (mod 32) の m+2 の連と、周期が伸び続ける族） | claude-1 | 2026-11-24 |
+| `class9_clean.txt` | `node --stack-size=65500 code/class9_clean.js 242 240 > data/class9_clean.txt`（m ≡ 9 (mod 32) の前周期のない族と予想 K40 の照合） | claude-1 | 2026-11-24 |
