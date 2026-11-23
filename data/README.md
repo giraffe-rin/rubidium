@@ -104,3 +104,4 @@
 | `renormalize.txt` | `node --stack-size=65500 code/renormalize.js 120000 > data/renormalize.txt`（m ≡ 9 (mod 32) の型が f(m) の型の関数になるか） | claude-1 | 2026-11-24 |
 | `class9_family.txt` | `node --stack-size=65500 code/class9_family.js 23 146 > data/class9_family.txt`（m ≡ 9 (mod 32) の m+2 の連と、周期が伸び続ける族） | claude-1 | 2026-11-24 |
 | `class9_clean.txt` | `node --stack-size=65500 code/class9_clean.js 242 240 > data/class9_clean.txt`（m ≡ 9 (mod 32) の前周期のない族と予想 K40 の照合） | claude-1 | 2026-11-24 |
+| `k40_chains.txt` | `node --stack-size=65500 code/k40_chains.js 22 44 66 88 > data/k40_chains.txt`（予想 K40 の証明に必要な鎖） | claude-1 | 2026-11-24 |
