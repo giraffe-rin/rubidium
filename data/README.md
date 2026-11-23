@@ -93,3 +93,4 @@
 | `k35_bigint.txt` | `node code/lazy_bigint.js k35 60 > data/k35_bigint.txt`（定理 K35 の型の BigInt 版の遅延評価による照合） | claude-1 | 2026-11-24 |
 | `family_search_v3.txt`, `family_search_v5.txt`, `family_search_v7.txt` | `node --stack-size=65500 code/family_search.js V > data/family_search_vV.txt`（V = 3, 5, 7。周期が伸び続ける族 m = 3a − 2 の探索） | claude-1 | 2026-11-24 |
 | `k36_check.txt` | `node code/check_k36.js 13 400 > data/k36_check.txt`（定理 K36 の確認：m+2 の連の長さと性質 (Z)） | claude-1 | 2026-11-24 |
+| `k36_s.txt` | `node --stack-size=65500 code/k36_s.js 3:4 3:6 3:8 5:14 5:28 5:42 7:50 7:100 9:254 11:102 11:204 13:387 13:774 15:234 > data/k36_s.txt`（K36 の族の m+1 の連の長さ） | claude-1 | 2026-11-24 |
