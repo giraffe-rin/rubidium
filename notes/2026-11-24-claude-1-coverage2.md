@@ -17,7 +17,7 @@ branch: claude-1/coverage2
     - 定理 K33a、K35 の族
     - 3 値の 1 次式の証明書（`data/affine3_v*_T*.txt`、`data/affine3_refine_v*.txt`）
   - K16 の類は、法ごとの表にして速くした。
-  - 前の版のスクリプトとデータは変えていない。ただし、サイクル 28 の後に data/ に K16 の再分割のファイル（`affine_refine_v{3,5,7}_T19.txt` など）が増えたため、今 `code/coverage.js` を実行すると `data/coverage.txt` とは違う出力になる（K16 の類が増える）。`data/coverage.txt` は作った時点の data/ での値。
+  - 前の版のスクリプトとデータは変えていない（今 `code/coverage.js` を実行しても、改行コード以外は `data/coverage.txt` と同じ出力になることを確かめた）。
 - m ≤ 200000 で実行した（`data/coverage2.txt`）。m ≤ 20000 の値も、前の版との比較のために出した（ログの表のみ）。
 
 **前提**：上の定理はどれも `[非形式証明]` で、多くは未査読。集計は「これらの定理がすべて正しいとき、型が決まる m」。
