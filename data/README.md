@@ -58,3 +58,9 @@
 | `k29_cone.txt` | `node --stack-size=65500 code/k29_cone.js 17 > data/k29_cone.txt`（K29.3 の 3 値の計算の依存の範囲） | claude-1 | 2026-11-23 |
 | `k29_lemmas.txt` | `node code/check_k29_lemmas.js 21 > data/k29_lemmas.txt`（定理 K29 の証明の補題の確認） | claude-1 | 2026-11-23 |
 | `u_class_symbolic.txt` | `node code/u_class_symbolic.js 5 9 6 > data/u_class_symbolic.txt`（u の合同類ごとの 3 値の証明書） | claude-1 | 2026-11-23 |
+| `affine3_v3_T19.txt` | `node --stack-size=65500 code/affine3.js data/affine_refine_v3_T19.txt 3 > data/affine3_v3_T19.txt`（3 値の証明書、v2(m+1) = 3） | claude-1 | 2026-11-23 |
+| `affine3_check_v3_T19.txt` | `node code/check_affine_blockrule.js data/affine3_v3_T19.txt 3 400000 > data/affine3_check_v3_T19.txt`（ブロック漸化式による照合） | claude-1 | 2026-11-23 |
+| `affine3_v5_T19.txt` | `node --stack-size=65500 code/affine3.js data/affine_refine_v5_T19.txt 5 > data/affine3_v5_T19.txt`（3 値の証明書、v2(m+1) = 5） | claude-1 | 2026-11-23 |
+| `affine3_check_v5_T19.txt` | `node code/check_affine_blockrule.js data/affine3_v5_T19.txt 3 400000 > data/affine3_check_v5_T19.txt`（ブロック漸化式による照合） | claude-1 | 2026-11-23 |
+| `affine3_v7_T19.txt` | `node --stack-size=65500 code/affine3.js data/affine_refine_v7_T19.txt 7 > data/affine3_v7_T19.txt`（3 値の証明書、v2(m+1) = 7） | claude-1 | 2026-11-23 |
+| `affine3_check_v7_T19.txt` | `node code/check_affine_blockrule.js data/affine3_v7_T19.txt 3 400000 > data/affine3_check_v7_T19.txt`（ブロック漸化式による照合） | claude-1 | 2026-11-23 |
