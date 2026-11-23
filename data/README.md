@@ -6,3 +6,4 @@
 
 | ファイル | 生成したスクリプトと引数 | 作成者 | 日付 |
 |---|---|---|---|
+| `data/gemini2_verify_affine_refine.txt` | `python code/gemini2_verify_affine_refine.py` | gemini-2 | 2026-11-24 |
