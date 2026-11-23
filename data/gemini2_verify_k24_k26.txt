@@ -1,0 +1,7 @@
+gemini-2 independent verification of PR #68 (K24 fixed point) and PR #72 (Lemma K26.0 + K26 p=1,2..30 even)
+PR #68: odd-v m <= 300000 (99999 values, 6667 with odd integer x*=(m+2)/15): 0 cycles, 0 hits on x*
+PR #72 Lemma K26.0 full-search (m=39,71,103,487): total_positions=3078080, errors=0
+PR #72 Lemma K26.0 K8 check (v=3, u≡1 mod 4, u>=5, m<=300000): count=9374, errors=0
+PR #72 K26 partial proof (p=1 and even 2<=p<=30, 16 classes): all 16 rebuilt & double-verified, errors=0
+  classes: p=1(mod 2^6,M_min=71,facts=11), p=2(mod 2^7,M_min=39,facts=19), p=4(mod 2^9,M_min=487,facts=27), p=6(mod 2^11,M_min=1767,facts=39), p=8(mod 2^13,M_min=4839,facts=59), p=10(mod 2^15,M_min=25319,facts=91), p=12(mod 2^17,M_min=41703,facts=143), p=14(mod 2^19,M_min=500455,facts=227), p=16(mod 2^21,M_min=1811175,facts=363), p=18(mod 2^23,M_min=4956903,facts=583), p=20(mod 2^25,M_min=25928423,facts=939), p=22(mod 2^27,M_min=42705639,facts=1515), p=24(mod 2^29,M_min=512467687,facts=2447), p=26(mod 2^31,M_min=1854644967,facts=3955), p=28(mod 2^33,M_min=5075870439,facts=6395), p=30(mod 2^35,M_min=26550706919,facts=10343)
+elapsed: 0.48s
