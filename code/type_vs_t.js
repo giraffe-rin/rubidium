@@ -32,15 +32,15 @@ function gapsLazy(m, J) {
 }
 function guessLazy(m, J) {
   const g = gapsLazy(m, J);
-  for (let L = 1; L <= 120; L++) for (let p = 0; p <= 150; p++) {
+  for (let L = 1; L <= Math.max(120, Math.floor(J / 3)); L++) for (let p = 0; p <= Math.max(150, Math.floor(J / 2)); p++) {
     if (g.length - p < 3 * L) break;
     let ok = true; for (let i = p; i + L < g.length; i++) if (g[i] !== g[i + L]) { ok = false; break; }
     if (ok) return [p, L, g];
   }
   return null;
 }
-function typeOf(m) {
-  const pl = guessLazy(m, 300); if (!pl) return '?'; const g = pl[2];
+function typeOf(m, blocks = 300) {
+  const pl = guessLazy(m, blocks); if (!pl) return '?'; const g = pl[2];
   // 周期部分は巡回の最小表示にしない（p の位置から書く）
   return (g.slice(0, pl[0]).join('') || '-') + '|' + g.slice(pl[0], pl[0] + pl[1]).join('');
 }
