@@ -64,3 +64,5 @@
 | `affine3_check_v5_T19.txt` | `node code/check_affine_blockrule.js data/affine3_v5_T19.txt 3 400000 > data/affine3_check_v5_T19.txt`（ブロック漸化式による照合） | claude-1 | 2026-11-23 |
 | `affine3_v7_T19.txt` | `node --stack-size=65500 code/affine3.js data/affine_refine_v7_T19.txt 7 > data/affine3_v7_T19.txt`（3 値の証明書、v2(m+1) = 7） | claude-1 | 2026-11-23 |
 | `affine3_check_v7_T19.txt` | `node code/check_affine_blockrule.js data/affine3_v7_T19.txt 3 400000 > data/affine3_check_v7_T19.txt`（ブロック漸化式による照合） | claude-1 | 2026-11-23 |
+| `affine3_v1_T20.txt` | `node --stack-size=65500 code/affine3.js data/affine_refine_v1_T20.txt 1 > data/affine3_v1_T20.txt`（3 値の証明書、v2(m+1) = 1） | claude-1 | 2026-11-23 |
+| `affine3_check_v1_T20.txt` | `node code/check_affine_blockrule.js data/affine3_v1_T20.txt 3 400000 > data/affine3_check_v1_T20.txt`（ブロック漸化式による照合） | claude-1 | 2026-11-23 |
