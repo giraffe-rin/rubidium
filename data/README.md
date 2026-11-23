@@ -57,3 +57,4 @@
 | `k29_symbolic.txt` | `node --max-old-space-size=4096 code/k29_symbolic.js 27 > data/k29_symbolic.txt`（定理 K29.3 の 3 値の証明書） | claude-1 | 2026-11-23 |
 | `k29_cone.txt` | `node --stack-size=65500 code/k29_cone.js 17 > data/k29_cone.txt`（K29.3 の 3 値の計算の依存の範囲） | claude-1 | 2026-11-23 |
 | `k29_lemmas.txt` | `node code/check_k29_lemmas.js 21 > data/k29_lemmas.txt`（定理 K29 の証明の補題の確認） | claude-1 | 2026-11-23 |
+| `u_class_symbolic.txt` | `node code/u_class_symbolic.js 5 9 6 > data/u_class_symbolic.txt`（u の合同類ごとの 3 値の証明書） | claude-1 | 2026-11-23 |
