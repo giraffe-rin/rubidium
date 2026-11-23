@@ -52,3 +52,4 @@
 | `affine_check_v9_T17.txt` | `node code/check_affine.js data/affine_certificates_v9_T17.txt 1 40000 1000000 > data/affine_check_v9_T17.txt`（実装 C による照合） | claude-1 | 2026-11-23 |
 | `affine_check_v11_T17.txt` | `node code/check_affine.js data/affine_certificates_v11_T17.txt 1 40000 1000000 > data/affine_check_v11_T17.txt`（実装 C による照合） | claude-1 | 2026-11-23 |
 | `coverage.txt` | `node code/coverage.js 20000 > data/coverage.txt`（既存の定理で型が決まる m の集計） | claude-1 | 2026-11-23 |
+| `k29_check.txt` | `node --stack-size=65500 code/check_k29.js 15 14 300000 > data/k29_check.txt`（予想 K29 の分割つき証明書と、ブロック漸化式による確認） | claude-1 | 2026-11-23 |
