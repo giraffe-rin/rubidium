@@ -88,3 +88,4 @@
 | `k33a_check.txt` | `node code/check_k33a.js 20 > data/k33a_check.txt`（定理 K33a の証明の各段階のブロック漸化式による確認） | claude-1 | 2026-11-24 |
 | `k33_bigint.txt` | `node code/lazy_bigint.js k33 200 > data/k33_bigint.txt`（予想 K33 の BigInt 版の遅延評価による照合） | claude-1 | 2026-11-24 |
 | `k34_bigint.txt` | `node code/lazy_bigint.js k34 50 > data/k34_bigint.txt`（予想 K34 の BigInt 版の遅延評価による照合） | claude-1 | 2026-11-24 |
+| `k33_odd_cone.txt` | `node --stack-size=65500 code/k33_odd_cone.js 9 11 13 15 > data/k33_odd_cone.txt`（m = 9·2^e + 1（e 奇数）で参照される距離の分類） | claude-1 | 2026-11-24 |
