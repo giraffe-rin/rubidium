@@ -84,3 +84,4 @@
 | `k32_check.txt` | `node code/check_k32.js 3000 60 > data/k32_check.txt`（定理 K32 と補題 Q_n のブロック漸化式による確認） | claude-1 | 2026-11-24 |
 | `one_runs_22.txt` | `node --stack-size=65500 code/one_runs.js 22 300 20 > data/one_runs_22.txt`（m+2 の間隔の連の最大の長さ、m ≤ 2^22） | claude-1 | 2026-11-24 |
 | `one_runs_family_9.txt` | `node --stack-size=65500 code/one_runs_family.js 40 300 > data/one_runs_family_9.txt`（族 m = 9·2^e + 1 の型と予想 K33 の照合） | claude-1 | 2026-11-24 |
+| `family_v3.txt` | `node --stack-size=65500 code/family_v3.js 300 > data/family_v3.txt`（族 m = 8(36·16^k − 1)/5 − 1 の型と予想 K34 の照合） | claude-1 | 2026-11-24 |
