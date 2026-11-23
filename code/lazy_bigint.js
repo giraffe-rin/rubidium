@@ -9,10 +9,12 @@
  *     selftest：m = 2..300 の 40 ブロックで nextBlock と一致するか
  *     k33 EMAX：e = 7..EMAX で m = 9·2^e + 1 の間隔の列が、予想 K33 の周期の 3 回分と一致するか
  *     k34 KMAX：k = 4..KMAX で m = 8(36·16^k − 1)/5 − 1 の間隔の列が、予想 K34 の周期の 3 回分と一致するか
+ *     k35 KMAX：k = 2..KMAX で m = (3·16^k − 13)/5 の間隔の列が、定理 K35 の周期 1^{2k−1} 0 0 の 3 回分と一致するか
  * 実行方法（リポジトリのルートで）:
  *   node code/lazy_bigint.js selftest
  *   node code/lazy_bigint.js k33 200 > data/k33_bigint.txt
  *   node code/lazy_bigint.js k34 50 > data/k34_bigint.txt
+ *   node code/lazy_bigint.js k35 60 > data/k35_bigint.txt
  */
 'use strict';
 function gapsBig(m, J) {
@@ -64,12 +66,13 @@ if (require.main === module) {
     const { nextBlock } = require('./block_rule'); let bad = 0;
     for (let m = 2; m <= 300; m++) { let pv = null, s = ''; for (let j = 0; j < 40; j++) { pv = nextBlock(m, pv); s += pv.g === m + 2 ? 1 : 0; } if (gapsBig(BigInt(m), 40).gaps !== s) bad++; }
     console.log('m = 2..300、40 ブロックで nextBlock と食い違う m の個数: ' + bad);
-  } else if (mode === 'k33' || mode === 'k34') {
+  } else if (mode === 'k33' || mode === 'k34' || mode === 'k35') {
     const N = +lim; const out = [`# 予想 ${mode.toUpperCase()} の BigInt 版の遅延評価による照合（周期の 3 回分）`, `# 生成: node code/lazy_bigint.js ${mode} ${N}`, (mode === 'k33' ? 'e' : 'k') + ' | m の桁数（10 進）| 周期の長さ | 一致 | 評価した事実の数'];
     let ok = 0, ng = 0;
-    for (let n = mode === 'k33' ? 7 : 4; n <= N; n++) {
+    for (let n = mode === 'k33' ? 7 : mode === 'k35' ? 2 : 4; n <= N; n++) {
       let m, per;
       if (mode === 'k33') { m = 9n * 2n ** BigInt(n) + 1n; per = n % 2 === 0 ? '1'.repeat(n / 2) + '0' : '1'.repeat(n - 1) + '0' + '1'.repeat((n - 1) / 2) + '0'; }
+      else if (mode === 'k35') { m = (3n * 16n ** BigInt(n) - 13n) / 5n; per = '1'.repeat(2 * n - 1) + '00'; }
       else { m = 8n * (36n * 16n ** BigInt(n) - 1n) / 5n - 1n; per = '1'.repeat(4 * n + 2) + '0' + ('1'.repeat(2 * n + 1) + '00').repeat(2); }
       const r = gapsBig(m, 3 * per.length); const good = r.gaps === per.repeat(3); good ? ok++ : ng++;
       out.push(`${n} | ${m.toString().length} | ${per.length} | ${good ? '一致' : '不一致'} | ${r.facts}`);
