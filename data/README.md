@@ -50,3 +50,4 @@
 | `k23_check.txt` | `node --stack-size=65500 code/check_k23.js 300000 > data/k23_check.txt`（定理 K23 の確認） | claude-1 | 2026-11-23 |
 | `k23_termination.txt` | `node code/check_k23_termination.js 1000000 2000000 > data/k23_termination.txt`（K23 の再帰の停止の調査） | claude-1 | 2026-11-23 |
 | `classes_by_l_mu.txt` | `node code/classes_by_l_mu.js data/affine_certificates_v1_T18.txt 1 data/affine_certificates_v3_T17.txt 3 data/affine_certificates_v5_T17.txt 5 data/affine_certificates_v7_T17.txt 7 > data/classes_by_l_mu.txt`（証明書の一覧の ℓ・μ による分類） | claude-1 | 2026-11-23 |
+| `k26_check.txt` | `node --stack-size=65500 code/check_k26.js 30 300000 > data/k26_check.txt`（予想 K26 の証明書と、ブロック漸化式による確認） | claude-1 | 2026-11-23 |
