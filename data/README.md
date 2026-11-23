@@ -100,3 +100,4 @@
 | `u_w_table.txt` | `node --stack-size=65500 code/u_w_table.js 5 15 4096 > data/u_w_table.txt`（w = v2(u+1) ごとの型の分布） | claude-1 | 2026-11-24 |
 | `k38_check.txt` | `node code/check_k38.js 2048 > data/k38_check.txt`（定理 K38 の証明の各段階のブロック漸化式による確認） | claude-1 | 2026-11-24 |
 | `coverage2.txt` | `node code/coverage2.js 200000 > data/coverage2.txt`（既存の定理で型が決まる m の集計、更新版） | claude-1 | 2026-11-24 |
+| `deep_classes.txt` | `node --stack-size=65500 code/deep_classes.js 16384 200000 > data/deep_classes.txt`（型が簡単な規則で決まらない類の調査） | claude-1 | 2026-11-24 |
