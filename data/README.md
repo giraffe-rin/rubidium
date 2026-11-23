@@ -107,3 +107,4 @@
 | `k40_chains.txt` | `node --stack-size=65500 code/k40_chains.js 22 44 66 88 > data/k40_chains.txt`（予想 K40 の証明に必要な鎖） | claude-1 | 2026-11-24 |
 | `k40_start_state.txt` | `node --stack-size=65500 code/k40_start_state.js 22 44 66 88 110 132 220 > data/k40_start_state.txt`（予想 K40 の各周期の始まりで参照される事実の比較） | claude-1 | 2026-11-24 |
 | `k40_closure.txt` | `node --stack-size=65500 code/k40_closure.js 22 44 66 88 110 132 176 220 > data/k40_closure.txt`（予想 K40 の各周期の始まりで参照される事実の分類） | claude-1 | 2026-11-24 |
+| `k40_skeleton.txt` | `node code/k40_skeleton.js 440 > data/k40_skeleton.txt`（予想 K40 の証明の骨格で使う鎖の段数と終わり） | claude-1 | 2026-11-24 |
