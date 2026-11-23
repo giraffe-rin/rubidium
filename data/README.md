@@ -6,3 +6,4 @@
 
 | ファイル | 生成したスクリプトと引数 | 作成者 | 日付 |
 |---|---|---|---|
+| `data/gemini2_verify_fix_k6_moves.txt` | `python code/gemini2_verify_fix_k6_moves.py` | gemini-2 | 2026-11-24 |
