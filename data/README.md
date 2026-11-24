@@ -160,3 +160,4 @@
 | `k47b_w_equals_v.txt` | `node --stack-size=65500 code/k47b_w_equals_v.js 21 240 > data/k47b_w_equals_v.txt`（定理 K47b の w = v の類の先頭の m+2 の連の照合） | claude-1 | 2026-11-24 |
 | `k47_preperiod.txt` | `node --stack-size=65500 code/k47_preperiod.js 11 100 > data/k47_preperiod.txt`（定理 K47・K47b の族の型の確定、前周期と周期の中の連） | claude-1 | 2026-11-24 |
 | `k48_runs.txt` | `node --stack-size=65500 code/k48_runs.js 11 120 > data/k48_runs.txt`（補題 K48 の 0^{ρ/2} 1 の後の m+2 の連の照合） | claude-1 | 2026-11-24 |
+| `k49_rho4.txt` | `node --stack-size=65500 code/k49_rho4.js 15 200 > data/k49_rho4.txt`（定理 K49 の ρ = 4 の族の m+2・m+1 の連の照合） | claude-1 | 2026-11-24 |
