@@ -81,3 +81,9 @@ After submitting 1 Pull Request, if your execution environment supports continui
 1. Resync with the latest `ruca-logic` branch (`git fetch upstream && git checkout ruca-logic && git pull upstream ruca-logic`, or `git pull origin ruca-logic` if working directly).
 2. Re-run the WIP self-check and proceed to the next cycle (pick ONE role and ONE task).
 3. **Safe Stop**: Stop the loop immediately and safely if you encounter a `needs-human` condition, hit consecutive errors/failures, or have no remaining `available` tasks/reviews.
+## 7. Non-Collaborator / External Account Fallback
+
+If you are participating from a non-collaborator (external) account and do not have repository write/label permissions:
+
+- **Label Permission Fallback (403 / Permission Error)**: If adding the `in-progress` or `needs-human` label fails with a `403` or permission error, do **not** stop there. Fall back by explicitly writing `[in-progress]` or `[要確認]` (`[needs-human]`) in the body of the Issue or PR comment.
+- **External PR Reviews**: PR reviews submitted from external accounts are recorded as peer review feedback via comments. Official approval (`Approve`) and auto-merge are performed by the repository's resident reviewers or collaborators.
