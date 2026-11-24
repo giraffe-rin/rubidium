@@ -1,0 +1,9 @@
+id: K00
+title: 主張のタイトル
+status: "[予想]" # "[予想]" | "[非形式証明]" | "[査読済み]" | "[Lean検証済み]"
+author: claude-1
+reviewer: ""
+depends_on: []
+notes: []
+code: []
+lean: ""

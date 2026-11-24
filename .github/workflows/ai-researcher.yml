@@ -1,0 +1,89 @@
+name: AI Researcher (Claude)
+
+on:
+  schedule:
+    - cron: '0 */4 * * *'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: '実行モード (auto / fix-only / new-proof)'
+        required: false
+        default: 'auto'
+      force_run:
+        description: 'AUTONOMOUS_ENABLED=false でも手動実行する'
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write
+  actions: read
+
+concurrency:
+  group: rubidium-ai-researcher
+  cancel-in-progress: false
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    if: >-
+      (github.event_name == 'schedule' && vars.AUTONOMOUS_ENABLED == 'true') ||
+      (github.event_name == 'workflow_dispatch' && (inputs.force_run == true || vars.AUTONOMOUS_ENABLED == 'true'))
+
+    steps:
+      - name: Generate GitHub App Token (if configured)
+        id: app_token
+        continue-on-error: true
+        if: secrets.RUBIDIUM_APP_ID != '' && secrets.RUBIDIUM_APP_PRIVATE_KEY != ''
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.RUBIDIUM_APP_ID }}
+          private-key: ${{ secrets.RUBIDIUM_APP_PRIVATE_KEY }}
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ruca-logic
+          fetch-depth: 0
+          token: ${{ steps.app_token.outputs.token || secrets.GITHUB_TOKEN }}
+
+      - name: Check WIP limit (unreviewed proof PRs)
+        id: wip
+        env:
+          GH_TOKEN: ${{ steps.app_token.outputs.token || secrets.GITHUB_TOKEN }}
+        run: |
+          OPEN_PRS=$(gh pr list --state open --json number,title,reviewDecision,labels --limit 100)
+          UNREVIEWED=$(echo "$OPEN_PRS" | python3 -c "
+          import json, sys
+          prs = json.load(sys.stdin)
+          cnt = sum(1 for p in prs if p.get('title','').startswith('claude-') and p.get('reviewDecision') != 'APPROVED')
+          print(cnt)
+          ")
+          CHANGES_REQ=$(echo "$OPEN_PRS" | python3 -c "
+          import json, sys
+          prs = json.load(sys.stdin)
+          nums = [str(p['number']) for p in prs if p.get('reviewDecision') == 'CHANGES_REQUESTED']
+          print(','.join(nums))
+          ")
+          echo "unreviewed_count=${UNREVIEWED}" >> "$GITHUB_OUTPUT"
+          echo "changes_requested=${CHANGES_REQ}" >> "$GITHUB_OUTPUT"
+
+      - name: Run Claude Code autonomous research cycle
+        if: >-
+          (secrets.ANTHROPIC_API_KEY != '' || secrets.CLAUDE_CODE_OAUTH_TOKEN != '') &&
+          (steps.wip.outputs.unreviewed_count < 5 || steps.wip.outputs.changes_requested != '' || inputs.mode == 'fix-only')
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ steps.app_token.outputs.token || secrets.GITHUB_TOKEN }}
+          claude_args: "--max-turns 25"
+          prompt: |
+            あなたは rubidium 研究チームの自律エージェント `claude-1` です。
+            `AGENTS.md`、`problems/restricted-stone-game/PROBLEM.md`、`problems/restricted-stone-game/STATUS.md`、`.claude/skills/research-cycle/SKILL.md` を熟読してください。
+            未査読証明PR数: ${{ steps.wip.outputs.unreviewed_count }} (上限5) / 修正依頼PR: ${{ steps.wip.outputs.changes_requested || 'なし' }} / モード: ${{ inputs.mode || 'auto' }}。
+            修正依頼があるか未査読PRが5件以上なら新規証明をせず既存PRの修正のみ実施してください。そうでなければ未着手課題を1つ選び、Issue宣言→ブランチ作成→実験・証明→`notes/`と`claims/<ID>.yaml`追加→`python3 code/generate_status.py --check`通過後に `ruca-logic` 宛てPRを作成してください。要確認条件に該当する場合は `needs-human` ラベルを付けて停止してください。
