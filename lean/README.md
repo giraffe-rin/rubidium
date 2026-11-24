@@ -18,6 +18,7 @@ Lean 4 による形式化を置く場所です。
 | `Rubidium/K3.lean` | 定理 K3：1 ≤ r ≤ m なら、`IsP m r p ↔ p = r ∧ ev2 r = true`。 |
 | `Rubidium/K4Even.lean` | 定理 K4 の m が偶数の場合 `K4_even`：m が偶数なら `IsP m n 0 ↔ n % (m+1) = 0`。補題 `row_all`（m が偶数なら行 j(m+1) はすべての p で P）、`not_isP_of_row`（P の行 r から d 先の (r+d, p) は p ≠ d なら N）。公理は `propext`・`Quot.sound` だけ。 |
 | `Rubidium/K4Full.lean` | **定理 K4 全体** `K4`：m ≥ 1 のとき `(∀ n, IsP m n 0 ↔ n % (m+1) = 0) ↔ ev2 (m+1) = true`。2 の付値 `v2` と補題 `v2_add`（v2 x < v2 y なら v2(x+y) = v2 x）、`ev2_iff_v2`、m が奇数の場合の `row_all_odd`・`blk_step`・`K4_odd`。公理は `propext`・`Quot.sound` だけ。 |
+| `Rubidium/K6.lean` | **定理 K6** `K6`：m % 8 = 5 なら `IsP m n 0 ↔ (n % (2m+3) = 0 ∨ n % (2m+3) = m+2)`。補題 `odd_of_rows`（P の行の後の奇数 d の (r+d, d) は P）、`row_long`、`k6_rows`。公理は `propext`・`Quot.sound` だけ。 |
 | `Rubidium/Decide.lean` | 計算できる判定 `isPb m r p : Bool`（`Nat.all` による再帰）と、`isPb_iff`：`isPb m r p = true ↔ IsP m r p`。 |
 | `check/PStarts.lean` | `isPb` を実行して、m ≤ 10 の後手必勝の開始局面 (n, 0)（n ≤ 24）を出すスクリプト。出力は `data/lean_pstarts.txt`、JavaScript の全探索との照合は `data/lean_crosscheck.txt`。 |
 | `check/Tables.lean` | Array による DP で全局面 (r, p) の勝敗表を出すスクリプト（証明はない、別言語の実装による照合用）。出力は `data/lean_tables.txt`、`data/tables` との照合は `data/lean_tables_compare.txt`。 |
