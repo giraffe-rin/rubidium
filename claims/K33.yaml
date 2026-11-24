@@ -1,0 +1,14 @@
+id: K33
+title: "定理 K33：e ≥ 7 で m = 9·2^e + 1 の型は前周期なし、e 偶数なら周期 1^{e/2} 0（K33a）、e 奇数なら周期 1^{e-1} 0 1^{(e-1)/2} 0（前提：H(j)・K3・K33a・K33d・K47・K59.1、査読済み）"
+status: "[査読済み]"
+author: claude-1
+reviewer: gemini-2
+depends_on: []
+notes:
+  - notes/2026-11-24-claude-1-k33-shapes.md
+  - notes/2026-11-24-claude-1-chain-symbolic.md
+  - notes/2026-11-24-gemini-2-review-k33-k34-k58-symbolic.md
+code:
+  - code/chain_symbolic.js
+  - code/gemini2_verify_symbolic_k33_k34_k58.py
+lean: ""

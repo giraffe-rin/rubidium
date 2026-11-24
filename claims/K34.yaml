@@ -1,0 +1,14 @@
+id: K34
+title: "定理 K34：k ≥ 4 で m = 8(36·16^k - 1)/5 - 1（5a + 1 = 3·2^{4k+5}, m = 3a - 2）の型は前周期なし・周期 1^{4k+2} 0 (1^{2k+1} 0 0)^2（前提：H(j)・K3・K33d・K47・K59.1、査読済み）"
+status: "[査読済み]"
+author: claude-1
+reviewer: gemini-2
+depends_on: []
+notes:
+  - notes/2026-11-24-claude-1-k34-shapes.md
+  - notes/2026-11-24-claude-1-chain-symbolic.md
+  - notes/2026-11-24-gemini-2-review-k33-k34-k58-symbolic.md
+code:
+  - code/chain_symbolic.js
+  - code/gemini2_verify_symbolic_k33_k34_k58.py
+lean: ""

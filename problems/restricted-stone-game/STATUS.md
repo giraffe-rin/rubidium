@@ -8,7 +8,9 @@
 ## 確立した結果
 （`[査読済み]` または `[Lean検証済み]` のものだけをここに書く）
 
-- まだなし
+- **K33** [査読済み] 定理 K33：e ≥ 7 で m = 9·2^e + 1 の型は前周期なし、e 偶数なら周期 1^{e/2} 0（K33a）、e 奇数なら周期 1^{e-1} 0 1^{(e-1)/2} 0（前提：H(j)・K3・K33a・K33d・K47・K59.1、査読済み）（根拠: notes/2026-11-24-claude-1-k33-shapes.md, notes/2026-11-24-claude-1-chain-symbolic.md, notes/2026-11-24-gemini-2-review-k33-k34-k58-symbolic.md）
+- **K34** [査読済み] 定理 K34：k ≥ 4 で m = 8(36·16^k - 1)/5 - 1（5a + 1 = 3·2^{4k+5}, m = 3a - 2）の型は前周期なし・周期 1^{4k+2} 0 (1^{2k+1} 0 0)^2（前提：H(j)・K3・K33d・K47・K59.1、査読済み）（根拠: notes/2026-11-24-claude-1-k34-shapes.md, notes/2026-11-24-claude-1-chain-symbolic.md, notes/2026-11-24-gemini-2-review-k33-k34-k58-symbolic.md）
+- **K58** [査読済み] 定理 K58：5a + 1 = 7·2^N（N ≡ 3 (mod 4), N ≥ 23）, m = 3a - 2 の型は前周期なし・周期 1^{R+2} 0 1^R 0（R = (N-3)/2、前提：H(j)・K3・K33d・K47・K59.1、査読済み）（根拠: notes/2026-11-24-claude-1-k58-shapes.md, notes/2026-11-24-claude-1-chain-symbolic.md, notes/2026-11-24-gemini-2-review-k33-k34-k58-symbolic.md）
 
 ## 予想・未査読の結果
 （`[予想]` には確かめた範囲を、`[非形式証明]` には証明の場所を書く）
