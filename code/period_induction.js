@@ -15,6 +15,8 @@
  *     (0) ブロック 0 の間隔（K3 による）が w[0] と一致する
  *   (0)(1)(2) が成り立てば、ブロック 0 は (G)(A) を満たし（K3）、ブロック B が (G)(A) を満たせばブロック B+L も満たすので、
  *   帰納法により、すべての周期で間隔の列は w のくり返しになり、型が確定する。
+ * prove3 の第 6 引数 opts.k33d = true で、周期の始まりの一般の仮定に「v2 = 1 の距離は入らない」（補題 K33d：E 型ブロックでは d/2 が奇数で入るため。
+ *   ブロック 0 では K3 と一致）を加える。既定は false（従来どおり）。
  * 使い方（モジュール）: require('./period_induction').prove(m, w) → { ok, why, A, facts }
  * 実行方法（リポジトリのルートで）:
  *   node --stack-size=65500 code/period_induction.js k33odd 199 > data/period_induction_k33odd.txt
@@ -93,7 +95,8 @@ function prove2(m, w, maxRounds = 5000, maxFacts = 3000000) {
 //   周期の列 w の末尾が 0 なら、ブロック b の事実として (G)（奇数は入る、v2 ≤ min(2s−1, v−1) は偶奇、補題 Q_s）を使い、
 //   末尾が 1 なら (G) は使わない（b の事実はすべて (A) に入れる）。(A) の値はブロック b での実際の値とする。
 //   ブロック b からの 1 周期で、間隔が w と一致し、(A) がブロック b + L で再現されることを確かめる。
-function prove3(m, pre, w, maxRounds = 20000, maxFacts = 3000000) {
+function prove3(m, pre, w, maxRounds = 20000, maxFacts = 3000000, opts = {}) {
+  const k33d = !!opts.k33d;   // 補題 K33d：周期の始まり（E 型ブロック、またはブロック 0）で v2 = 1 の距離は入らない
   if (m % 2n === 0n) return { ok: false, why: 'm が偶数' };
   const p = pre.length, L = w.length, v = v2(m + 1n), h = (m + 1n) / 2n, full = pre + w; let s = 0; while (s < L && w[L - 1 - s] === '0') s++;
   const word = i => (i < p ? pre[i] : w[(i - p) % L]);
@@ -109,7 +112,7 @@ function prove3(m, pre, w, maxRounds = 20000, maxFacts = 3000000) {
   for (let round = 0; round < maxRounds; round++) {
     const memo = new Map(); let unknown = null, tooMany = false;
     const S = (i, d) => { if (unknown || tooMany) return false; const key = i + ':' + d; if (memo.has(key)) return memo.get(key); if (memo.size > maxFacts) { tooMany = true; return false; } let r;
-      if (i === 0) { const t = v2(d); if (useG && t === 0) r = true; else if (useG && t <= bound) r = t % 2 === 0; else if (A.has(d.toString())) r = A.get(d.toString()); else { unknown = d; return false; } }
+      if (i === 0) { const t = v2(d); if (useG && t === 0) r = true; else if (useG && k33d && t === 1) r = false; else if (useG && t <= bound) r = t % 2 === 0; else if (A.has(d.toString())) r = A.get(d.toString()); else { unknown = d; return false; } }
       else { r = !(d % 2n === 0n && S(i, d / 2n)); if (r) { const g = gapRel(i - 1), sm = g + d; if (sm % 2n === 0n && sm / 2n <= m && S(i - 1, sm / 2n)) r = false; if (r && g === m + 2n && d === h - 1n) r = false; } }
       if (unknown || tooMany) return false; memo.set(key, r); return r; };
     let ok1 = true; for (let i = 1; i <= L; i++) { const x = S(i, h); if (unknown || tooMany) break; if ((x ? '1' : '0') !== w[i % L]) { ok1 = false; break; } }
