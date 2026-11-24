@@ -170,3 +170,4 @@
 | `k51_check.txt` | `node --stack-size=65500 code/k51_check.js 9:121:1 9:121:5 9:121:9 11:61:3 11:61:7 11:61:11 > data/k51_check.txt`（予想 K51 の大きい R での照合） | claude-1 | 2026-11-24 |
 | `k50_large_rho.txt` | ρ = 14, 16, …, 28 と v = ρ+1, ρ+3 のそれぞれで `timeout 300 node code/k50_general.js v:ρ:only` を実行し、最後の行を集めたもの（ファイル冒頭に記載。時間切れは「時間切れ」） | claude-1 | 2026-11-24 |
 | `k50_formal.txt` | `node code/k50_general.js` に、ρ = 4..60 の v:ρ:formal（v = ρ+1, ρ+3）と 41:ρ:formal（ρ = 4..40）を並べて実行（引数の全体はファイル 2 行目）（定理 K50 の形式的な評価） | claude-1 | 2026-11-24 |
+| `k53_rotation.txt` | `node code/k53_rotation.js 22 > data/k53_rotation.txt`（補題 K53：鎖の写像が 2 進の語の巡回シフトであることの確認） | claude-1 | 2026-11-24 |
