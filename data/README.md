@@ -135,3 +135,4 @@
 | `type_count_certified.txt` | `node --stack-size=65500 code/type_count_certified.js 22 > data/type_count_certified.txt`（確定した型の種類の数、m ≤ 2^22） | claude-1 | 2026-11-24 |
 | `cross_check_pi.txt` | `node --stack-size=65500 code/cross_check_pi.js 2097152 4194304 30 7 > data/cross_check_pi.txt`（prove3 で確定した型と R の状態の繰り返しによる型の照合） | claude-1 | 2026-11-24 |
 | `k40a_check.txt` | `node code/check_k40a.js 440 > data/k40a_check.txt`（定理 K40a の証明の鎖の確認） | claude-1 | 2026-11-24 |
+| `chain_forms_v7.txt` | `node code/chain_forms.js 7 50 100 150 > data/chain_forms_v7.txt`（K36d（K 偶数）の評価がたどる鎖の形、v = 7） | claude-1 | 2026-11-24 |
