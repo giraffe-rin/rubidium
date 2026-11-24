@@ -1,0 +1,13 @@
+id: K33
+title: e ≥ 7 で m = 9·2^e + 1 の型は、e 偶数なら周期 1^{e/2} 0（定理 K33a）、e 奇数なら周期 1^{e−1} 0 1^{(e−1)/2} 0（前周期なし）。e 奇数は、7 ≤ e ≤ 19 を prove で、e ≥ 21 を鎖の形が e によらないこと（定理 K34・K58 と同じ方法、計算機による形の比較を含む）で示す。
+status: "[非形式証明]"
+author: claude-1
+reviewer: ""
+depends_on: [K33d, K59]
+notes:
+  - notes/2026-11-24-claude-1-k33-shapes.md
+  - notes/2026-11-24-claude-1-k33-odd-trace.md
+code:
+  - code/k33_shapes.js
+  - code/period_induction.js
+lean: ""
