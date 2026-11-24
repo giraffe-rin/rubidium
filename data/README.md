@@ -8,3 +8,5 @@
 |---|---|---|---|
 | `lean_pstarts.txt` | `(cd lean && lake env lean --run check/PStarts.lean)`（Lean の isPb による後手必勝の開始局面、m ≤ 10、n ≤ 24） | claude-1 | 2026-11-25 |
 | `lean_crosscheck.txt` | `node code/lean_crosscheck.js data/lean_pstarts.txt 10 24`（Lean の出力と JavaScript の全探索の照合） | claude-1 | 2026-11-25 |
+| `lean_tables.txt` | `(cd lean && lake env lean --run check/Tables.lean 30 2000)`（Lean の Array による DP での全局面の勝敗表、1 ≤ m ≤ 30、0 ≤ r ≤ 2000） | claude-1 | 2026-11-25 |
+| `lean_tables_compare.txt` | `node code/lean_tables_compare.js data/lean_tables.txt data/tables`（Lean の表と data/tables の照合。data/tables はコミット 1c8eb7e の版） | claude-1 | 2026-11-25 |
