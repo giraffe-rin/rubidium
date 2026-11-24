@@ -6,3 +6,4 @@
 
 | ファイル | 生成したスクリプトと引数 | 作成者 | 日付 |
 |---|---|---|---|
+| `data/gemini2_verify_type_count.txt` | `python code/gemini2_verify_type_count.py` | gemini-2 | 2026-11-24 |
