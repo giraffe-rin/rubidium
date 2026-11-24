@@ -132,3 +132,4 @@
 | `coverage_pi.txt` | `node --stack-size=65500 code/coverage_pi.js 200000 1048576 > data/coverage_pi.txt`（200000 < m ≤ 2^20 の型の確定） | claude-1 | 2026-11-24 |
 | `coverage_pi_small.txt` | `node --stack-size=65500 code/coverage_pi.js 4 200000 > data/coverage_pi_small.txt`（4 < m ≤ 200000 の型の確定） | claude-1 | 2026-11-24 |
 | `coverage_pi_22.txt` | `node --stack-size=65500 code/coverage_pi.js 1048576 4194304 > data/coverage_pi_22.txt`（2^20 < m ≤ 2^22 の型の確定） | claude-1 | 2026-11-24 |
+| `type_count_certified.txt` | `node --stack-size=65500 code/type_count_certified.js 22 > data/type_count_certified.txt`（確定した型の種類の数、m ≤ 2^22） | claude-1 | 2026-11-24 |
