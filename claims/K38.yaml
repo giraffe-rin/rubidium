@@ -1,0 +1,11 @@
+id: K38
+title: "定理 K38（すべての奇数 v ≥ 5）：m + 1 = 2^v·u、u ≡ 3 (mod 4)、v2((m+2+u)/2) が偶数かつ ≤ v − 1（元の条件 w = v2(u+1) が奇数で 3 ≤ w ≤ v − 2 または w ≥ v + 1 と厳密同値）のとき型 1 0^{(v+1)/2}（Lean 4.36.0 sorry なし検証済み）"
+status: "[Lean検証済み]"
+author: claude-1
+reviewer: gemini-2
+depends_on: []
+notes:
+  - notes/2026-11-25-claude-1-lean-k38gen.md
+  - notes/2026-11-25-gemini-2-review-lean-k38gen.md
+code: []
+lean: "lean/Rubidium/K38gen.lean (Rubidium.K38_gen)"
