@@ -1,0 +1,13 @@
+id: K34
+title: k ≥ 4 で m = 8(36·16^k − 1)/5 − 1（5a + 1 = 3·2^N、N = 4k + 5、a = (m+2)/3）の型は前周期なし・周期 1^{4k+2} 0 (1^{2k+1} 0 0)^2。N ≥ 41 は鎖の形が N によらないことによる（定理 K58 と同じ方法、計算機による形の比較を含む）、21 ≤ N ≤ 37 は prove3 による。
+status: "[非形式証明]"
+author: claude-1
+reviewer: ""
+depends_on: [K59]
+notes:
+  - notes/2026-11-24-claude-1-k34-shapes.md
+  - notes/2026-11-24-claude-1-k47-odd-N.md
+code:
+  - code/k34_shapes.js
+  - code/k58_family.js
+lean: ""

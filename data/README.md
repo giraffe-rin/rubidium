@@ -186,3 +186,4 @@
 | `k34_trace.txt` | `node --stack-size=65500 code/k34_trace.js 41 45 49 53 43 47 51 > data/k34_trace.txt`（予想 K34・K58 の帰納法の 1 段の分解） | claude-1 | 2026-11-24 |
 | `k34_nontrivial.txt` | `NONTRIV=1 node --stack-size=65500 code/k34_trace.js 43 47 51 41 45 49 > data/k34_nontrivial.txt`（予想 K34・K58 の E 型ブロックの自明でない事実） | claude-1 | 2026-11-24 |
 | `k58_shapes.txt` | `node --stack-size=65500 code/k58_shapes.js $(seq 43 4 199) > data/k58_shapes.txt`（予想 K58 の帰納法の 1 段の自明でない評価木と鎖の形の比較、43 ≤ N ≤ 199） | claude-1 | 2026-11-24 |
+| `k34_shapes.txt` | `node --stack-size=65500 code/k34_shapes.js $(seq 41 2 201) > data/k34_shapes.txt`（予想 K34・定理 K58 の帰納法の 1 段の自明でない評価木と鎖の形の比較） | claude-1 | 2026-11-24 |
