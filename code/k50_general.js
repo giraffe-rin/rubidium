@@ -13,14 +13,16 @@
  *       鎖の条件を確かめる：各 b < 3r（または軌道がそこに入る）、各奇数の点で v2(β) + v + 2 < v + ρ(R − 1) + 1 ≤ N、終点の v2 ≤ ρ − 1（ブロック B で分かる範囲）。
  *   (3) R = R0..R0 + 2P − 1（P は現れた軌道の周期の最小公倍数の 2 倍）で、h ∉ S_{B+R+j}（j = 1..z−1）となる R を求め、R mod P の剰余類として出す。
  *       鎖の結果（段数の偶奇と終点の b）は R について周期 P をもつ（軌道に入った後）ので、これで R ≥ R0 のすべてが決まる。2 周期分で一致することも確かめる。
+ *   引数を v:ρ:only とすると、R ≡ 1 と P/2 + 1 (mod P) だけを、それぞれ R ≥ R0 の最小の 2 つの R で評価する（大きい ρ 用）。
  * 実行方法（リポジトリのルートで）:
+ *   node code/k50_general.js 19:18:only 21:20:only 23:22:only 25:24:only > data/k50_large_rho.txt
  *   node code/k50_general.js 5:4 7:4 9:4 11:4 13:4 7:6 9:6 11:6 13:6 9:8 11:8 13:8 11:10 13:10 13:12 > data/k50_general.txt
  */
 'use strict';
 const out = ['# 定理 K50：m+2 の連の直後に m+1 が ρ/2 個以上続く R の剰余類', '# 生成: node code/k50_general.js ' + process.argv.slice(2).join(' ')];
 const fail = msg => { throw new Error(msg); };
 for (const arg of process.argv.slice(2)) {
-  const [v, rho] = arg.split(':').map(Number), z = rho / 2;
+  const [vs, rhos, mode] = arg.split(':'), v = +vs, rho = +rhos, z = rho / 2, only = mode === 'only';
   const q = 2n ** BigInt(v) - 2n ** BigInt(rho) + 1n, r = (2n ** BigInt(rho) - 1n) / 3n, R3 = 3n * r;
   const MOD = 2n ** 40n; const inv = (x => { let y = 1n; for (let i = 0; i < 7; i++) y = (y * (2n - x * y)) % MOD; return ((y % MOD) + MOD) % MOD; })(((q % MOD) + MOD) % MOD);   // ニュートン法による 2 進の逆元
   if ((((q % MOD) + MOD) % MOD) * inv % MOD !== 1n) fail('逆元の計算に失敗');
@@ -71,6 +73,12 @@ for (const arg of process.argv.slice(2)) {
     const R0 = 3 * v;   // 十分大きい R から
     const g = (x, y) => (y ? g(y, x % y) : x); const lcmOf = () => { let l = 1; for (const L of cycLens) l = l / g(l, L) * L; return 2 * l; };
     zerosAfter(R0); let P = lcmOf(), res;
+    if (only) {   // R ≡ 1, P/2 + 1 (mod P) だけを、それぞれ 2 つの R で評価する（P が変わらなくなるまで）
+      let rows;
+      for (;;) { rows = []; for (const g0 of [1, P / 2 + 1]) { let R = g0; while (R < R0) R += P; rows.push([g0, zerosAfter(R), zerosAfter(R + P)]); } const P2 = lcmOf(); if (P2 === P) break; P = P2; }
+      out.push(`v = ${v}、ρ = ${rho}（z = ${z}）：軌道の周期 {${[...cycLens].join(', ')}}、P = ${P}、` + rows.map(([g0, x, y]) => `R ≡ ${g0}: ${x && y ? 'm+1 が z 個以上続く' : x === y ? '示せない' : '2 つの R で違う'}`).join('、'));
+      continue;
+    }
     for (;;) { res = []; for (let R = R0; R < R0 + 2 * P; R++) res.push(zerosAfter(R)); const P2 = lcmOf(); if (P2 === P) break; P = P2; }   // 現れた軌道の周期が増えなくなるまで
     let per = true; for (let i = 0; i < P; i++) if (res[i] !== res[i + P]) per = false;
     for (const L of cycLens) if (P % L !== 0) per = false;

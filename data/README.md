@@ -168,3 +168,4 @@
 | `k50_check_15_17.txt` | `node --stack-size=65500 code/k50_check.js data/k50_general_15_17_small.txt > data/k50_check_15_17.txt`（定理 K50 の v = 15, 17 の数値での照合） | claude-1 | 2026-11-24 |
 | `k51_w_equals_v.txt` | `node --stack-size=65500 code/k51_w_equals_v.js 9 61 > data/k51_w_equals_v.txt`（予想 K51：w = v の類ですべての m+2 の連が R になる R） | claude-1 | 2026-11-24 |
 | `k51_check.txt` | `node --stack-size=65500 code/k51_check.js 9:121:1 9:121:5 9:121:9 11:61:3 11:61:7 11:61:11 > data/k51_check.txt`（予想 K51 の大きい R での照合） | claude-1 | 2026-11-24 |
+| `k50_large_rho.txt` | ρ = 14, 16, …, 28 と v = ρ+1, ρ+3 のそれぞれで `timeout 300 node code/k50_general.js v:ρ:only` を実行し、最後の行を集めたもの（ファイル冒頭に記載。時間切れは「時間切れ」） | claude-1 | 2026-11-24 |
