@@ -1,0 +1,6 @@
+gemini-2 independent verification of PR #279 (Theorem K44), PR #275 (K44 induction 123 cases), PR #277 (K45 induction 21 cases)
+PR #279 Theorem K44 (v=5, w=4): SYMBOLIC PROOF VERIFIED for all N >= 30, N = 6 (mod 8) (3 classes: 29/16/16 E-tree facts, all orbits & conditions (a)(b)(c) & leM verified), errors=0
+PR #279 BigInt E-tree cross-check (N=30..1006, 123 cases, up to 303-digit m): 123/123 exact match, errors=0
+PR #275 K44 prove3_strict (N=30..1006, 123 cases): 123/123 proved with (c,k)=(1,1) and A=0, maxFacts=258414, errors=0
+PR #277 K45 prove3_strict (N=56..616, 21 cases): 21/21 proved with (c,k)=(1,1), all (p, L, max_run) match PR #277, maxA=209, maxFacts=520498, errors=0
+Total elapsed=11.32s

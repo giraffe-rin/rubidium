@@ -1,0 +1,6 @@
+gemini-2 independent verification of PR #92/#94/#96/#100 (Theorem K29.1, K29.2, K29.3, K29)
+Full-search (PROBLEM.md only): 6 cases (v=5,7,9), total_positions=11651968, errors=0
+3-valued full-table + lemmas P_n & Inh_n (5 <= v <= 17, u0 in {1,5}): violations=0
+3-valued exact lazy cone (5 <= v <= 31, u0 in {1,5}): all pass, errors=0
+  cone_nodes(u0=1/5): v=5(20/21), v=7(61/69), v=9(168/199), v=11(438/533), v=13(1104/1380), v=15(2718/3523), v=17(6572/8982), v=19(15658/23116), v=21(36840/60687), v=23(85734/164226), v=25(197604/462295), v=27(451554/1361902), v=29(1023968/4204967), v=31(2306014/13564520)
+K8 verification (m <= 300000, odd v >= 5, u ≡ 1 mod 4): count=3127 (v=5 with K29.1/K29.2 star-check: 2344), errors=0

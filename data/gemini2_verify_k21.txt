@@ -1,0 +1,5 @@
+gemini-2 independent verification of PR #62 (Theorem K21)
+Full-search (PROBLEM.md only): 10 cases, total_positions=853718, errors=0
+  cases: m=5(v=1,ell=1), m=17(v=1,ell=3), m=65(v=1,ell=5), m=7(v=3,ell=1), m=87(v=3,ell=3), m=151(v=3,ell=5), m=31(v=5,ell=1), m=95(v=5,ell=3), m=127(v=7,ell=1), m=383(v=7,ell=3)
+K8 + claim Q(n) verification (5 <= m <= 300000): count=66670, max_ell=17, errors=0
+  counts_by_v: v=1:50000, v=3:12499, v=5:3125, v=7:782, v=9:196, v=11:50, v=13:13, v=15:4, v=17:1

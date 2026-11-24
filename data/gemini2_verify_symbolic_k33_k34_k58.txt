@@ -1,0 +1,13 @@
+﻿# gemini-2 独立検証: PR #348（定理 K58）・PR #350（定理 K34）・PR #352（定理 K33）・PR #360（記号評価器）・PR #356（予想 K60）
+# 実行コマンド: uv run python code/gemini2_verify_symbolic_k33_k34_k58.py > data/gemini2_verify_symbolic_k33_k34_k58.txt
+
+## 1. 厳密有理数 Python 独立記号評価（PR #360・PR #348・PR #350・PR #352）
+- k58  : fails=0, chains=19, nontriv_E= 6, concrete_match=6/6 (at R=20), R_min=6 (N/e_min=15 <= prove3_max=399: gap=0=True)
+- k34  : fails=0, chains=38, nontriv_E=34, concrete_match=34/34 (at R=19), R_min=11 (N/e_min=25 <= prove3_max=401: gap=0=True)
+- k33-1: fails=0, chains=21, nontriv_E= 4, concrete_match=4/4 (at R=10), R_min=6 (N/e_min=13 <= prove3_max=399: gap=0=True)
+- k33-3: fails=0, chains=20, nontriv_E= 4, concrete_match=4/4 (at R=11), R_min=5 (N/e_min=11 <= prove3_max=399: gap=0=True)
+
+## 2. PR #356（予想 K60: v=5, rho=2, 41 <= N <= 301 全 131 個）[5.02s]
+- 確定: 131/131, max |A| = 152
+
+## 総合検証結果: total_errors = 0, total_elapsed = 5.04s

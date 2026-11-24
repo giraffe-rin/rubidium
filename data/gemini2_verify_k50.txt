@@ -1,0 +1,5 @@
+gemini-2 independent symbolic & numerical verification of PR #299 (Theorem K50 v<=13) and PR #301 (Theorem K50 v=15,17)
+Symbolic Kleene 3-valued verification (all 28 pairs: odd v=5..17, even 4<=rho<=v-1): 28/28 exact match (P & residue classes {1, P/2+1})
+Explicit soundness invariants verified across all 28 pairs: preperiod(c) < R0 (max_pre=0), no definite {1} cycle, leM(a_min) & d>0, max_k=17 << N_min, errors=0
+Numerical K8 lazy cross-check: PR #299 (54/54) + PR #301 (32/32) = 86/86 exact match (max N=1458), errors=0
+Total elapsed=37.42s

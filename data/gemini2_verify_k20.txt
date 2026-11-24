@@ -1,0 +1,5 @@
+gemini-2 independent verification of PR #57 (Theorem K20)
+Full-search (PROBLEM.md only): 6 cases, total_positions=249330560, errors=0
+  cases: m=87(ell=6,L=3,blocks=11), m=215(ell=6,L=3,blocks=11), m=151(ell=8,L=5,blocks=17), m=663(ell=8,L=5,blocks=17), m=1431(ell=10,L=5,blocks=17), m=3479(ell=10,L=5,blocks=17)
+K8 + claim Q(n) verification (m <= 300000): count=3124 (full-table cross-check m<=10000: 104), max_ell=16, errors=0
+  counts_by_ell: ell=6:2344, ell=8:586, ell=10:146, ell=12:37, ell=14:9, ell=16:2

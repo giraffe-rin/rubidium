@@ -1,0 +1,28 @@
+﻿# gemini-2 独立検証: PR #362（定理 K60 全 14 類）・PR #368（命題 K61）・PR #370（命題 K62）
+# 実行コマンド: uv run python code/gemini2_verify_k60_k61_k62.py > data/gemini2_verify_k60_k61_k62.txt
+
+## 1. PR #362（定理 K60: 29a + 1 = s·2^N, 全 14 類の厳密有理数記号評価）
+- k60-1  (s=15, Rpar=0): fails=0, base_fails=0, nontriv_E=13, R_min=12 (N_min=29 <= 301: gap=0=True)
+- k60-3  (s=11, Rpar=1): fails=0, base_fails=0, nontriv_E=48, R_min=13 (N_min=31 <= 301: gap=0=True)
+- k60-5  (s=39, Rpar=0): fails=0, base_fails=0, nontriv_E= 8, R_min=14 (N_min=33 <= 301: gap=0=True)
+- k60-7  (s=17, Rpar=1): fails=0, base_fails=0, nontriv_E= 8, R_min=15 (N_min=35 <= 301: gap=0=True)
+- k60-9  (s=55, Rpar=0): fails=0, base_fails=0, nontriv_E= 8, R_min=16 (N_min=37 <= 301: gap=0=True)
+- k60-11 (s=21, Rpar=1): fails=0, base_fails=0, nontriv_E=13, R_min=17 (N_min=39 <= 301: gap=0=True)
+- k60-13 (s=27, Rpar=0): fails=0, base_fails=0, nontriv_E=75, R_min=18 (N_min=41 <= 301: gap=0=True)
+- k60-15 (s=43, Rpar=1): fails=0, base_fails=0, nontriv_E=25, R_min=19 (N_min=43 <= 301: gap=0=True)
+- k60-17 (s=47, Rpar=0): fails=0, base_fails=0, nontriv_E= 8, R_min= 6 (N_min=17 <= 301: gap=0=True)
+- k60-19 (s=19, Rpar=1): fails=0, base_fails=0, nontriv_E=13, R_min= 7 (N_min=19 <= 301: gap=0=True)
+- k60-21 (s=41, Rpar=0): fails=0, base_fails=0, nontriv_E= 4, R_min= 8 (N_min=21 <= 301: gap=0=True)
+- k60-23 (s= 3, Rpar=1): fails=0, base_fails=0, nontriv_E=13, R_min= 9 (N_min=23 <= 301: gap=0=True)
+- k60-25 (s=37, Rpar=0): fails=0, base_fails=0, nontriv_E=12, R_min=10 (N_min=25 <= 301: gap=0=True)
+- k60-27 (s=31, Rpar=1): fails=0, base_fails=0, nontriv_E= 8, R_min=11 (N_min=27 <= 301: gap=0=True)
+- 定理 K60 全 14 類まとめ: errors = 0, max N_min = 43 (prove3 既査読範囲 41 <= N <= 301 と完全接続)
+
+## 2. PR #368（命題 K61）・PR #370（命題 K62）の独立検証と反例確認
+- PR #370 実例 (497, 5, 839, 109): 有理数規則=26, 整数規則=27, 実際=26
+- 査読で発見した命題 K61・K62 の仮定漏れ反例（E = N + γ で u = v2(b' + q c_o s / r) >= N）:
+  [u = N 反例] (5, 1, 83, 5)  [a=531, m=1591, inner=416, u=5=N, 実v2(a-s)=6]: 現行K61/K62予測=1, 実際=3 (不一致!), u<Nガード時=unknown
+  [u > N 反例] (5, 1, 243, 5) [a=1555, m=4663, inner=1216, u=6>N, 実v2(a-s)=5]: 現行K61/K62予測=2, 実際=1 (不一致!), u<Nガード時=unknown
+- u < N ガード付き独立ランダム検証（r=±1 250 族 + 一般奇数 r 250 族）: 判定内 466/466 一致（ガード停止 34 族）
+
+## 総合検証結果: total_errors = 0, elapsed = 0.17s

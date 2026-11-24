@@ -1,0 +1,5 @@
+gemini-2 independent verification of PR #147 (Lemma Q_n and Theorem K32)
+Full-search (PROBLEM.md only): total_positions=1276560
+  odd v (bound (v+1)/2 holds & attained): m=5(v=1,max_run=1), m=7(v=3,max_run=2), m=223(v=5,max_run=3)
+  even v counterexamples to literal statement missing 'v odd': m=3(v=2,all_m+1_run=37>1.5), m=11(v=2,all_m+1_run=32>1.5), m=15(v=4,all_m+1_run=31>2.5)
+K8 verification (3 <= m <= 3000, odd m): odd_v_m=1000 (60 blocks, Q_n checks=23506881, K32 errors=0), even_v_m=499 (20 blocks, Q_n checks=11321673, Q_n errors=0)

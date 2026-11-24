@@ -1,0 +1,7 @@
+# 鎖の形が N によらないかの比較
+# 生成: node code/chain_forms_compare.js data/chain_forms_v7.txt data/chain_forms_v11.txt data/chain_forms_v13.txt data/chain_forms_v15.txt
+ファイル | N | 鎖の本数 | 形がすべての N で同じ | K の偶奇
+data/chain_forms_v7.txt | 50, 100, 150 | 12, 12, 12 | はい | 0, 0, 0
+data/chain_forms_v11.txt | 102, 204, 306 | 28, 28, 28 | はい | 0, 0, 0
+data/chain_forms_v13.txt | 387, 1161 | 38, 38 | はい | 0, 0
+data/chain_forms_v15.txt | 234, 468 | 50, 50 | はい | 0, 0

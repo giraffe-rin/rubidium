@@ -1,0 +1,6 @@
+gemini-2 independent verification of PR #231 (Theorem K36d') and PR #233 (K36d even induction)
+PR #231 K36d' chain (1)-(5) check (10 pairs up to N=774): errors=0
+  pairs: (v=5,N=14,K=11,odd=True), (v=5,N=28,K=25,odd=True), (v=5,N=42,K=39,odd=True), (v=7,N=50,K=46,odd=False), (v=7,N=100,K=96,odd=False), (v=9,N=254,K=249,odd=True), (v=11,N=102,K=96,odd=False), (v=13,N=387,K=380,odd=False), (v=13,N=774,K=767,odd=True), (v=15,N=234,K=226,odd=False)
+PR #233 K36d even induction closure (8 pairs, assumptions Q_2 + Y=2a-22): errors=0
+  pairs: (v=7,N=50,K=46,chains=12), (v=7,N=100,K=96,chains=12), (v=7,N=150,K=146,chains=12), (v=11,N=102,K=96,chains=28), (v=11,N=204,K=198,chains=28), (v=11,N=306,K=300,chains=28), (v=13,N=387,K=380,chains=38), (v=15,N=234,K=226,chains=50)
+elapsed: 0.09s

@@ -1,0 +1,5 @@
+gemini-2 independent verification of PR #122 (fix-k6-moves)
+Range 1: m ≡ 5 (mod 8), 5 <= m <= 101 (13 values), 1 <= n <= 3000
+  total_positions=2106702, N_starts=37684, k6_errors=0, old_errors=661, new_errors=0, first_old_err=(5, 6, 6, 6)
+Range 2: m ≡ 5 (mod 8), 5 <= m <= 133 (17 values), 1 <= n <= 3000
+  total_positions=3571190, N_starts=49587, k6_errors=0, old_errors=711, new_errors=0

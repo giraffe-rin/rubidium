@@ -1,0 +1,38 @@
+﻿# gemini-2 独立検証: PR #331 修正（K57）・PR #344（K34/K58 トレース）・PR #346（非自明事実）・PR #348（定理 K58）
+# 実行コマンド: uv run python code/gemini2_verify_k57fix_k34_k58.py > data/gemini2_verify_k57fix_k34_k58.txt
+
+## 1. PR #331 修正（命題 K57）
+- 検証対象 314 族: 対象内 311 族中 311 族一致, 対象外 3 族 (期待: 311/311, 対象外 3)
+  (5,9,9,4): 対象外 (beta0=32, v=5), actual=0000
+  (5,9,17,5): 対象外 (beta0=32, v=5), actual=0000
+  (3,-1,1,3): 対象外 (beta0=0, v=inf), actual=1001
+  (27,-1,1,9): pred=1…, actual=11, match=True
+
+## 2. PR #344（k33_odd_trace 修正確認 & K34/K58 1 段分解）・PR #346（非自明 E 型事実）
+- k33_odd_trace（e = 15, 21, 27, 33）での早期終了例外発生回数: 0 (0 なので PR #333 検証結果への影響なし)
+  N=41 (s=3, R=19, L=81): ok=True, E=161, O=90, nontriv=34, match=True
+  N=45 (s=3, R=21, L=89): ok=True, E=169, O=98, nontriv=34, match=True
+  N=49 (s=3, R=23, L=97): ok=True, E=177, O=106, nontriv=34, match=True
+  N=53 (s=3, R=25, L=105): ok=True, E=185, O=114, nontriv=34, match=True
+  N=43 (s=7, R=20, L=44): ok=True, E=56, O=48, nontriv=6, match=True
+  N=47 (s=7, R=22, L=48): ok=True, E=60, O=52, nontriv=6, match=True
+  N=51 (s=7, R=24, L=52): ok=True, E=64, O=56, nontriv=6, match=True
+- PR #346 非自明事実の不変性: s=3 (34 個) 全一致=True, s=7 (6 個) 全一致=True, errors=0
+
+## 3. PR #348（定理 K58：data/k58_shapes.txt 独立再現 & 6 本鎖の記号軌道解析）
+- 43 <= N <= 199 (N ≡ 3 mod 4, 全 40 例): 1 段閉鎖・6 非自明事実・6 鎖形比較一致, errors = 0
+- 小さい境界 N = 23, 27, 31, 35, 39 での挙動確認:
+  N=23 (R=10): ok=True, same_nontriv=False, same_rle_struct=True
+  N=27 (R=12): ok=True, same_nontriv=True, same_rle_struct=True
+  N=31 (R=14): ok=True, same_nontriv=True, same_rle_struct=True
+  N=35 (R=16): ok=True, same_nontriv=True, same_rle_struct=True
+  N=39 (R=18): ok=True, same_nontriv=True, same_rle_struct=True
+- 6 本鎖の記号軌道・越え場面解析（PR #348 本文の記述検証）:
+  Chain 1 (9a-3)/4 [E1] (len=22, N=43): pre-cross b-runs=[(3, 22)], NO CROSS, end_v2=0
+  Chain 1 (9a-3)/4 [B] (len=20, N=43): pre-cross b-runs=[(3, 20)], NO CROSS, end_v2=0
+  Chain 2 (2a-4)   [E1] (len=22, N=43): pre-cross b-runs=[(11, 1), (7, 1), (5, 1), (1, 19)], CROSS(E=44>N=43 at odd_step=22, K=42), end_v2=1
+  Chain 2 (2a-4)   [B] (len=20, N=43): pre-cross b-runs=[(11, 1), (7, 1), (5, 1), (1, 17)], NO CROSS, end_v2=1
+  Chain 3 (5a-15)/2[E1] (len=22, N=43): pre-cross b-runs=[(5, 1), (1, 18)], CROSS(E=N=43 at odd_step=19, K=41, b'=1, c=15, u=v2(b'a-7c)=1, new_c=105, new_beta''=526), end_v2=1
+  Chain 3 (5a-15)/2[B] (len=20, N=43): pre-cross b-runs=[(5, 1), (1, 18)], CROSS(E=N=43 at odd_step=19, K=41, b'=1, c=15, u=v2(b'a-7c)=1, new_c=105, new_beta''=526), end_v2=0
+
+## 総合検証結果: total_errors = 0, elapsed = 0.13s

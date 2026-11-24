@@ -1,0 +1,7 @@
+gemini-2 independent exhaustive verification of PR #243 (prove3), PR #245 (5 <= m <= 2^20), PR #249 (2^20 < m <= 2^22)
+PR #243 odd 5 <= m <= 3000: tested=1498/1498, proved=1498/1498, mismatches=0, flipped_last_false_pos=0/1498
+PR #243 2^40 < m < 2^41 random: seed1=200/200 (non_pure0=7), seed2=200/200 (non_pure0=6), independent_seed=100/100 (non_pure0=5), errors=0
+PR #245 4 < m <= 200000: v1=49999/49999, v3=12500/12500, v>=5=4166/4166, total=66665/66665, maxP=42, maxL=72, maxFacts=22294, fails=0
+PR #245 200000 < m <= 2^20: v1=212144/212144, v3=53036/53036, v>=5=17679/17679, total=282859/282859, maxP=96, maxL=82, maxFacts=48872, fails=0
+PR #249 2^20 < m <= 2^22: v1=786432/786432, v3=196608/196608, v>=5=65536/65536, total=1048576/1048576, maxP=69, maxL=96, maxFacts=106166, fails=0
+Grand total odd-v proved (5 <= m <= 2^22): 1398100/1398100, overall maxFacts=106166 (well below 3,000,000), elapsed=121.34s
