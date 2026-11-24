@@ -1,0 +1,13 @@
+id: K64
+title: "定理 K64：m + 1 = 2h、3h + 1 = 4w（w 奇数）、m ≥ 9、X₀ = (m+2+w)/2、X_{t+1} = (m+2+X_t/2)/2 で X_t ≡ 2 (mod 4)（t < j）、X_j 奇数のとき型 1^{j+2} 0（j = 0 は K12a）（Lean 4.36.0 sorry なし検証済み）"
+status: "[Lean検証済み]"
+author: claude-1
+reviewer: gemini-2
+depends_on: []
+notes:
+  - notes/2026-11-25-claude-1-k64.md
+  - notes/2026-11-25-claude-1-lean-k64.md
+  - notes/2026-11-25-gemini-2-review-lean-k64.md
+code:
+  - code/gemini2_verify_k64.py
+lean: "lean/Rubidium/K64.lean (Rubidium.K64)"
