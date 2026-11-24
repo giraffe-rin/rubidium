@@ -245,3 +245,52 @@ theorem K11 (m v u : Nat) (hmv : m + 1 = 2 ^ v * u) (hvo : v % 2 = 1) (hv5 : 5 �
         (by rw [show 2 * m + 3 + 16 * w - 8 * w = 2 * m + 3 + 8 * w by omega]; exact hc8)
 
 end Rubidium
+
+namespace Rubidium
+
+/-- K10c の u = 1：m = 7 は交互型でない。b = 9、h = 4。
+    (10, 1) は N（K3、ev2 5 = true）、(11, 2) は P、(13, 4) は N なので行 17 は P。
+    (8, 4) は P（手 k ≠ 4 の行き先 (8−k, k) は K3 より N）、よって (12, 3) は N（手 4）、(15, 6) は P、(21, 4) は N（手 6）。
+    よって行 25 は P で、(25, 0) は P。25 ≡ 8 (mod 17) なので交互型に反する。-/
+theorem not_alt_seven : ¬ Alt 7 := by
+  have hev : ev2 4 = true := by rw [show 4 = 4 * 1 from rfl, ev2_four 1 (by omega)]; exact ev2_odd 1 rfl
+  have hrowb := g_rowb 7 4 rfl rfl (by omega) hev
+  -- (10, 1) は N
+  have h10 : ¬ IsP 7 (7 + 2 + 1) 1 := by
+    rw [g_odd 7 4 rfl rfl (by omega) hev 1 (by omega) rfl (by omega) (by omega), show (7 + 2 + 1) / 2 = 5 from rfl, ev2_odd 5 rfl]
+    decide
+  have h11 : IsP 7 (7 + 2 + 2) 2 := (g_even 7 4 rfl rfl (by omega) hev 2 (by omega) (by omega) rfl).mpr h10
+  have h13 : ¬ IsP 7 (7 + 2 + 4) 4 := by
+    rw [g_even 7 4 rfl rfl (by omega) hev 4 (by omega) (by omega) rfl]; exact fun h => h h11
+  have hc0 := row_next 7 (7 + 2) hrowb h13
+  -- (8, 4) は P
+  have h8 : IsP 7 8 4 := by
+    rw [isP_iff]
+    intro k hk1 hkm hkr hkp hPk
+    rw [K3 7 (8 - k) k (by omega) (by omega)] at hPk
+    obtain ⟨hkeq, _⟩ := hPk
+    omega
+  have h12 : ¬ IsP 7 (7 + 2 + 3) 3 :=
+    not_isP_move 7 _ 3 4 (by omega) (by omega) (by omega) (by omega) h8
+  have h15 : IsP 7 (7 + 2 + 6) 6 := (g_even 7 4 rfl rfl (by omega) hev 6 (by omega) (by omega) rfl).mpr h12
+  have h21 : ¬ IsP 7 (7 + 2 + (7 + 1) + 4) 4 :=
+    not_isP_move 7 _ 4 6 (by omega) (by omega) (by omega) (by omega) h15
+  have hd0 := row_next 7 (7 + 2 + (7 + 1)) hc0 h21
+  intro halt
+  have := (halt 25).mp (hd0 0)
+  revert this; decide
+
+/-- 定理 K10c（完全な形）：m + 1 = 8u（u は奇数）で交互型なら、u ≥ 3、v2(9u+1) は奇数、v2(11u+1) は偶数。-/
+theorem K10c_full (m u : Nat) (hmu : m + 1 = 8 * u) (hu : u % 2 = 1) (halt : Alt m) :
+    3 ≤ u ∧ v2 (9 * u + 1) % 2 = 1 ∧ v2 (11 * u + 1) % 2 = 0 := by
+  have hu3 : 3 ≤ u := by
+    apply Decidable.byContradiction
+    intro h
+    have hu1 : u = 1 := by omega
+    subst hu1
+    have hm : m = 7 := by omega
+    subst hm
+    exact not_alt_seven halt
+  exact ⟨hu3, K10c m u hmu hu hu3 halt⟩
+
+end Rubidium
