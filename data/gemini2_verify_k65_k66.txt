@@ -1,0 +1,42 @@
+=== 1. O(N) Direct PROBLEM.md DP vs Naive O(N*m^2) DP Cross-Check ===
+  m=9: 0..110 (1110 positions) -> EXACT MATCH
+  m=13: 0..150 (2114 positions) -> EXACT MATCH
+  m=17: 0..190 (3438 positions) -> EXACT MATCH
+  m=25: 0..270 (7046 positions) -> EXACT MATCH
+  Total positions cross-checked: 13708, mismatches: 0
+
+=== 2. PR #451 (Conjecture K65 & data/k65_obs.txt) Direct PROBLEM.md DP Verification (m <= 60000) ===
+  Total qualifying m <= 60000 verified by direct PROBLEM.md DP state-cycle: 213
+  Max blocks to exact m-row DP state repeat: 58
+  Conjecture K65 (a) [k=2, j=1, X_1 mod 8 in {1,5} -> 1110,   t=0]: 59/59 EXACT MATCH
+  Conjecture K65 (b) [k=2, j=1, X_1 mod 8 == 3      -> 111010, t=0]: 29/29 EXACT MATCH
+  Conjecture K65 (c) [k=2, j=2                      -> 11110,  t=0]: 29/29 EXACT MATCH
+  Comparison against PR #451 data/k65_obs.txt (main table): ALL 36 (k,j,X_j mod 8) rows MATCH 100%
+  BUG DETECTED in PR #451 code/k65_obs.js line 25 & data/k65_obs.txt footer:
+    Main table 'ほかの型' sum = 12, true footer sum = 12, PR #451 footer sum = 9
+    True count of '1011（前周期あり）' = 4, PR #451 reported = 1
+    Cause: code/k65_obs.js line 25 reads `other[word]` instead of `other[word + (t > 0 ? '（前周期あり）' : '')]`.
+    Simulating that exact bug reproduces PR #451 footer 100%: True
+  All 12 non-standard cases (m, k, j, X_j mod 8, preperiod t, period word):
+    m=9 (k=2, j=1, X_j mod 8=7): t=0, word=110
+    m=4265 (k=4, j=2, X_j mod 8=1): t=0, word=11110111101111010
+    m=8361 (k=4, j=1, X_j mod 8=1): t=0, word=111011101010
+    m=10249 (k=2, j=1, X_j mod 8=7): t=4, word=1011
+    m=18441 (k=2, j=1, X_j mod 8=7): t=0, word=1110111010
+    m=18697 (k=2, j=3, X_j mod 8=7): t=0, word=11111010111110
+    m=34825 (k=2, j=1, X_j mod 8=7): t=2, word=1011101110
+    m=38921 (k=2, j=1, X_j mod 8=7): t=4, word=1011
+    m=43017 (k=2, j=1, X_j mod 8=7): t=4, word=1011
+    m=49321 (k=4, j=1, X_j mod 8=7): t=0, word=1110111010
+    m=51241 (k=3, j=1, X_j mod 8=1): t=0, word=1110111010
+    m=55305 (k=2, j=1, X_j mod 8=7): t=4, word=1011
+
+=== 3. PR #453 (Theorem K66 & 93.82% Lean Coverage) Independent Verification ===
+  Hypothesis equivalence (1 <= m <= 1000000): 100% match, count=7812, min m=87 (u=11)
+  Disjointness on v2(m+1)=3: overlap(K66, K10a)=0, overlap(K66, K13)=0
+  Direct PROBLEM.md DP state-cycle verification for K66: 94/94 cases (u=11..1499, m=87..11991) -> ALL EXACT 110 (t=0)
+  Lean coverage table (1 <= m <= 1000000): 938189/1000000 = 93.82% -> LINE-FOR-LINE MATCH with PR #453
+  v2(m+1)=3 coverage: 39061/62500 = 62.50% (K66 added 7812 disjoint cases)
+  Exact asymptotic natural density: 1351/1440 = 5404/5760 = 93.819444% (previous 5359/5760 + 1/128)
+
+ALL VERIFICATIONS PASSED.

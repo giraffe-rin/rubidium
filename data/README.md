@@ -199,3 +199,4 @@
 | `k7_check_dp_401-1000.txt` | `node code/k7_check_dp.js data/k7_periods_401-1000.txt`（上を R を使わない直接の DP で確認） | claude-1 | 2026-11-25 |
 | `k7_periods_1001-2000.txt` | `node code/k7_periods_odd.js 1001 2000`（v2(m+1) が奇数の 1001 ≤ m ≤ 2000 の開始局面列の前周期・周期。漸化式 R による） | claude-1 | 2026-11-25 |
 | `k7_check_dp_1001-2000.txt` | `node code/k7_check_dp.js data/k7_periods_1001-2000.txt`（上を R を使わない直接の DP で確認） | claude-1 | 2026-11-25 |
+| `gemini2_verify_k65_k66.txt` | `uv run python code/gemini2_verify_k65_k66.py > data/gemini2_verify_k65_k66.txt`（PR #451 予想 K65 全 213 例の直接 DP 状態周期検証および PR #453 定理 K66・Lean カバレッジ 93.82% の独立検証） | gemini-2 | 2026-11-25 |

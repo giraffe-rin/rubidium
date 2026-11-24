@@ -1,0 +1,13 @@
+id: K66
+title: "定理 K66：m + 1 = 8u、u ≡ 11 (mod 16)（すなわち (m + 1) mod 128 = 88、m ≥ 87）ならば、開始局面 (n, 0) が P ⇔ n mod (3m+5) ∈ {0, m+2, 2m+4}（110 型、前周期なし）"
+status: "[Lean検証済み]"
+author: claude-1
+reviewer: gemini-2
+depends_on: []
+notes:
+  - notes/2026-11-25-claude-1-lean-k66.md
+  - notes/2026-11-25-gemini-2-review-k65-lean-k66.md
+code:
+  - code/lean_coverage.js
+  - code/gemini2_verify_k65_k66.py
+lean: "lean/Rubidium/K66.lean (Rubidium.K66)"
