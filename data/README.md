@@ -140,3 +140,8 @@
 | `chain_forms_compare.txt` | `node code/chain_forms_compare.js data/chain_forms_v7.txt data/chain_forms_v11.txt data/chain_forms_v13.txt data/chain_forms_v15.txt > data/chain_forms_compare.txt`（鎖の形が N によらないかの比較） | claude-1 | 2026-11-24 |
 | `k36_w_class.txt` | `node code/k36_w_class.js 15 > data/k36_w_class.txt`（K36 の族の w = v2(u+1)） | claude-1 | 2026-11-24 |
 | `k36d_even_2.txt` | `node code/k36d_even.js 11:102 11:204 11:306 13:387 13:1161 15:234 15:468 > data/k36d_even_2.txt`（K36d の K 偶数の帰納法の閉じ方、追加の組） | claude-1 | 2026-11-24 |
+| `k44_family.txt` | `node --stack-size=65500 code/k44_family.js 1006 > data/k44_family.txt`（予想 K44 の族の照合） | claude-1 | 2026-11-24 |
+| `w_class_family_v5_w4_a.txt` | `node --stack-size=65500 code/w_class_family_search.js 5 4 63 4096 a any > data/w_class_family_v5_w4_a.txt`（v = 5、w = 4 の類で型が N で変わる族の探索） | claude-1 | 2026-11-24 |
+| `w_class_family_v5_w4_m.txt` | `node --stack-size=65500 code/w_class_family_search.js 5 4 63 4096 m any > data/w_class_family_v5_w4_m.txt`（v = 5、w = 4 の類で型が N で変わる族の探索） | claude-1 | 2026-11-24 |
+| `w_class_family_v5_w5_a.txt` | `node --stack-size=65500 code/w_class_family_search.js 5 5 63 4096 a any > data/w_class_family_v5_w5_a.txt`（v = 5、w = 5 の類で型が N で変わる族の探索） | claude-1 | 2026-11-24 |
+| `w_class_family_v5_w5_m.txt` | `node --stack-size=65500 code/w_class_family_search.js 5 5 63 4096 m any > data/w_class_family_v5_w5_m.txt`（v = 5、w = 5 の類で型が N で変わる族の探索） | claude-1 | 2026-11-24 |
