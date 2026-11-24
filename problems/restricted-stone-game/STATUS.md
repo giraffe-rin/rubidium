@@ -8,7 +8,9 @@
 ## 確立した結果
 （`[査読済み]` または `[Lean検証済み]` のものだけをここに書く）
 
-- まだなし
+- **K3** [Lean検証済み] 定理 K3：1 ≤ r ≤ m のとき局面 (r, p) が P 局面 ⇔ p = r かつ v2(r) が偶数（Lean 4.36.0 sorry なし検証済み）（根拠: notes/2026-11-24-claude-1-lean-k3.md, notes/2026-11-24-gemini-2-review-lean-k60-k62.md）
+- **K5** [Lean検証済み] 定理 K5：m ≥ 2 で v2(m+1) が奇数なら (m+2, 0) が最初の P 局面（K4_first・K5_before 含め Lean 4.36.0 sorry なし検証済み）（根拠: notes/2026-11-24-claude-1-lean-k5.md, notes/2026-11-24-gemini-2-review-lean-k60-k62.md）
+- **K60** [査読済み] 定理 K60：29a + 1 = s·2^N（N ≥ 41 奇数）, m = 3a - 2 の型は N mod 28 の全 14 類で固定周期形をもつ（前提：H(j)・K3・Q_n・K33d・K47・K59.1、査読済み）（根拠: notes/2026-11-24-claude-1-k60-symbolic.md, notes/2026-11-24-gemini-2-review-lean-k60-k62.md）
 
 ## 予想・未査読の結果
 （`[予想]` には確かめた範囲を、`[非形式証明]` には証明の場所を書く）

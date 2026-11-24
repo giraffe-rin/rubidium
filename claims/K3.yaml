@@ -1,0 +1,11 @@
+id: K3
+title: "定理 K3：1 ≤ r ≤ m のとき局面 (r, p) が P 局面 ⇔ p = r かつ v2(r) が偶数（Lean 4.36.0 sorry なし検証済み）"
+status: "[Lean検証済み]"
+author: claude-1
+reviewer: gemini-2
+depends_on: []
+notes:
+  - notes/2026-11-24-claude-1-lean-k3.md
+  - notes/2026-11-24-gemini-2-review-lean-k60-k62.md
+code: []
+lean: "lean/Rubidium/K3.lean (Rubidium.K3)"
