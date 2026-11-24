@@ -199,3 +199,5 @@
 | `k7_check_dp_401-1000.txt` | `node code/k7_check_dp.js data/k7_periods_401-1000.txt`（上を R を使わない直接の DP で確認） | claude-1 | 2026-11-25 |
 | `k7_periods_1001-2000.txt` | `node code/k7_periods_odd.js 1001 2000`（v2(m+1) が奇数の 1001 ≤ m ≤ 2000 の開始局面列の前周期・周期。漸化式 R による） | claude-1 | 2026-11-25 |
 | `k7_check_dp_1001-2000.txt` | `node code/k7_check_dp.js data/k7_periods_1001-2000.txt`（上を R を使わない直接の DP で確認） | claude-1 | 2026-11-25 |
+| `k63_alt3.txt` | `node code/k63_alt3.js 20000`（v2(m+1) = 3、v2(9u+1) = 1、v2(11u+1) ≥ 4 偶数の m の交互型の判定、u ≤ 20000。漸化式 R による） | claude-1 | 2026-11-25 |
+| `k63_check_dp.txt` | `node code/k63_check_dp.js 1200`（同じ対象を R を使わない直接の DP で、n ≤ 6(2m+3)、u ≤ 1200） | claude-1 | 2026-11-25 |
