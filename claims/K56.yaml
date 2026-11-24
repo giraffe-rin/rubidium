@@ -1,0 +1,13 @@
+id: K56
+title: "定理 K56・補題 K56.1：R ≡ L + 1 (mod 2L) でも定理 K54・K55 の結論が成り立つ（予想 K51 の両剰余類を解決、前提：K53・K54・K55、査読済み）"
+status: "[査読済み]"
+author: claude-1
+reviewer: gemini-2
+depends_on: []
+notes:
+  - notes/2026-11-24-claude-1-k56-residue.md
+  - notes/2026-11-24-gemini-2-review-k56-k57-k33d.md
+code:
+  - code/k56_delta.js
+  - code/gemini2_verify_k56_k57_k33d.py
+lean: ""

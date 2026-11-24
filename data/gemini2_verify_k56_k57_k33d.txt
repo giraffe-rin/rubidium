@@ -1,0 +1,46 @@
+﻿# gemini-2 独立検証: PR #327（prove3 k33d）・PR #329（補題 K56.1・定理 K56）・PR #331（命題 K57）
+# 実行コマンド: uv run python code/gemini2_verify_k56_k57_k33d.py > data/gemini2_verify_k56_k57_k33d.txt
+
+## 1. PR #327（prove3 k33d 比較: 4 < m <= 2^20, v2(m+1) = 1）[57.89s]
+- 対象 m: 262143（推測不能 0）
+- k33d なし: 確定 262143, 仮定数合計 293753, 最大 128
+- k33d あり: 確定 262143, 仮定数合計 176367, 最大 128
+- 片方のみ確定: なしのみ 0, ありのみ 0
+- data/k33d_compare.txt との完全一致: True
+
+## 2. PR #329（補題 K56.1 全数検証・定理 K56 K8 直接検証）
+- rho= 4: L=    2, entries=      2, periodic=  1, odd_delta=0, nd=0, c1_err=0, T_cycle_err=0, match=True
+- rho= 6: L=    6, entries=     10, periodic=  2, odd_delta=0, nd=0, c1_err=0, T_cycle_err=0, match=True
+- rho= 8: L=   12, entries=     41, periodic=  3, odd_delta=0, nd=0, c1_err=0, T_cycle_err=0, match=True
+- rho=10: L=   60, entries=    162, periodic=  5, odd_delta=0, nd=0, c1_err=0, T_cycle_err=0, match=True
+- rho=12: L=   60, entries=    637, periodic= 13, odd_delta=0, nd=0, c1_err=0, T_cycle_err=0, match=True
+- rho=14: L=  420, entries=   2509, periodic= 17, odd_delta=0, nd=0, c1_err=0, T_cycle_err=0, match=True
+- rho=16: L=  840, entries=   9907, periodic= 42, odd_delta=0, nd=0, c1_err=0, T_cycle_err=0, match=True
+- rho=18: L= 2520, entries=  39202, periodic= 74, odd_delta=0, nd=0, c1_err=0, T_cycle_err=0, match=True
+- rho=20: L= 2520, entries= 155381, periodic=165, odd_delta=0, nd=0, c1_err=0, T_cycle_err=0, match=True
+- rho=22: L=27720, entries= 616665, periodic=257, odd_delta=0, nd=0, c1_err=0, T_cycle_err=0, match=True
+- rho=24: L=27720, entries=2449867, periodic=677, odd_delta=0, nd=0, c1_err=0, T_cycle_err=0, match=True
+- 補題 K56.1 検証時間: 3.15s, errors = 0
+- 定理 K56（R ≡ L + 1 mod 2L）K8 直接照合（9 例, errors = 0）:
+  [OK] K54 (v=5, w=4, rho=4, L=2, R=7): runs=[(1, 7), (0, 3), (1, 7), (0, 3), (1, 7), (0, 3)]
+  [OK] K54 (v=7, w=4, rho=4, L=2, R=11): runs=[(1, 11), (0, 2), (1, 11), (0, 2), (1, 11), (0, 2)]
+  [OK] K54 (v=7, w=6, rho=6, L=6, R=19): runs=[(1, 19), (0, 3), (1, 19), (0, 3), (1, 19), (0, 3)]
+  [OK] K54 (v=9, w=6, rho=6, L=6, R=19): runs=[(1, 19), (0, 3), (1, 19), (0, 3), (1, 19), (0, 3)]
+  [OK] K54 (v=9, w=8, rho=8, L=12, R=37): runs=[(1, 37), (0, 4), (1, 37), (0, 4), (1, 37), (0, 4)]
+  [OK] K55 (v=3, w=3, rho=4, L=2, R=11, s=1): runs=[(1, 11), (0, 2), (1, 11), (0, 2), (1, 11), (0, 2)]
+  [OK] K55 (v=5, w=5, rho=6, L=6, R=19, s=1): runs=[(1, 19), (0, 3), (1, 19), (0, 3), (1, 19), (0, 3)]
+  [OK] K55 (v=5, w=5, rho=6, L=6, R=19, s=3): runs=[(1, 19), (0, 3), (1, 19), (0, 3), (1, 19), (0, 3)]
+  [OK] K55 (v=7, w=7, rho=8, L=12, R=37, s=1): runs=[(1, 37), (0, 4), (1, 37), (0, 4), (1, 37), (0, 4)]
+
+## 3. PR #331（命題 K57 独立検証・鎖条件確認・境界欠陥確認）[0.02s]
+- 310 族（既知 10 + 無作為 300）予測一致: 310/310
+- 全奇数の点での鎖条件 ((M+d)/2 <= m, d != h-1, d > 0) 成立: 310/310 (不成立 0)
+- 予想 K45 族 (29, 4641) の b 軌道: [(109, 4), (877, 4), (925, 9), (29, 7), (109, 4), (877, 4)]
+- 査読で発見した境界欠陥（1）ブロック 0 で v >= N の反例:
+  (q=5, r=9, s=9, N=4) -> a=27, m=79, beta0=32, v=5 >= N: K57予測 g0='1', 実際 g0='0' (不一致)
+  (q=5, r=9, s=17, N=5) -> a=107, m=319, beta0=32, v=5 >= N: K57予測 g0='1', 実際 g0='0' (不一致)
+- 査読で発見した境界欠陥（2）code/k57_predict.js の無限ループ誘発例:
+  (q=27, r=-1, s=1, N=9) -> a=19, m=55: beta0=24, v=3, b0=3, b0+3r=0 -> T(b0) infinite loop
+  (q=3, r=-1, s=1, N=3) -> a=3, m=7: beta0 == 0 -> v2(beta0) infinite loop
+
+## 総合検証結果: verification_errors = 0, total_elapsed = 61.12s
