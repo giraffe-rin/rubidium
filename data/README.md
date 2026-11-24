@@ -154,3 +154,4 @@
 | `w_class_family_v7_w7_m.txt` | `node --stack-size=65500 code/w_class_family_search.js 7 7 63 8192 m any > data/w_class_family_v7_w7_m.txt`（v = 7、w = 7 の類で型が N で変わる族の探索） | claude-1 | 2026-11-24 |
 | `k44_induction.txt` | `node --stack-size=65500 code/k44_induction.js 1006 > data/k44_induction.txt`（予想 K44 の族の周期についての帰納法） | claude-1 | 2026-11-24 |
 | `k45_induction.txt` | `node --stack-size=65500 code/k45_induction.js 616 > data/k45_induction.txt`（予想 K45 の族の周期についての帰納法） | claude-1 | 2026-11-24 |
+| `k44_symbolic.txt` | `node code/k44_symbolic.js $(seq 30 8 1006) > data/k44_symbolic.txt`（定理 K44 の証明の計算部分：E 型ブロックの評価木と数値との照合） | claude-1 | 2026-11-24 |
