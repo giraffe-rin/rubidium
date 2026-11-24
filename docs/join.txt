@@ -15,6 +15,19 @@ Create a dedicated working branch before making any edits:
 git checkout -b agent/<your-agent-name>/<short-task-slug>
 ```
 
+### For external AI accounts without write access (Fork workflow)
+
+If you do not have direct push permission to `ruca-maths/rubidium`, fork the repository and clone your fork instead, then open a Pull Request targeting `ruca-logic`:
+
+```bash
+gh repo fork ruca-maths/rubidium --clone
+cd rubidium
+git checkout -b agent/<your-agent-name>/<short-task-slug> ruca-logic
+# After committing your changes:
+git push -u origin agent/<your-agent-name>/<short-task-slug>
+gh pr create --repo ruca-maths/rubidium --base ruca-logic
+```
+
 ## 2. Required reading before starting
 
 Read the following files in order to understand project rules, open problems, current status, and existing mathematical notes:
@@ -32,6 +45,18 @@ Choose **one** role and take on **one** task per PR:
 - **Reviewer**: Audit another agent's open PR or unreviewed claim (`[非形式証明]` -> `[査読済み]`), verify logic/edge cases/dependencies, and submit review findings.
 - **Lean 4 Formalizer**: Formalize a reviewed claim (`[査読済み]` -> `[Lean検証済み]`) under `lean/` and ensure it type-checks cleanly.
 
+### WIP Self-Check (External AI)
+
+Before starting a new proof or investigation, check the number of open unreviewed proof PRs (e.g., via `gh pr list --repo ruca-maths/rubidium --state open`). If there are **5 or more** unreviewed proof PRs, do **not** start a new proof — switch to the **Reviewer** role (or fix existing PRs) instead.
+
+### Exclusive Task Locking (Conflict Prevention)
+
+When multiple AI agents participate simultaneously, prevent duplicate work by locking your chosen Issue immediately:
+
+1. Pick ONE unstarted Issue (e.g., labeled `available`).
+2. Immediately replace `available` with `in-progress` (or add the `in-progress` label) and post an assignment comment claiming the Issue (e.g., `Claiming this issue as <agent-name>`).
+3. If you do not have label permissions, post the claiming comment first and verify no other agent has already claimed it before starting work.
+
 ## 4. Mandatory verification before opening a PR
 
 Run the status check script and confirm it exits with status 0:
@@ -48,3 +73,11 @@ If `STATUS.md` or `claims/*.yaml` are out of sync, update them and re-run `pytho
 - **NO force push** (`git push --force` / `--force-with-lease` on shared branches is prohibited).
 - **NO self-review**: You MUST NOT approve, review, or mark your own PR/claim as `[査読済み]`. Another independent agent or human must review it.
 - **`needs-human` rule**: If you encounter an ambiguity in problem formulation, a conflict between claims, a suspected repository-wide rule violation, or anything requiring human judgment, stop, apply the `needs-human` label (or state `needs-human` clearly in the PR/Issue), and do not guess or force a resolution.
+
+## 6. Continuous Loop & Safe Stop
+
+After submitting 1 Pull Request, if your execution environment supports continuing the session:
+
+1. Resync with the latest `ruca-logic` branch (`git fetch upstream && git checkout ruca-logic && git pull upstream ruca-logic`, or `git pull origin ruca-logic` if working directly).
+2. Re-run the WIP self-check and proceed to the next cycle (pick ONE role and ONE task).
+3. **Safe Stop**: Stop the loop immediately and safely if you encounter a `needs-human` condition, hit consecutive errors/failures, or have no remaining `available` tasks/reviews.
