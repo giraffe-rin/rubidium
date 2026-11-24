@@ -49,7 +49,7 @@ function prove(m, w, maxRounds = 5000, maxFacts = 3000000) {
     for (const [ds, val] of A) { const got = S(L, BigInt(ds)); if (unknown) break; if (got !== val) return { ok: false, why: 'A の値が次の始まりで再現されない', A: A.size }; }
     if (tooMany) return { ok: false, why: '事実が多すぎる', A: A.size };
     if (unknown) { A.set(unknown.toString(), v2(unknown) % 2 === 0); continue; }
-    return { ok: true, A: A.size, facts: memo.size };
+    return { ok: true, A: A.size, facts: memo.size, Aset: [...A.entries()] };   // Aset：仮定の距離と値（調べる用）
   }
   return { ok: false, why: '仮定の集合が収束しない', A: A.size };
 }
