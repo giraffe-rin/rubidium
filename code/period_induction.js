@@ -122,7 +122,7 @@ function prove3(m, pre, w, maxRounds = 20000, maxFacts = 3000000, opts = {}) {
     for (const [ds, val] of A) { const got = S(L, BigInt(ds)); if (unknown) break; if (got !== val) return { ok: false, why: 'A の値が次の始まりで再現されない', A: A.size }; }
     if (tooMany) return { ok: false, why: '事実が多すぎる', A: A.size };
     if (unknown) { A.set(unknown.toString(), T(b, unknown)); if (over) return { ok: false, why: '事実が多すぎる' }; continue; }
-    return { ok: true, A: A.size, facts: memo.size + base.size };
+    return { ok: true, A: A.size, facts: memo.size + base.size, Aset: [...A.entries()] };   // Aset：仮定の距離と値（調べる用）
   }
   return { ok: false, why: '仮定の集合が収束しない', A: A.size };
 }

@@ -180,3 +180,4 @@
 | `k33d_compare.txt` | `node --stack-size=65500 code/k33d_compare.js 4 1048576 > data/k33d_compare.txt`（prove3 の補題 K33d の選択肢の有無の比較） | claude-1 | 2026-11-24 |
 | `k56_delta.txt` | `node code/k56_delta.js 24 > data/k56_delta.txt`（定理 K56 の補題 K56.1：入口で δ(c) が偶数） | claude-1 | 2026-11-24 |
 | `k57_predict.txt` | `node --stack-size=65500 code/k57_predict.js 29:4641:1:56 29:4641:1:112 29:4641:1:224 29:4641:1:336 17:5:3:30 17:5:3:62 23:1:1:22 23:1:1:88 125:1:1:100 125:1:1:200 random:300:12345 > data/k57_predict.txt`（命題 K57 の予測と実際の比較） | claude-1 | 2026-11-24 |
+| `k33_odd_extend.txt` | `node --stack-size=65500 code/k33_odd_extend.js 9 399 > data/k33_odd_extend.txt`（予想 K33（e 奇数）の型の確定、e ≤ 399） | claude-1 | 2026-11-24 |
