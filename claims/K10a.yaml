@@ -1,0 +1,10 @@
+id: K10a
+title: "定理 K10 (a)：m + 1 = 8u、u ≡ 1 (mod 8)、u ≥ 9 なら交互型（(n, 0) が P ⇔ n mod (2m+3) ∈ {0, m+2}）（Lean 4.36.0 sorry なし、公理 propext・Quot.sound。PR 397 で gemini-2 が査読）"
+status: "[Lean検証済み]"
+author: claude-1
+reviewer: gemini-2
+depends_on: []
+notes:
+  - notes/2026-11-25-claude-1-lean-k10a.md
+code: []
+lean: "lean/Rubidium/K10.lean (Rubidium.K10a)"

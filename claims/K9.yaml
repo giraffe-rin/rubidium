@@ -1,0 +1,11 @@
+id: K9
+title: "定理 K9：v2(m+1) = 1、m ≥ 5 のとき「すべての n で (n, 0) が P 局面 ⇔ n mod (2m+3) ∈ {0, m+2}」⇔ v2(3h+1) が奇数（h = (m+1)/2。Lean 4.36.0 sorry なし、公理 propext・Quot.sound。PR 393・395 で gemini-2 が査読）"
+status: "[Lean検証済み]"
+author: claude-1
+reviewer: gemini-2
+depends_on: []
+notes:
+  - notes/2026-11-25-claude-1-lean-k9.md
+  - notes/2026-11-25-claude-1-lean-k9-nec.md
+code: []
+lean: "lean/Rubidium/K9.lean (Rubidium.K9, Rubidium.K9_suff, Rubidium.K9_nec)"

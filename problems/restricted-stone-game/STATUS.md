@@ -7,6 +7,8 @@
 ## 確立した結果
 （`[査読済み]` または `[Lean検証済み]` のものだけをここに書く）
 
+- **K10a** [Lean検証済み] 定理 K10 (a)：m + 1 = 8u、u ≡ 1 (mod 8)、u ≥ 9 なら交互型（(n, 0) が P ⇔ n mod (2m+3) ∈ {0, m+2}）（Lean 4.36.0 sorry なし、公理 propext・Quot.sound。PR 397 で gemini-2 が査読）（根拠: notes/2026-11-25-claude-1-lean-k10a.md）
+- **K13** [Lean検証済み] 定理 K13：m + 1 = 8u、{v2(9u+1), v2(11u+1)} = {1, 3} なら 100 型（(n, 0) が P ⇔ n mod (3m+4) ∈ {0, m+2, 2m+3}）（Lean 4.36.0 sorry なし、公理 propext・Quot.sound。PR 399 で antigravity-1 が査読）（根拠: notes/2026-11-25-claude-1-lean-k13.md）
 - **K3** [Lean検証済み] 定理 K3：1 ≤ r ≤ m のとき局面 (r, p) が P 局面 ⇔ p = r かつ v2(r) が偶数（Lean 4.36.0 sorry なし検証済み）（根拠: notes/2026-11-24-claude-1-lean-k3.md, notes/2026-11-24-gemini-2-review-lean-k60-k62.md）
 - **K33** [査読済み] 定理 K33：e ≥ 7 で m = 9·2^e + 1 の型は前周期なし、e 偶数なら周期 1^{e/2} 0（K33a）、e 奇数なら周期 1^{e-1} 0 1^{(e-1)/2} 0（前提：H(j)・K3・K33a・K33d・K47・K59.1、査読済み）（根拠: notes/2026-11-24-claude-1-k33-shapes.md, notes/2026-11-24-claude-1-chain-symbolic.md, notes/2026-11-24-gemini-2-review-k33-k34-k58-symbolic.md）
 - **K33d** [査読済み] 補題 K33d：奇数 m の E 型ブロック（直前の間隔が m+1）では v2(d) = 1 の距離 d は S_B に入らない（前提：H(j)・K3、査読済み）（根拠: notes/2026-11-24-claude-1-k33-odd-trace.md, notes/2026-11-24-gemini-2-review-k33c-k33d.md）
@@ -16,9 +18,11 @@
 - **K57** [査読済み] 命題 K57：一般の族 q·a + r = s·2^N（m = 3a - 2、β0 ≠ 0、v < N、各奇数点で b_j + 3r ≠ 0 かつ鎖条件成立）で、ブロック 0 からの h の鎖の b 軌道から間隔の列の先頭が決まる（前提：H(j)・K3・K47、査読済み）（根拠: notes/2026-11-24-claude-1-k57-orbit-predict.md, notes/2026-11-24-gemini-2-review-k56-k57-k33d.md, notes/2026-11-24-gemini-2-review-k57fix-k34-k58.md）
 - **K58** [査読済み] 定理 K58：5a + 1 = 7·2^N（N ≡ 3 (mod 4), N ≥ 23）, m = 3a - 2 の型は前周期なし・周期 1^{R+2} 0 1^R 0（R = (N-3)/2、前提：H(j)・K3・K33d・K47・K59.1、査読済み）（根拠: notes/2026-11-24-claude-1-k58-shapes.md, notes/2026-11-24-claude-1-chain-symbolic.md, notes/2026-11-24-gemini-2-review-k33-k34-k58-symbolic.md）
 - **K59** [査読済み] 定理 K59・補題 K59.1：鎖が v2(β) = N を越える場面の記述と、v = 3・ρ = 2・N ≥ 9 奇数族（K34・K58）の先頭 m+2 連（s = 3 で 2R、s = 7 で R + 2、前提：H(j)・K3・K47、査読済み）（根拠: notes/2026-11-24-claude-1-k47-crossing.md, notes/2026-11-24-gemini-2-review-k33ext-k58-k59.md）
+- **K6** [Lean検証済み] 定理 K6：m ≡ 5 (mod 8) なら、すべての n で (n, 0) が P 局面 ⇔ n mod (2m+3) ∈ {0, m+2}（Lean 4.36.0 sorry なし、公理 propext・Quot.sound。PR 391 で gemini-2 が査読）（根拠: notes/2026-11-25-claude-1-lean-k6.md）
 - **K60** [査読済み] 定理 K60：29a + 1 = s·2^N（N ≥ 41 奇数）, m = 3a - 2 の型は N mod 28 の全 14 類で固定周期形をもつ（前提：H(j)・K3・Q_n・K33d・K47・K59.1、査読済み）（根拠: notes/2026-11-24-claude-1-k60-symbolic.md, notes/2026-11-24-gemini-2-review-lean-k60-k62.md）
 - **K61** [査読済み] 命題 K61：族 q·a + r = s·2^N（r = ±1, β0 ≠ 0, v < N, 各奇数点で b + 3r ≠ 0, 各 E = N + γ 越えで inner ≠ 0 かつ u < N）で先頭 m+2 連の長さが b 軌道と越える場面の規則で決まる（前提：H(j)・K3・K57・K59.1、査読済み）（根拠: notes/2026-11-24-claude-1-k61-first-run.md, notes/2026-11-25-gemini-2-review-k61k62fix-lean-k4-dp.md）
 - **K62** [査読済み] 命題 K62：奇数を分母にもつ有理数 b, c で c'' = c_o s / r として、命題 K61 を一般の奇数 r に拡張（前提：β0 ≠ 0, v < N, 各奇数点で b + 3r ≠ 0, 各 E = N + γ 越えで inner ≠ 0 かつ u < N、査読済み）（根拠: notes/2026-11-24-claude-1-k62-general-r.md, notes/2026-11-25-gemini-2-review-k61k62fix-lean-k4-dp.md）
+- **K9** [Lean検証済み] 定理 K9：v2(m+1) = 1、m ≥ 5 のとき「すべての n で (n, 0) が P 局面 ⇔ n mod (2m+3) ∈ {0, m+2}」⇔ v2(3h+1) が奇数（h = (m+1)/2。Lean 4.36.0 sorry なし、公理 propext・Quot.sound。PR 393・395 で gemini-2 が査読）（根拠: notes/2026-11-25-claude-1-lean-k9.md, notes/2026-11-25-claude-1-lean-k9-nec.md）
 
 ## 予想・未査読の結果
 （`[予想]` には確かめた範囲を、`[非形式証明]` には証明の場所を書く）
