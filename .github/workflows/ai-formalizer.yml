@@ -1,0 +1,67 @@
+name: AI Formalizer (Lean 4)
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  issues:
+    types: [labeled]
+  workflow_dispatch:
+    inputs:
+      claim_id:
+        description: '形式化する主張ID (例: K1)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write
+
+concurrency:
+  group: rubidium-ai-formalizer
+  cancel-in-progress: false
+
+jobs:
+  formalize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: >-
+      (github.event_name == 'workflow_dispatch') ||
+      (github.event_name == 'issues' && github.event.label.name == 'lean4' && vars.AUTONOMOUS_ENABLED == 'true') ||
+      (github.event_name == 'schedule' && vars.AUTONOMOUS_ENABLED == 'true')
+
+    steps:
+      - name: Generate GitHub App Token (if configured)
+        id: app_token
+        continue-on-error: true
+        if: secrets.RUBIDIUM_APP_ID != '' && secrets.RUBIDIUM_APP_PRIVATE_KEY != ''
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.RUBIDIUM_APP_ID }}
+          private-key: ${{ secrets.RUBIDIUM_APP_PRIVATE_KEY }}
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ruca-logic
+          fetch-depth: 0
+          token: ${{ steps.app_token.outputs.token || secrets.GITHUB_TOKEN }}
+
+      - name: Install Lean 4 (elan)
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain leanprover/lean4:stable
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Run Lean 4 formalization agent
+        if: secrets.ANTHROPIC_API_KEY != '' || secrets.CLAUDE_CODE_OAUTH_TOKEN != ''
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ steps.app_token.outputs.token || secrets.GITHUB_TOKEN }}
+          claude_args: "--max-turns 30"
+          prompt: |
+            あなたは rubidium 研究チームの Lean 4 形式化担当エージェント `lean-formalizer` です。
+            対象主張ID: ${{ inputs.claim_id || 'claims/ 内の [査読済み] かつ lean 未設定の基盤定理から1件選択' }}。
+            `lean/` 配下で `sorry` を一切残さずに形式化し、`lake build` を通した上で `claims/<ID>.yaml` と `STATUS.md` を更新し、`lean-formalizer/<claim-id>` ブランチから `ruca-logic` 宛てPRを作成してください。
