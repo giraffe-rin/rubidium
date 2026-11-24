@@ -5,13 +5,14 @@
  *   乱数の種 SEED から決まる擬似乱数で、2^K < m < 2^{K+1}、v2(m+1) が奇数の m を COUNT 個選ぶ。
  *   lazy_bigint.js の gapsBig で 400 ブロックの間隔の列を求め、前周期 p と周期 L を推測する。
  *   p = 0 で周期の列 w の末尾が 0 なら、period_induction.js の prove(m, w) で確定させる。prove が失敗したら、
- *   出発点をブロック L にとる prove2(m, w) を試す。
+ *   出発点をブロック L にとる prove2(m, w) を試す。前周期がある型、または末尾が 1 の型は、prove3(m, 前周期, 周期) で試す
+ *   （状態の周期が型の周期の倍数のことがあるので、周期の列を k = 1..4 回くり返したものを周期として試す）。
  *   出力：v2(m+1) ごとの、選んだ個数、p = 0 かつ末尾 0 の個数、確定した個数、失敗の理由の内訳。
  * 実行方法（リポジトリのルートで）:
  *   node --stack-size=65500 code/period_induction_random.js 40 200 1 > data/period_induction_random.txt
  */
 'use strict';
-const { prove, prove2 } = require('./period_induction'); const { gapsBig } = require('./lazy_bigint');
+const { prove, prove2, prove3 } = require('./period_induction'); const { gapsBig } = require('./lazy_bigint');
 const [K, COUNT, SEED] = process.argv.slice(2).map(Number);
 let st = BigInt(SEED) * 6364136223846793005n + 1442695040888963407n; const MASK = (1n << 64n) - 1n;
 const rnd = () => { st = (st * 6364136223846793005n + 1442695040888963407n) & MASK; return st; };
@@ -23,8 +24,8 @@ while (n < COUNT) {
   const key = v >= 5 ? '≥5' : String(v); const s = (stat[key] = stat[key] || { n: 0, pure: 0, ok: 0, why: {} }); s.n++;
   let g; try { g = gapsBig(m, 400, 3000000).gaps; } catch (e) { s.why['事実が多すぎる（推測）'] = (s.why['事実が多すぎる（推測）'] || 0) + 1; continue; }
   const pl = per(g); if (!pl) { s.why['周期を推測できない'] = (s.why['周期を推測できない'] || 0) + 1; continue; }
-  if (pl[0] !== 0) { s.why['前周期あり'] = (s.why['前周期あり'] || 0) + 1; continue; }
-  const w = g.slice(0, pl[1]); if (w[w.length - 1] !== '0') { s.why['末尾が 1'] = (s.why['末尾が 1'] || 0) + 1; continue; }
+  if (pl[0] !== 0 || g[pl[1] - 1] !== '0') { const pre = g.slice(0, pl[0]), w3 = g.slice(pl[0], pl[0] + pl[1]); let r3 = null; for (let k = 1; k <= 4; k++) { r3 = prove3(m, pre, w3.repeat(k)); if (r3.ok) { if (k > 1) s.why['（周期を ' + k + ' 倍にして確定）'] = (s.why['（周期を ' + k + ' 倍にして確定）'] || 0) + 1; break; } } const k3 = (pl[0] ? '前周期あり' : '末尾が 1'); if (r3.ok) { s.ok3 = (s.ok3 || 0) + 1; s.why[k3 + '：prove3 で確定'] = (s.why[k3 + '：prove3 で確定'] || 0) + 1; } else s.why[k3 + '：' + r3.why] = (s.why[k3 + '：' + r3.why] || 0) + 1; continue; }
+  const w = g.slice(0, pl[1]);
   s.pure++; let r = prove(m, w); if (r.ok) s.ok++; else { const r2 = prove2(m, w); if (r2.ok) { s.ok++; s.ok2 = (s.ok2 || 0) + 1; } else s.why[r.why + ' / ' + r2.why] = (s.why[r.why + ' / ' + r2.why] || 0) + 1; }
 }
 const out = ['# 大きい m の型の、周期についての帰納法による確定（無作為抽出）', `# 生成: node --stack-size=65500 code/period_induction_random.js ${K} ${COUNT} ${SEED}`, `範囲：2^${K} < m < 2^${K + 1}、v2(m+1) が奇数`, 'v2(m+1) | 選んだ個数 | 前周期なし・末尾 0 | 確定（うち prove2 で）| それ以外の内訳'];

@@ -84,7 +84,40 @@ function prove2(m, w, maxRounds = 5000, maxFacts = 3000000) {
   }
   return { ok: false, why: '仮定の集合が収束しない', A: A.size };
 }
-module.exports = { prove, prove2 };
+// prove3：前周期 pre（長さ p）と周期 w（長さ L）の型を扱う版。出発点を b = p + L にとる。
+//   (0″) ブロック 0〜b を K3 から R で計算し、間隔が pre + w と一致する（ブロック 0 の間隔は K3 から、ブロック i の間隔は h ∈ S_i で確かめる）
+//   周期の列 w の末尾が 0 なら、ブロック b の事実として (G)（奇数は入る、v2 ≤ min(2s−1, v−1) は偶奇、補題 Q_s）を使い、
+//   末尾が 1 なら (G) は使わない（b の事実はすべて (A) に入れる）。(A) の値はブロック b での実際の値とする。
+//   ブロック b からの 1 周期で、間隔が w と一致し、(A) がブロック b + L で再現されることを確かめる。
+function prove3(m, pre, w, maxRounds = 20000, maxFacts = 3000000) {
+  const p = pre.length, L = w.length, v = v2(m + 1n), h = (m + 1n) / 2n, full = pre + w; let s = 0; while (s < L && w[L - 1 - s] === '0') s++;
+  const word = i => (i < p ? pre[i] : w[(i - p) % L]);
+  const g0 = (m % 2n === 1n && v2(h) % 2 === 0) ? '1' : '0'; if (g0 !== word(0)) return { ok: false, why: 'ブロック 0 の間隔が違う' };
+  const gapAbs = j => (word(j) === '1' ? m + 2n : m + 1n); const b = p + L;
+  const base = new Map(); let over = false;
+  const T = (j, d) => { if (over) return false; const key = j + ':' + d; if (base.has(key)) return base.get(key); if (base.size > maxFacts) { over = true; return false; } let r;
+    if (j === 0) r = v2(d) % 2 === 0; else { r = !(d % 2n === 0n && T(j, d / 2n)); if (r) { const g = gapAbs(j - 1), sm = g + d; if (sm % 2n === 0n && sm / 2n <= m && T(j - 1, sm / 2n)) r = false; if (r && g === m + 2n && d === h - 1n) r = false; } }
+    base.set(key, r); return r; };
+  for (let j = 1; j <= b; j++) { if ((T(j, h) ? '1' : '0') !== word(j)) return { ok: false, why: over ? '事実が多すぎる' : '最初の部分の間隔が違う' }; }
+  const bound = s > 0 ? Math.min(2 * s - 1, v - 1) : -1; const useG = s > 0; const A = new Map();
+  const gapRel = i => gapAbs(b + i);
+  for (let round = 0; round < maxRounds; round++) {
+    const memo = new Map(); let unknown = null, tooMany = false;
+    const S = (i, d) => { if (unknown || tooMany) return false; const key = i + ':' + d; if (memo.has(key)) return memo.get(key); if (memo.size > maxFacts) { tooMany = true; return false; } let r;
+      if (i === 0) { const t = v2(d); if (useG && t === 0) r = true; else if (useG && t <= bound) r = t % 2 === 0; else if (A.has(d.toString())) r = A.get(d.toString()); else { unknown = d; return false; } }
+      else { r = !(d % 2n === 0n && S(i, d / 2n)); if (r) { const g = gapRel(i - 1), sm = g + d; if (sm % 2n === 0n && sm / 2n <= m && S(i - 1, sm / 2n)) r = false; if (r && g === m + 2n && d === h - 1n) r = false; } }
+      memo.set(key, r); return r; };
+    let ok1 = true; for (let i = 1; i <= L; i++) { const x = S(i, h); if (unknown || tooMany) break; if ((x ? '1' : '0') !== w[i % L]) { ok1 = false; break; } }
+    if (tooMany) return { ok: false, why: '事実が多すぎる', A: A.size };
+    if (unknown) { A.set(unknown.toString(), T(b, unknown)); if (over) return { ok: false, why: '事実が多すぎる' }; continue; }
+    if (!ok1) return { ok: false, why: '間隔が w と違う', A: A.size };
+    for (const [ds, val] of A) { const got = S(L, BigInt(ds)); if (unknown) break; if (got !== val) return { ok: false, why: 'A の値が次の始まりで再現されない', A: A.size }; }
+    if (unknown) { A.set(unknown.toString(), T(b, unknown)); continue; }
+    return { ok: true, A: A.size, facts: memo.size + base.size };
+  }
+  return { ok: false, why: '仮定の集合が収束しない', A: A.size };
+}
+module.exports = { prove, prove2, prove3 };
 if (require.main === module) {
   const [mode, lim] = process.argv.slice(2); const N = +lim; const out = [`# 周期についての帰納法による型の確定（${mode}）`, `# 生成: node code/period_induction.js ${mode} ${N}`, 'パラメータ | m の桁数 | 周期 | 結果 | 仮定 A の大きさ | 評価した事実']; let ok = 0, ng = 0;
   for (let n = mode === 'k33odd' ? 7 : mode === 'k34' ? 4 : mode === 'k40odd' ? 33 : 1; n <= N; n += mode === 'k33odd' ? 2 : mode === 'k40odd' ? 22 : 1) {
