@@ -1,0 +1,299 @@
+{
+  "count": 49,
+  "theorems": [
+    {
+      "name": "nat_all_iff",
+      "kind": "theorem",
+      "file": "lean/Rubidium/Decide.lean",
+      "line": 13
+    },
+    {
+      "name": "isPb_iff",
+      "kind": "theorem",
+      "file": "lean/Rubidium/Decide.lean",
+      "line": 33
+    },
+    {
+      "name": "isP_iff",
+      "kind": "theorem",
+      "file": "lean/Rubidium/Game.lean",
+      "line": 20
+    },
+    {
+      "name": "isP_zero",
+      "kind": "theorem",
+      "file": "lean/Rubidium/Game.lean",
+      "line": 25
+    },
+    {
+      "name": "ev2_odd",
+      "kind": "theorem",
+      "file": "lean/Rubidium/Game.lean",
+      "line": 39
+    },
+    {
+      "name": "ev2_even",
+      "kind": "theorem",
+      "file": "lean/Rubidium/Game.lean",
+      "line": 43
+    },
+    {
+      "name": "not_isP_near",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K10.lean",
+      "line": 15
+    },
+    {
+      "name": "k10_E_h",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K10.lean",
+      "line": 30
+    },
+    {
+      "name": "k10_O",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K10.lean",
+      "line": 55
+    },
+    {
+      "name": "k10_rows",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K10.lean",
+      "line": 114
+    },
+    {
+      "name": "K10a",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K10.lean",
+      "line": 150
+    },
+    {
+      "name": "not_isP_move",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K13.lean",
+      "line": 16
+    },
+    {
+      "name": "p_four",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K13.lean",
+      "line": 24
+    },
+    {
+      "name": "p_two",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K13.lean",
+      "line": 49
+    },
+    {
+      "name": "k13_step",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K13.lean",
+      "line": 74
+    },
+    {
+      "name": "k13_rows",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K13.lean",
+      "line": 135
+    },
+    {
+      "name": "mod4_of_v2_one",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K13.lean",
+      "line": 161
+    },
+    {
+      "name": "mod16_of_v2_three",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K13.lean",
+      "line": 170
+    },
+    {
+      "name": "K13",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K13.lean",
+      "line": 179
+    },
+    {
+      "name": "ev2_iff",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K3.lean",
+      "line": 17
+    },
+    {
+      "name": "K3",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K3.lean",
+      "line": 29
+    },
+    {
+      "name": "not_isP_of_row",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K4Even.lean",
+      "line": 16
+    },
+    {
+      "name": "row_all",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K4Even.lean",
+      "line": 25
+    },
+    {
+      "name": "K4_even",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K4Even.lean",
+      "line": 39
+    },
+    {
+      "name": "v2_odd",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K4Full.lean",
+      "line": 26
+    },
+    {
+      "name": "v2_even",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K4Full.lean",
+      "line": 29
+    },
+    {
+      "name": "even_of_v2_pos",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K4Full.lean",
+      "line": 33
+    },
+    {
+      "name": "ev2_iff_v2",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K4Full.lean",
+      "line": 40
+    },
+    {
+      "name": "v2_add",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K4Full.lean",
+      "line": 53
+    },
+    {
+      "name": "row_next",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K4Full.lean",
+      "line": 73
+    },
+    {
+      "name": "blk_step",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K4Full.lean",
+      "line": 97
+    },
+    {
+      "name": "row_all_odd",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K4Full.lean",
+      "line": 148
+    },
+    {
+      "name": "K4_odd",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K4Full.lean",
+      "line": 171
+    },
+    {
+      "name": "K4",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K4Full.lean",
+      "line": 189
+    },
+    {
+      "name": "not_isP_small",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K5.lean",
+      "line": 14
+    },
+    {
+      "name": "isP_succ",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K5.lean",
+      "line": 20
+    },
+    {
+      "name": "K4_first",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K5.lean",
+      "line": 39
+    },
+    {
+      "name": "K5",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K5.lean",
+      "line": 46
+    },
+    {
+      "name": "K5_before",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K5.lean",
+      "line": 66
+    },
+    {
+      "name": "odd_of_rows",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K6.lean",
+      "line": 22
+    },
+    {
+      "name": "row_long",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K6.lean",
+      "line": 37
+    },
+    {
+      "name": "k6_rows",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K6.lean",
+      "line": 53
+    },
+    {
+      "name": "K6",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K6.lean",
+      "line": 92
+    },
+    {
+      "name": "blkE_step",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K9.lean",
+      "line": 23
+    },
+    {
+      "name": "blkO_of_blk",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K9.lean",
+      "line": 67
+    },
+    {
+      "name": "k9_rows",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K9.lean",
+      "line": 90
+    },
+    {
+      "name": "K9_suff",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K9.lean",
+      "line": 128
+    },
+    {
+      "name": "K9_nec",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K9.lean",
+      "line": 169
+    },
+    {
+      "name": "K9",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K9.lean",
+      "line": 205
+    }
+  ]
+}

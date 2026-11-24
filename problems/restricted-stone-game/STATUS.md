@@ -1,35 +1,80 @@
-# STATUS — 制限付き石取りゲーム
+# Restricted Stone Game — Research Status
 
-チーム全体で「今わかっていること」をまとめる場所です。
-更新ルールは `AGENTS.md` 第 4・5 節を参照してください。各項目には根拠のログファイル名を書きます。
+<!-- Auto-generated deterministically by scripts/autonomous_ops.py sync-status. Do not edit manually. -->
 
-最終更新：2026-11-23（初期化）
+## Overview
 
-## 確立した結果
-（`[査読済み]` または `[Lean検証済み]` のものだけをここに書く）
+- **Main Theorem Target**: `MainTheorem` (OPEN)
+- **Lean-Verified Theorems & Lemmas**: 49
+- **Recorded Dead Ends**: 0
+- **Stagnation Cycles**: 0 / 20
 
-- まだなし
+## Lean-Verified Results (`claims/proved/index.json`)
 
-## 予想・未査読の結果
-（`[予想]` には確かめた範囲を、`[非形式証明]` には証明の場所を書く）
+| Kind | Name | File | Line |
+| :--- | :--- | :--- | ---: |
+| `theorem` | `nat_all_iff` | `lean/Rubidium/Decide.lean` | 13 |
+| `theorem` | `isPb_iff` | `lean/Rubidium/Decide.lean` | 33 |
+| `theorem` | `isP_iff` | `lean/Rubidium/Game.lean` | 20 |
+| `theorem` | `isP_zero` | `lean/Rubidium/Game.lean` | 25 |
+| `theorem` | `ev2_odd` | `lean/Rubidium/Game.lean` | 39 |
+| `theorem` | `ev2_even` | `lean/Rubidium/Game.lean` | 43 |
+| `theorem` | `not_isP_near` | `lean/Rubidium/K10.lean` | 15 |
+| `theorem` | `k10_E_h` | `lean/Rubidium/K10.lean` | 30 |
+| `theorem` | `k10_O` | `lean/Rubidium/K10.lean` | 55 |
+| `theorem` | `k10_rows` | `lean/Rubidium/K10.lean` | 114 |
+| `theorem` | `K10a` | `lean/Rubidium/K10.lean` | 150 |
+| `theorem` | `not_isP_move` | `lean/Rubidium/K13.lean` | 16 |
+| `theorem` | `p_four` | `lean/Rubidium/K13.lean` | 24 |
+| `theorem` | `p_two` | `lean/Rubidium/K13.lean` | 49 |
+| `theorem` | `k13_step` | `lean/Rubidium/K13.lean` | 74 |
+| `theorem` | `k13_rows` | `lean/Rubidium/K13.lean` | 135 |
+| `theorem` | `mod4_of_v2_one` | `lean/Rubidium/K13.lean` | 161 |
+| `theorem` | `mod16_of_v2_three` | `lean/Rubidium/K13.lean` | 170 |
+| `theorem` | `K13` | `lean/Rubidium/K13.lean` | 179 |
+| `theorem` | `ev2_iff` | `lean/Rubidium/K3.lean` | 17 |
+| `theorem` | `K3` | `lean/Rubidium/K3.lean` | 29 |
+| `theorem` | `not_isP_of_row` | `lean/Rubidium/K4Even.lean` | 16 |
+| `theorem` | `row_all` | `lean/Rubidium/K4Even.lean` | 25 |
+| `theorem` | `K4_even` | `lean/Rubidium/K4Even.lean` | 39 |
+| `theorem` | `v2_odd` | `lean/Rubidium/K4Full.lean` | 26 |
+| `theorem` | `v2_even` | `lean/Rubidium/K4Full.lean` | 29 |
+| `theorem` | `even_of_v2_pos` | `lean/Rubidium/K4Full.lean` | 33 |
+| `theorem` | `ev2_iff_v2` | `lean/Rubidium/K4Full.lean` | 40 |
+| `theorem` | `v2_add` | `lean/Rubidium/K4Full.lean` | 53 |
+| `theorem` | `row_next` | `lean/Rubidium/K4Full.lean` | 73 |
+| `theorem` | `blk_step` | `lean/Rubidium/K4Full.lean` | 97 |
+| `theorem` | `row_all_odd` | `lean/Rubidium/K4Full.lean` | 148 |
+| `theorem` | `K4_odd` | `lean/Rubidium/K4Full.lean` | 171 |
+| `theorem` | `K4` | `lean/Rubidium/K4Full.lean` | 189 |
+| `theorem` | `not_isP_small` | `lean/Rubidium/K5.lean` | 14 |
+| `theorem` | `isP_succ` | `lean/Rubidium/K5.lean` | 20 |
+| `theorem` | `K4_first` | `lean/Rubidium/K5.lean` | 39 |
+| `theorem` | `K5` | `lean/Rubidium/K5.lean` | 46 |
+| `theorem` | `K5_before` | `lean/Rubidium/K5.lean` | 66 |
+| `theorem` | `odd_of_rows` | `lean/Rubidium/K6.lean` | 22 |
+| `theorem` | `row_long` | `lean/Rubidium/K6.lean` | 37 |
+| `theorem` | `k6_rows` | `lean/Rubidium/K6.lean` | 53 |
+| `theorem` | `K6` | `lean/Rubidium/K6.lean` | 92 |
+| `theorem` | `blkE_step` | `lean/Rubidium/K9.lean` | 23 |
+| `theorem` | `blkO_of_blk` | `lean/Rubidium/K9.lean` | 67 |
+| `theorem` | `k9_rows` | `lean/Rubidium/K9.lean` | 90 |
+| `theorem` | `K9_suff` | `lean/Rubidium/K9.lean` | 128 |
+| `theorem` | `K9_nec` | `lean/Rubidium/K9.lean` | 169 |
+| `theorem` | `K9` | `lean/Rubidium/K9.lean` | 205 |
 
-- まだなし
+## Subgoal DAG (`data/dag.json`)
 
-## 未解決の問い
+| ID | Title | Status | Failures | Needs Decomposition |
+| :--- | :--- | :--- | ---: | :--- |
+| `SG-001` | Game definition and decidable evaluator in Lean 4 (IsP, isPb) | `proved` | 0 | no |
+| `SG-002` | Formalize small-m P-position characterizations (K3, K4, K4_even, K5_before, K6) | `proved` | 0 | no |
+| `SG-003` | Formalize medium-m block-rule characterizations (K9, K10a, K13) | `proved` | 0 | no |
+| `SG-004` | Formalize general even-m P-position structure and 2-adic valuation rules | `open` | 0 | no |
+| `SG-005` | Formalize periodicity and preperiod bounds for odd m >= 7 | `open` | 0 | no |
+| `SG-006` | Characterize winning/losing positions for general states (r, p) | `open` | 0 | no |
+| `SG-007` | Prove MainTheorem characterizing starting positions (n, 0) for all m >= 1 | `open` | 0 | no |
 
-- 各 `m` について、開始局面 `(n, 0)` が先手必勝となる `n` の特徴づけ（主目標）
-- 一般の局面 `(r, p)` の勝敗
-- 必勝戦略の記述
+## Recent Dead Ends (`data/dead_ends.jsonl`)
 
-## 試して駄目だった方法
-（同じ失敗を繰り返さないために、理由とともに書く）
-
-- まだなし
-
-## 最初に取りかかるべきタスク
-
-1. 全探索ソルバーを 2 つの独立な実装で作り、結果の一致を確認する（`code/`）。
-2. `1 ≤ m ≤ 30`、`1 ≤ n ≤ 2000` 程度の勝敗表を `data/` に出力する。開始局面だけでなく、すべての `(r, p)` について出す。
-3. 勝敗表から周期性などの規則を探し、予想としてまとめる。
-4. 小さな `m`（`m = 2, 3`）から順に証明を試みる。
-5. ゲームの定義と勝敗判定を Lean 4 で形式化する（`lean/`）。
+_No dead ends recorded yet._
