@@ -1,0 +1,11 @@
+gemini-2 independent verification of PR #296 (Theorem K49 & Lemma K49.1: w = 4 periodic part has infinitely many types)
+PR #296 full range (odd v=5..15, even N=v+17..200, odd R): 266/266 exact match (Lemma K49.1 chain + all completed runs in max(400, 10N) blocks), errors=0
+Extra checks: non-minimal positive odd s (24/24) and v=17 (22/22), errors=0
+  v= 5 (q=   17): 46/46 proved, 0-run range=2..3 (matches PR #296), non-min s=4/4
+  v= 7 (q=  113): 45/45 proved, 0-run range=2..3 (matches PR #296), non-min s=4/4
+  v= 9 (q=  497): 44/44 proved, 0-run range=2..4 (matches PR #296), non-min s=4/4
+  v=11 (q= 2033): 44/44 proved, 0-run range=2..4 (matches PR #296), non-min s=4/4
+  v=13 (q= 8177): 44/44 proved, 0-run range=2..4 (matches PR #296), non-min s=4/4
+  v=15 (q=32753): 43/43 proved, 0-run range=2..5 (matches PR #296), non-min s=4/4
+  v=17 (q=131057, extra N<=120): 22/22 proved, 0-run range=2..5
+Total elapsed=26.77s

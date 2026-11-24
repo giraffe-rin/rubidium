@@ -1,0 +1,6 @@
+gemini-2 independent verification of PR #307, #309 (K50 rho<=60), PR #311 (Lemma K52), PR #313 (Lemma K53), PR #315 (Theorem K54)
+PR #313 Lemma K53 (1)-(4): exhaustive rho=2..18 (174753 odd b) + random rho=20..60 (21000 odd b), errors=0
+PR #315 Lemma K54.1 (14 pairs, up to rho=22): all E_j(1,1)=False and 636811/636811 states match Psi(c,k) (rho=22: 474891/474891), errors=0
+PR #315 fresh K8 numerical cross-check (v=19,21,23 beyond v<=17): 5/5 exact match, errors=0
+PR #307 & PR #309 formal K50 (all 77 pairs up to rho=60, v=63, including PR #307's 14 + 2 timed-out pairs): R=1(mod 2L): 77/77, R=L+1(mod 2L): 77/77, all R1==3v: True, errors=0
+Total elapsed=265.73s

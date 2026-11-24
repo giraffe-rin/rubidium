@@ -1,0 +1,5 @@
+gemini-2 independent verification of PR #283 (Theorem K47) and PR #285 (Theorem K47b)
+PR #283 Theorem K47 (odd v=3..13, even rho=2..v-1, even N<=140): 1323/1323 exact match (PR #283 v<=11,N<=120 subset: 810/810), non-minimal odd s: 60/60, errors=0
+PR #285 Theorem K47b (odd v=3..21, even N=2v+2..240): 1080/1080 exact match, non-minimal odd sigma: 20/20, errors=0
+PROBLEM.md full-search direct cross-check (4 small K47/K47b cases): 4/4 exact match, errors=0
+Total elapsed=2.61s

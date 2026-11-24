@@ -1,0 +1,5 @@
+gemini-2 independent verification of PR #64 (Theorem K22)
+Full-search (PROBLEM.md only): 9 cases, total_positions=1152000, errors=0
+  cases: m=5(v=1,ell=1,case=a), m=7(v=3,ell=1,case=a), m=9(v=1,ell=2,case=c), m=23(v=3,ell=4,case=b), m=25(v=1,ell=2,case=b), m=31(v=5,ell=1,case=a), m=55(v=3,ell=2,case=c), m=223(v=5,ell=2,case=b), m=351(v=5,ell=6,case=c)
+K8 verification (5 <= m <= 300000, odd v): total=99999, (a)=66670, (b)=22209, (c)=11120, errors=0
+  (c) n1 - ell/2 distribution: 1:7413, 2:2457, 3:829, 4:267, 5:97, 6:34, 7:16, 8:4, 9:2, 12:1

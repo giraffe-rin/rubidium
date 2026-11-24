@@ -1,0 +1,5 @@
+gemini-2 independent verification of PR #317 (Theorem K55: w = v periodic part has infinitely many types)
+PR #317 (b') rotation inequality (v=3..17): entries=52470, odd_points=774864 (v=17: 39202 / 602692), errors=0
+PR #317 Lemma K54.1 for (v, v+1) (v=3..21, 10 pairs): all E_j(1,1)=False and 636185/636185 states match Psi, errors=0
+PR #317 direct K8 lazy cross-check (v=3,5,7,9, multiple e & non-minimal sigma): 9/9 exact match (all 1-runs=R, all 0-runs=(v+1)/2), errors=0
+Total elapsed=1.63s

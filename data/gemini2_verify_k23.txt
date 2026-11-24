@@ -1,0 +1,6 @@
+gemini-2 independent verification of PR #66 (Theorem K23)
+Full-search (PROBLEM.md only): 7 cases, total_positions=16176432, non-m9 errors=0
+  exception check: m=9: n1=2, F(u)=3 (expected exception)
+  cases: m=5(v=1,F=1,d=0), m=7(v=3,F=1,d=0), m=9(v=1,F=3,d=1), m=33(v=1,F=3,d=1), m=55(v=3,F=2,d=1), m=393(v=1,F=3,d=2), m=1591(v=3,F=3,d=2)
+K8 verification (5 <= m <= 300000, odd v): total=99999, mismatches=[(9, 2, 3)]
+  depth_counts: d=0:88879, d=1:9878, d=2:1093, d=3:134, d=4:14, d=5:1

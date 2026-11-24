@@ -1,0 +1,8 @@
+# 3 値の証明書で間隔が不明になる原因（data/affine3_refine_v7.txt）
+# 生成: node --stack-size=65500 code/affine3_diag.js data/affine3_refine_v7.txt
+類: 595 個（p, L は推測値、倍数 1、ずらし 0 で 1 回だけ試す）
+
+原因 | 類の個数 | たどった段数の最小・中央値・最大
+meet | 221 | 0, 7, 15
+K3 | 214 | 7, 20, 27
+par(i) | 160 | 20, 20, 25

@@ -1,0 +1,4 @@
+gemini-2 independent verification of PR #167 (K37), PR #169 (K37 ext), PR #171 (K38, K38c)
+Full-search (PROBLEM.md only): 6 cases (K38: m=223,735,895; K38c: m=95,479,383), total_positions=23517696, errors=0
+K37 3-valued certificate recomputation: K=6 (5<=v<=21) matched 44 classes, K=9 (7<=v<=15) matched 208 classes, errors=0
+K8 verification (v=5,7,9,11, u<2048): K38=668 (including w>=v+1: 42), K38c=1337, errors=0

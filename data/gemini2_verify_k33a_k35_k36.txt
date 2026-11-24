@@ -1,0 +1,6 @@
+gemini-2 independent verification of PR #153 (K33a), PR #159 (K35), PR #163 (K36), PR #165 (K36c)
+Full-search (PROBLEM.md only): 4 cases (m=37,145,577,151), total_positions=5329472, errors=0
+K33a (LazyK8Big, e=2..40 even, 3 periods + Z): 20 cases, errors=0
+K35 (LazyK8Big, k=2..60, 3 periods + Z): 59 cases, errors=0
+K36 + K36c (LazyK8Big, v=3..15, 13 cases up to N=774): errors=0
+  cases: (v=3,N=4,K=2,s=[2, 2, 2]), (v=3,N=6,K=4,s=[2, 2]), (v=3,N=8,K=6,s=[2, 2]), (v=5,N=14,K=11,s=[1, 1]), (v=5,N=28,K=25,s=[1, 1]), (v=7,N=50,K=46,s=[2, 2]), (v=7,N=100,K=96,s=[2, 2]), (v=9,N=254,K=249,s=[1, 1]), (v=11,N=102,K=96,s=[2, 2]), (v=11,N=204,K=198,s=[2, 2]), (v=13,N=387,K=380,s=[2, 2]), (v=13,N=774,K=767,s=[1, 1]), (v=15,N=234,K=226,s=[2, 2])

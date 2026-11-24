@@ -1,0 +1,21 @@
+=== gemini-2 独立検証: 定理 K15・系 K15.1（2 <= k <= 16 の記号証明書） ===
+[1] 記号証明書の独立再計算 (2 <= k <= 16):
+  k= 2: ok=True, facts=       27, time=0.00s (OK)
+  k= 3: ok=True, facts=       74, time=0.00s (OK)
+  k= 4: ok=True, facts=      185, time=0.00s (OK)
+  k= 5: ok=True, facts=      440, time=0.00s (OK)
+  k= 6: ok=True, facts=    1,015, time=0.00s (OK)
+  k= 7: ok=True, facts=    2,294, time=0.00s (OK)
+  k= 8: ok=True, facts=    5,109, time=0.01s (OK)
+  k= 9: ok=True, facts=   11,252, time=0.02s (OK)
+  k=10: ok=True, facts=   24,563, time=0.04s (OK)
+  k=11: ok=True, facts=   53,234, time=0.06s (OK)
+  k=12: ok=True, facts=  114,673, time=0.15s (OK)
+  k=13: ok=True, facts=  245,744, time=0.42s (OK)
+  k=14: ok=True, facts=  524,271, time=0.94s (OK)
+  k=15: ok=True, facts=1,114,094, time=2.07s (OK)
+  k=16: ok=True, facts=2,359,277, time=4.43s (OK)
+[1] 記号証明書エラー: 0 件
+[2] 全探索検証 (k=2 m=73, k=3 m=297; 計 1,005,372 局面): 反例 0 件
+[3] 査読済み K8 照合 (k=2..6, w=7, 各 3 周期): 反例 0 件
+所要時間: 8.76 秒

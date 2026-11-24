@@ -1,0 +1,6 @@
+name = "rubidium"
+version = "0.1.0"
+defaultTargets = ["Rubidium"]
+
+[[lean_lib]]
+name = "Rubidium"

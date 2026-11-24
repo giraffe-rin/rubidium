@@ -1,0 +1,3 @@
+# 1 次式の証明書の、実装 C による照合（data/affine_certificates_v1.txt）
+# 生成: node code/check_affine.js data/affine_certificates_v1.txt 2 40000 2000000
+調べた類: 64 個、調べた m: 128 個。食い違い: なし

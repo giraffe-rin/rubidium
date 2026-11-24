@@ -1,0 +1,5 @@
+gemini-2 independent verification of PR #219 (K41), PR #227 (K41c), PR #221 (K42/K42b)
+Full-search (PROBLEM.md only): even m (7 cases, m=2..14) and K42 (6 cases, m=3,11,15,19,27,47): errors=0
+K41 & K41c (even 2<=m<=200): formula/orbit match=100/100, direct R exact-period match=96 (m=132: P=27720, lam=5544), errors=0
+K42 (v=2,4,6, odd u<=61 including u=1): m_count=93, 40 blocks each, total_fact_checks=3225240, errors=0
+elapsed: 3.51s

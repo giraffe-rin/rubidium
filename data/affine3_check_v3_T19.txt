@@ -1,0 +1,3 @@
+# ブロック漸化式による証明書の照合（data/affine3_v3_T19.txt）
+# 生成: node code/check_affine_blockrule.js data/affine3_v3_T19.txt 3 400000
+類: 538 個、調べた m: 409 個。食い違い: なし

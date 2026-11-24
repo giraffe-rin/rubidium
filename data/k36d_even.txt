@@ -1,0 +1,13 @@
+# 予想 K36d（K 偶数）の帰納法の閉じ方の確認
+# 生成: node code/k36d_even.js 7:50 7:100 7:150 11:102 11:204 11:306 13:387 15:234
+v | N | K | E₁ で h | E₂ で h | E₂ で Y | (A)(B) で決まらない事実 | O 型の鎖の本数 | 判定
+7 | 50 | 46 | false | true | true | 0 | 12 | 閉じる
+7 | 100 | 96 | false | true | true | 0 | 12 | 閉じる
+7 | 150 | 146 | false | true | true | 0 | 12 | 閉じる
+11 | 102 | 96 | false | true | true | 0 | 28 | 閉じる
+11 | 204 | 198 | false | true | true | 0 | 28 | 閉じる
+11 | 306 | 300 | false | true | true | 0 | 28 | 閉じる
+13 | 387 | 380 | false | true | true | 0 | 38 | 閉じる
+15 | 234 | 226 | false | true | true | 0 | 50 | 閉じる
+
+すべての (v, N) で帰納法が閉じた
