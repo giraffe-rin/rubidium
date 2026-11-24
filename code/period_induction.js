@@ -12,7 +12,8 @@
  *   評価できたら、次を確かめる。
  *     (1) 各ブロック B+i（1 ≤ i ≤ L）で h が入るかが w[i mod L] と一致する（i = L は次の始まり、w[0]）
  *     (2) A の各距離のブロック B+L での値が、A の値と一致する
- *   (1)(2) が成り立てば、ブロック 0 は (G)(A) を満たし（K3）、ブロック B が (G)(A) を満たせばブロック B+L も満たすので、
+ *     (0) ブロック 0 の間隔（K3 による）が w[0] と一致する
+ *   (0)(1)(2) が成り立てば、ブロック 0 は (G)(A) を満たし（K3）、ブロック B が (G)(A) を満たせばブロック B+L も満たすので、
  *   帰納法により、すべての周期で間隔の列は w のくり返しになり、型が確定する。
  * 使い方（モジュール）: require('./period_induction').prove(m, w) → { ok, why, A, facts }
  * 実行方法（リポジトリのルートで）:
@@ -25,6 +26,8 @@ const v2 = x => { let c = 0; while (x % 2n === 0n) { x /= 2n; c++; } return c; }
 function prove(m, w, maxRounds = 5000, maxFacts = 3000000) {
   const L = w.length, v = v2(m + 1n), h = (m + 1n) / 2n; let s = 0; while (s < L && w[L - 1 - s] === '0') s++;
   if (s === 0) return { ok: false, why: '周期の列の末尾が 0 でない' };
+  // ブロック 0 の間隔：m が奇数なら g_0 = m+2 ⇔ h ∈ S_0 ⇔ v2(h) が偶数（K3）。m が偶数なら g_0 = m+1。w[0] と一致すること
+  const g0 = (m % 2n === 1n && v2(h) % 2 === 0) ? '1' : '0'; if (g0 !== w[0]) return { ok: false, why: 'ブロック 0 の間隔が w[0] と違う' };
   const bound = Math.min(2 * s - 1, v - 1); const A = new Map();
   for (let round = 0; round < maxRounds; round++) {
     const memo = new Map(); let unknown = null, tooMany = false;
