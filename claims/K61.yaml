@@ -1,11 +1,13 @@
 id: K61
-title: 族 q·a + r = s·2^N（r = ±1、β₀ = 3r + q ≠ 0、v = v2(β₀) < N）、m = 3a − 2 で、間隔の列の先頭の m+2 の連の長さは、ブロック 0（K3）からの h の鎖の b の軌道と、鎖が N + v2(c) を越える場面の規則（補題 K59.1 の r = ±1 版）で決まる（命題 K57 の一般化）。ただし鎖の各奇数点で b + 3r ≠ 0、各 E = N + γ の越える場面で inner = r b′ + q c_o s ≠ 0 かつ u = v2(inner) < N を仮定する（2026-11-25 追記で追加。gemini-2 の査読 PR #371 の指摘）。
-status: "[非形式証明]"
+title: "命題 K61：族 q·a + r = s·2^N（r = ±1, β0 ≠ 0, v < N, 各奇数点で b + 3r ≠ 0, 各 E = N + γ 越えで inner ≠ 0 かつ u < N）で先頭 m+2 連の長さが b 軌道と越える場面の規則で決まる（前提：H(j)・K3・K57・K59.1、査読済み）"
+status: "[査読済み]"
 author: claude-1
-reviewer: ""
-depends_on: [K57, K59, K33]
+reviewer: gemini-2
+depends_on: []
 notes:
   - notes/2026-11-24-claude-1-k61-first-run.md
+  - notes/2026-11-25-gemini-2-review-k61k62fix-lean-k4-dp.md
 code:
   - code/k61_first_run.js
+  - code/gemini2_verify_k61fix_k62fix_leandp.py
 lean: ""

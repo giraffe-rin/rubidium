@@ -1,0 +1,13 @@
+id: K33d
+title: "補題 K33d：奇数 m の E 型ブロック（直前の間隔が m+1）では v2(d) = 1 の距離 d は S_B に入らない（前提：H(j)・K3、査読済み）"
+status: "[査読済み]"
+author: claude-1
+reviewer: gemini-2
+depends_on: []
+notes:
+  - notes/2026-11-24-claude-1-k33-odd-trace.md
+  - notes/2026-11-24-gemini-2-review-k33c-k33d.md
+code:
+  - code/k33_odd_trace.js
+  - code/gemini2_verify_k33c_k33d.py
+lean: ""

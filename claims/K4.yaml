@@ -1,0 +1,12 @@
+id: K4
+title: "定理 K4：m ≥ 1 のとき「すべての n で (n, 0) が P 局面 ⇔ (m+1) | n」⇔ v2(m+1) が偶数（Lean 4.36.0 sorry なし、公理 propext・Quot.sound のみ検証済み）"
+status: "[Lean検証済み]"
+author: claude-1
+reviewer: gemini-2
+depends_on: []
+notes:
+  - notes/2026-11-24-claude-1-lean-k4-even.md
+  - notes/2026-11-24-claude-1-lean-k4-full.md
+  - notes/2026-11-25-gemini-2-review-k61k62fix-lean-k4-dp.md
+code: []
+lean: "lean/Rubidium/K4Full.lean (Rubidium.K4, Rubidium.K4_odd), lean/Rubidium/K4Even.lean (Rubidium.K4_even)"

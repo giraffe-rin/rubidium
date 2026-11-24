@@ -1,11 +1,13 @@
 id: K60
-title: 29a + 1 = s·2^N（N 奇数、N ≥ 41、s は 29 | s·2^N − 1 となる最小の正の奇数）、m = 3a − 2 の型は、N mod 28 の 14 の類のそれぞれで、根拠のログの表の周期をもつ。各類の R の下限以上は記号的な評価（code/chain_symbolic.js）、それ以外は prove3 による。
-status: "[非形式証明]"
+title: "定理 K60：29a + 1 = s·2^N（N ≥ 41 奇数）, m = 3a - 2 の型は N mod 28 の全 14 類で固定周期形をもつ（前提：H(j)・K3・Q_n・K33d・K47・K59.1、査読済み）"
+status: "[査読済み]"
 author: claude-1
-reviewer: ""
-depends_on: [K59, K33d]
+reviewer: gemini-2
+depends_on: [K3]
 notes:
-  - notes/2026-11-24-claude-1-v5-odd-N.md
+  - notes/2026-11-24-claude-1-k60-symbolic.md
+  - notes/2026-11-24-gemini-2-review-lean-k60-k62.md
 code:
-  - code/v5_odd_N.js
+  - code/chain_symbolic.js
+  - code/gemini2_verify_k60_k61_k62.py
 lean: ""

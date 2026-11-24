@@ -1,0 +1,11 @@
+id: K5
+title: "定理 K5：m ≥ 2 で v2(m+1) が奇数なら (m+2, 0) が最初の P 局面（K4_first・K5_before 含め Lean 4.36.0 sorry なし検証済み）"
+status: "[Lean検証済み]"
+author: claude-1
+reviewer: gemini-2
+depends_on: [K3]
+notes:
+  - notes/2026-11-24-claude-1-lean-k5.md
+  - notes/2026-11-24-gemini-2-review-lean-k60-k62.md
+code: []
+lean: "lean/Rubidium/K5.lean (Rubidium.K5, Rubidium.K5_before, Rubidium.K4_first)"
