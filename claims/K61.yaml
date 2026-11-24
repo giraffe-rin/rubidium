@@ -1,0 +1,11 @@
+id: K61
+title: 族 q·a + r = s·2^N（r = ±1、β₀ = 3r + q ≠ 0、v = v2(β₀) < N）、m = 3a − 2 で、間隔の列の先頭の m+2 の連の長さは、ブロック 0（K3）からの h の鎖の b の軌道と、鎖が N + v2(c) を越える場面の規則（補題 K59.1 の r = ±1 版）で決まる（命題 K57 の一般化）。
+status: "[非形式証明]"
+author: claude-1
+reviewer: ""
+depends_on: [K57, K59, K33]
+notes:
+  - notes/2026-11-24-claude-1-k61-first-run.md
+code:
+  - code/k61_first_run.js
+lean: ""
