@@ -1,0 +1,13 @@
+id: K59
+title: "定理 K59・補題 K59.1：鎖が v2(β) = N を越える場面の記述と、v = 3・ρ = 2・N ≥ 9 奇数族（K34・K58）の先頭 m+2 連（s = 3 で 2R、s = 7 で R + 2、前提：H(j)・K3・K47、査読済み）"
+status: "[査読済み]"
+author: claude-1
+reviewer: gemini-2
+depends_on: []
+notes:
+  - notes/2026-11-24-claude-1-k47-crossing.md
+  - notes/2026-11-24-gemini-2-review-k33ext-k58-k59.md
+code:
+  - code/k59_first_run.js
+  - code/gemini2_verify_k33ext_k58_k59.py
+lean: ""
