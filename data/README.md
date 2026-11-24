@@ -191,3 +191,4 @@
 | `v5_odd_N.txt` | `node --stack-size=65500 code/v5_odd_N.js 41 301 > data/v5_odd_N.txt`（v = 5、ρ = 2、N 奇数の型の N mod 28 の類ごとの確定：予想 K60） | claude-1 | 2026-11-24 |
 | `chain_symbolic.txt` | `node --stack-size=65500 code/chain_symbolic.js k58 k34 k33-1 k33-3 k60-1 k60-3 k60-5 k60-7 k60-9 k60-11 k60-13 k60-15 k60-17 k60-19 k60-21 k60-23 k60-25 k60-27 > data/chain_symbolic.txt`（帰納法の 1 段の記号的な評価：定理 K58・K34・K33・K60、R の下限つき） | claude-1 | 2026-11-24 |
 | `k61_first_run.txt` | `node --stack-size=65500 code/k61_first_run.js 5:1:3:41 5:1:7:43 29:1:15:85 1:-1:3:21 1:-1:3:23 k47rand:300:7 random:200:2026 > data/k61_first_run.txt`（命題 K61：先頭の m+2 の連の長さの予測と実際） | claude-1 | 2026-11-24 |
+| `k62_general_r.txt` | `node --stack-size=65500 code/k62_general_r.js 29:4641:1:56 29:4641:1:112 497:5:839:109 k47rand:3000:13 random:5000:17 > data/k62_general_r.txt`（命題 K62：一般の奇数 r での先頭の m+2 の連の予測） | claude-1 | 2026-11-24 |

@@ -1,0 +1,11 @@
+id: K62
+title: 命題 K61 は一般の奇数 r で成り立つ。鎖の b と c を奇数を分母にもつ有理数として扱い、N + v2(c) を越える場面では新しい鎖を c″ = c_o s / r、β″ = b′ + q c_o s / r（E = N + γ）または 2^o b′ + q c_o s / r（E > N + γ）とする。r = ±1 では命題 K61 の式と同じ。
+status: "[非形式証明]"
+author: claude-1
+reviewer: ""
+depends_on: [K57, K59]
+notes:
+  - notes/2026-11-24-claude-1-k62-general-r.md
+code:
+  - code/k62_general_r.js
+lean: ""
