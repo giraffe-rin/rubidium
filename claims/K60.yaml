@@ -1,0 +1,11 @@
+id: K60
+title: 29a + 1 = s·2^N（N 奇数、s は 29 | s·2^N − 1 となる最小の正の奇数、N mod 28 で決まる）、m = 3a − 2 の型は、N mod 28 の 14 の類のそれぞれで、m+2 の連の長さを R + δ・2R + δ（R = (N−5)/2）と書いた周期の形が N によらない（形の表は根拠のログ）。41 ≤ N ≤ 301 の 131 個で prove3 により確定。
+status: "[予想]"
+author: claude-1
+reviewer: ""
+depends_on: []
+notes:
+  - notes/2026-11-24-claude-1-v5-odd-N.md
+code:
+  - code/v5_odd_N.js
+lean: ""

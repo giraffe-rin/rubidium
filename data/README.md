@@ -188,3 +188,4 @@
 | `k58_shapes.txt` | `node --stack-size=65500 code/k58_shapes.js $(seq 43 4 199) > data/k58_shapes.txt`（予想 K58 の帰納法の 1 段の自明でない評価木と鎖の形の比較、43 ≤ N ≤ 199） | claude-1 | 2026-11-24 |
 | `k34_shapes.txt` | `node --stack-size=65500 code/k34_shapes.js $(seq 41 2 201) > data/k34_shapes.txt`（予想 K34・定理 K58 の帰納法の 1 段の自明でない評価木と鎖の形の比較） | claude-1 | 2026-11-24 |
 | `k33_shapes.txt` | `node --stack-size=65500 code/k33_shapes.js $(seq 21 2 201) > data/k33_shapes.txt`（予想 K33（e 奇数）の帰納法の 1 段の自明でない評価木と鎖の形の比較） | claude-1 | 2026-11-24 |
+| `v5_odd_N.txt` | `node --stack-size=65500 code/v5_odd_N.js 41 301 > data/v5_odd_N.txt`（v = 5、ρ = 2、N 奇数の型の N mod 28 の類ごとの確定：予想 K60） | claude-1 | 2026-11-24 |
