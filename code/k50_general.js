@@ -6,13 +6,16 @@
  *
  * 何を計算するか:
  *   (1) E 型ブロック B+R+j（j = 1..z−1）での h を、距離を h の有理数倍 c·(3a−1)/2^k（記号的には (Pa+Q)/2^K）として、E 型の規則で評価する。
- *       偶奇は a ≡ −r/q (mod 2^40)（N ≥ 40 で成り立つ）で決め、e ≤ m の判定は a のすべての大きさで同じになることを確かめる。
+ *       偶奇は a ≡ −r/q (mod 2^256) の下位の桁で決め（使うのは K + 1 桁だけで、N > K + 1 なら正しい）、e ≤ m の判定は a のすべての大きさで同じになることを確かめる。
  *   (2) 1 つ前が O 型ブロック B+R のときは、入口 c(3a−1)/2^k から B までの一本道の鎖を、奇数の点での b（T(b) = (b + 3r)/2^{v2(b+3r)}）の軌道を
  *       R 段たどって求める（定理 K47 の記述の一般化）。c = 1 の入口は h の鎖の途中なので、h ∉ S_{B+R}（定理 K47、補題 K48）から決める。
  *       鎖の条件を満たさない（v2(β) が N に近づく）ときは値を「不明」とし、評価は 3 値（入る・入らない・不明）で行う（e の項を先に評価する）。
  *       鎖の条件を確かめる：各 b < 3r（または軌道がそこに入る）、各奇数の点で v2(β) + v + 2 < v + ρ(R − 1) + 1 ≤ N、終点の v2 ≤ ρ − 1（ブロック B で分かる範囲）。
  *   (3) R = R0..R0 + 2P − 1（P は現れた軌道の周期の最小公倍数の 2 倍）で、h ∉ S_{B+R+j}（j = 1..z−1）となる R を求め、R mod P の剰余類として出す。
  *       鎖の結果（段数の偶奇と終点の b）は R について周期 P をもつ（軌道に入った後）ので、これで R ≥ R0 のすべてが決まる。2 周期分で一致することも確かめる。
+ *   引数を v:ρ:formal とすると、鎖を R 段たどらずに、R ≡ 1、L + 1 (mod 2L)（L = lcm(1, …, ρ/2)）での値を閉じた式で求める（形式的な評価）。
+ *     入口の軌道が純周期的で周期が L を割り、軌道の各 b < 3r、軌道での r の平均 < ρ のときだけ値を決め、それ以外は不明とする。
+ *     このとき段数の偶奇は v − k + 1（R ≡ 1）、v − k + 1 + L + (L/ℓ)·S_ℓ（R ≡ L + 1）、終点の b は c。鎖の条件が成り立つ R の下限 R1 も出す。
  *   引数を v:ρ:only とすると、R ≡ 1 と P/2 + 1 (mod P) だけを、それぞれ R ≥ R0 の最小の 2 つの R で評価する（大きい ρ 用）。
  * 実行方法（リポジトリのルートで）:
  *   node code/k50_general.js 19:18:only 21:20:only 23:22:only 25:24:only > data/k50_large_rho.txt
@@ -24,13 +27,13 @@ const fail = msg => { throw new Error(msg); };
 for (const arg of process.argv.slice(2)) {
   const [vs, rhos, mode] = arg.split(':'), v = +vs, rho = +rhos, z = rho / 2, only = mode === 'only';
   const q = 2n ** BigInt(v) - 2n ** BigInt(rho) + 1n, r = (2n ** BigInt(rho) - 1n) / 3n, R3 = 3n * r;
-  const MOD = 2n ** 40n; const inv = (x => { let y = 1n; for (let i = 0; i < 7; i++) y = (y * (2n - x * y)) % MOD; return ((y % MOD) + MOD) % MOD; })(((q % MOD) + MOD) % MOD);   // ニュートン法による 2 進の逆元
+  const MOD = 2n ** 256n; const inv = (x => { let y = 1n; for (let i = 0; i < 7; i++) y = (y * (2n - x * y)) % MOD; return ((y % MOD) + MOD) % MOD; })(((q % MOD) + MOD) % MOD);   // ニュートン法による 2 進の逆元
   if ((((q % MOD) + MOD) % MOD) * inv % MOD !== 1n) fail('逆元の計算に失敗');
   const A = ((-r * inv) % MOD + MOD) % MOD;   // a mod 2^40
   const T = b => { let x = b + R3, k = 0; while (x % 2n === 0n) { x /= 2n; k++; } return [x, k]; };
   const norm = x => { let { P, Q, K } = x; while (K > 0n && P % 2n === 0n && Q % 2n === 0n) { P /= 2n; Q /= 2n; K--; } return { P, Q, K }; };
   const show = x => `(${x.P}a${x.Q < 0n ? '−' + (-x.Q) : '+' + x.Q})/2^${x.K}`;
-  const bit = x => { if (x.K + 1n > 40n) fail('K が大きすぎる'); const M2 = 2n ** (x.K + 1n); const t = ((x.P * A + x.Q) % M2 + M2) % M2; if (t % (2n ** x.K) !== 0n) fail('整数でない ' + show(x)); return t / 2n ** x.K; };
+  const bit = x => { if (x.K + 1n > 256n) fail('K が大きすぎる'); const M2 = 2n ** (x.K + 1n); const t = ((x.P * A + x.Q) % M2 + M2) % M2; if (t % (2n ** x.K) !== 0n) fail('整数でない ' + show(x)); return t / 2n ** x.K; };
   const leM = x => { const co = x.P - 3n * 2n ** x.K, rhs = -x.Q - 2n ** (x.K + 1n); if (co < 0n) return true; if (co > 0n) return false; return 0n <= rhs; };   // a は十分大きい
   const H = { P: 3n, Q: -1n, K: 1n };
   const cycLens = new Set();
@@ -48,6 +51,22 @@ for (const arg of process.argv.slice(2)) {
       else { const vend = t - 1; if (vend > rho - 1) fail('終点の v2 が大きい'); const inB = vend % 2 === 0; return s % 2 === 0 ? inB : !inB; }
     }
   }
+  // 形式的な鎖：R ≡ 1（which = 0）または R ≡ L + 1（which = 1）(mod 2L)、L = lcm(1, …, ρ/2) のときの値を閉じた式で求める
+  const Lall = (() => { const g = (x, y) => (y ? g(y, x % y) : x); let l = 1; for (let i = 1; i <= z; i++) l = l / g(l, i) * i; return l; })();
+  let R1 = 0;
+  function formalChain(c, k, which) {
+    if (c === 1n) { if (k < 1n || k > BigInt(v)) fail('c = 1 で k が範囲外'); return (k - 1n) % 2n === 0n ? false : true; }
+    if (c < 0n || c % 2n === 0n || k > BigInt(v)) fail('入口が範囲外 c = ' + c + ', k = ' + k);
+    const orb = [c]; for (;;) { const nb = T(orb[orb.length - 1])[0]; if (nb === c) break; if (orb.includes(nb)) return null; orb.push(nb); if (orb.length > 10 * rho) return null; }   // 純周期的でなければ不明
+    if (orb.some(b => b >= R3)) return null;
+    const l = orb.length; if (Lall % l !== 0) return null; cycLens.add(l);
+    const rs = orb.map(b => T(b)[1]), sumR = rs.reduce((x, y) => x + y, 0), S = sumR - l;
+    if (sumR >= rho * l) return null;   // 平均が ρ 以上：鎖の条件が大きい R で成り立たない
+    const need = Math.floor((v + 1 + l * rho) * l / (rho * l - sumR)) + 2; if (need > R1) R1 = need;   // (R−1)(ρ − 平均) > v + 1 + ℓρ となる R の下限
+    let par = (v - Number(k) + 1) % 2; if (which === 1) par = (par + Lall + (Lall / l) * S) % 2;
+    const vend = rs[0] - 1; if (vend > rho - 1) fail('終点の v2 が大きい'); const inB = vend % 2 === 0;
+    return par === 0 ? inB : !inB;
+  }
   function orbitLen(c) { const pos = new Map(); let b = c, i = 0; while (!pos.has(b)) { pos.set(b, i++); b = T(b)[0]; } return i - pos.get(b); }
   function zerosAfter(R) {   // h ∉ S_{B+R+j}（j = 1..z−1）か
     const memo = new Map();
@@ -58,7 +77,7 @@ for (const arg of process.argv.slice(2)) {
         const e = norm({ P: 3n * 2n ** x.K + x.P, Q: -(2n ** x.K) + x.Q, K: x.K + 1n });
         let bb = false;
         if (leM(e)) {
-          if (j === 1) { if (e.P % 3n !== 0n || e.P / 3n !== -e.Q) fail('入口の形が c(3a−1)/2^k でない ' + show(e)); const c = e.P / 3n; if (c !== 1n) cycLens.add(orbitLen(c)); bb = chain(c, e.K, R); }
+          if (j === 1) { if (e.P % 3n !== 0n || e.P / 3n !== -e.Q) fail('入口の形が c(3a−1)/2^k でない ' + show(e)); const c = e.P / 3n; if (c !== 1n && typeof R !== 'object') cycLens.add(orbitLen(c)); bb = (typeof R === 'object') ? formalChain(c, e.K, R.which) : chain(c, e.K, R); }
           else bb = E(j - 1, e);
         }
         if (bb === true) res = false;
@@ -72,6 +91,11 @@ for (const arg of process.argv.slice(2)) {
   try {
     const R0 = 3 * v;   // 十分大きい R から
     const g = (x, y) => (y ? g(y, x % y) : x); const lcmOf = () => { let l = 1; for (const L of cycLens) l = l / g(l, L) * L; return 2 * l; };
+    if (mode === 'formal') {
+      const x0 = zerosAfter({ which: 0 }), x1 = zerosAfter({ which: 1 });
+      out.push(`v = ${v}、ρ = ${rho}（z = ${z}）：L = lcm(1..${z}) = ${Lall}、現れた軌道の周期 {${[...cycLens].sort((x, y) => x - y).join(', ')}}、R ≡ 1 (mod ${2 * Lall}): ${x0 ? 'm+1 が z 個以上続く' : '示せない'}、R ≡ ${Lall + 1} (mod ${2 * Lall}): ${x1 ? 'm+1 が z 個以上続く' : '示せない'}、R の下限 R1 = ${Math.max(R1, R0)}`);
+      continue;
+    }
     zerosAfter(R0); let P = lcmOf(), res;
     if (only) {   // R ≡ 1, P/2 + 1 (mod P) だけを、それぞれ 2 つの R で評価する（P が変わらなくなるまで）
       let rows;
