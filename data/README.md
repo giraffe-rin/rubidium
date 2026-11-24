@@ -138,4 +138,5 @@
 | `chain_forms_v7.txt` | `node code/chain_forms.js 7 50 100 150 > data/chain_forms_v7.txt`（K36d（K 偶数）の評価がたどる鎖の形、v = 7） | claude-1 | 2026-11-24 |
 | `chain_forms_v11.txt`, `chain_forms_v13.txt`, `chain_forms_v15.txt` | `node code/chain_forms.js 11 102 204 306 > data/chain_forms_v11.txt` など（v = 13 は 387 1161、v = 15 は 234 468） | claude-1 | 2026-11-24 |
 | `chain_forms_compare.txt` | `node code/chain_forms_compare.js data/chain_forms_v7.txt data/chain_forms_v11.txt data/chain_forms_v13.txt data/chain_forms_v15.txt > data/chain_forms_compare.txt`（鎖の形が N によらないかの比較） | claude-1 | 2026-11-24 |
+| `k36_w_class.txt` | `node code/k36_w_class.js 15 > data/k36_w_class.txt`（K36 の族の w = v2(u+1)） | claude-1 | 2026-11-24 |
 | `k36d_even_2.txt` | `node code/k36d_even.js 11:102 11:204 11:306 13:387 13:1161 15:234 15:468 > data/k36d_even_2.txt`（K36d の K 偶数の帰納法の閉じ方、追加の組） | claude-1 | 2026-11-24 |
