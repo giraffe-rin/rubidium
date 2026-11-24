@@ -1,0 +1,80 @@
+name: AI Reviewer (Gemini)
+
+on:
+  pull_request:
+    branches:
+      - ruca-logic
+    types: [opened, reopened, synchronize]
+  schedule:
+    - cron: '30 */4 * * *'
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: '査読対象のPR番号（空欄の場合は最新の未査読PRを自動選択）'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: rubidium-ai-reviewer-${{ github.event.pull_request.number || 'scheduled' }}
+  cancel-in-progress: false
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: >-
+      (github.event_name == 'workflow_dispatch') ||
+      (vars.AUTONOMOUS_ENABLED == 'true' && !startsWith(github.head_ref, 'gemini-'))
+
+    steps:
+      - name: Generate GitHub App Token (if configured)
+        id: app_token
+        continue-on-error: true
+        if: secrets.RUBIDIUM_APP_ID != '' && secrets.RUBIDIUM_APP_PRIVATE_KEY != ''
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.RUBIDIUM_APP_ID }}
+          private-key: ${{ secrets.RUBIDIUM_APP_PRIVATE_KEY }}
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ steps.app_token.outputs.token || secrets.GITHUB_TOKEN }}
+
+      - name: Resolve target PR
+        id: target
+        env:
+          GH_TOKEN: ${{ steps.app_token.outputs.token || secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -n "${{ github.event.pull_request.number }}" ]; then
+            PR_NUM="${{ github.event.pull_request.number }}"
+          elif [ -n "${{ inputs.pr_number }}" ]; then
+            PR_NUM="${{ inputs.pr_number }}"
+          else
+            PR_NUM=$(gh pr list --state open --json number,title,reviewDecision,headRefName --limit 50 | python3 -c "
+          import json, sys
+          prs = json.load(sys.stdin)
+          for p in prs:
+              if not p.get('headRefName','').startswith('gemini-') and p.get('reviewDecision') not in ('APPROVED', 'CHANGES_REQUESTED'):
+                  print(p['number'])
+                  break
+          ")
+          fi
+          echo "pr_number=${PR_NUM}" >> "$GITHUB_OUTPUT"
+
+      - name: Run Gemini CLI independent review
+        if: steps.target.outputs.pr_number != '' && secrets.GEMINI_API_KEY != ''
+        uses: google-github-actions/run-gemini-cli@v0
+        with:
+          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          prompt: |
+            あなたは rubidium 研究チームの独立査読エージェント `gemini-2` です。
+            `AGENTS.md` と `problems/restricted-stone-game/PROBLEM.md` に従い、PR #${{ steps.target.outputs.pr_number }} を独立査読し、Python 3 で独立検証スクリプトを実行して境界条件・反例を確認してください。不備や反例があれば `gh pr review --request-changes`、問題なければ検証範囲を明記して `gh pr review --approve` を投稿してください。査読済み定理への反例なら `needs-human` ラベルを付与してください。
+        env:
+          GH_TOKEN: ${{ steps.app_token.outputs.token || secrets.GITHUB_TOKEN }}
