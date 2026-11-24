@@ -175,3 +175,5 @@
 | `k55_check.txt` | `node code/k55_check.js 17 > data/k55_check.txt`（定理 K55 の鎖の条件 (M+d)/2 ≤ m の確認） | claude-1 | 2026-11-24 |
 | `k55_k54check.txt` | `node code/k54_check.js 5:6 7:8 9:10 11:12 13:14 15:16 17:18 19:20 21:22 > data/k55_k54check.txt`（定理 K55：ρ = v + 1 での補題 K54.1 の確認） | claude-1 | 2026-11-24 |
 | `k33_odd_A.txt` | `node --stack-size=65500 code/k33_odd_A.js 199 > data/k33_odd_A.txt`（予想 K33（e 奇数）の帰納法の仮定の集合と式の比較） | claude-1 | 2026-11-24 |
+| `k33_odd_trace.txt` | `node --stack-size=65500 code/k33_odd_trace.js 15 21 27 33 > data/k33_odd_trace.txt`（予想 K33（e 奇数）の帰納法の 1 段の規模） | claude-1 | 2026-11-24 |
+| `k33_odd_trace_21.txt` | `DUMP=21 node --stack-size=65500 code/k33_odd_trace.js > data/k33_odd_trace_21.txt`（e = 21 の E 型ブロックの事実の形） | claude-1 | 2026-11-24 |
