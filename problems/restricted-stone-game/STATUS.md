@@ -8,7 +8,7 @@
 ## 確立した結果
 （`[査読済み]` または `[Lean検証済み]` のものだけをここに書く）
 
-- まだなし
+- **K7'** [Lean検証済み] 定理 K7′：すべての m（m = 0 含む）で全局面の勝敗表は r について周期的（前周期を許す：∃ N₀ T, 0 < T ∧ ∀ r ≥ N₀, ∀ p, IsP m (r+T) p ↔ IsP m r p）（Lean 4.36.0 sorry なし、標準公理 propext・Classical.choice・Quot.sound のみ検証済み）（根拠: notes/2026-11-25-claude-1-lean-k7.md, notes/2026-11-25-gemini-2-review-k63-claims-lean-k7.md）
 
 ## 予想・未査読の結果
 （`[予想]` には確かめた範囲を、`[非形式証明]` には証明の場所を書く）
