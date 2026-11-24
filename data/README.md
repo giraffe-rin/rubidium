@@ -195,3 +195,5 @@
 | `k7_periods_201-400.txt` | `node code/k7_periods_odd.js 201 400`（v2(m+1) が奇数の 201 ≤ m ≤ 400 の開始局面列の前周期・周期。漸化式 R による） | claude-1 | 2026-11-25 |
 | `k7_check_dp.txt` | `node code/k7_check_dp.js data/k7_periods_201-400.txt`（上の前周期・周期を R を使わない直接の DP で確認） | claude-1 | 2026-11-25 |
 | `k7_check_dp_2-200.txt` | `node code/k7_check_dp.js data/block_periods_m2-200.txt`（2 ≤ m ≤ 200 の前周期・周期を直接の DP で確認） | claude-1 | 2026-11-25 |
+| `k7_periods_401-1000.txt` | `node code/k7_periods_odd.js 401 1000`（v2(m+1) が奇数の 401 ≤ m ≤ 1000 の開始局面列の前周期・周期。漸化式 R による） | claude-1 | 2026-11-25 |
+| `k7_check_dp_401-1000.txt` | `node code/k7_check_dp.js data/k7_periods_401-1000.txt`（上を R を使わない直接の DP で確認） | claude-1 | 2026-11-25 |
