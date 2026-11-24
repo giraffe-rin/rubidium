@@ -1,0 +1,204 @@
+name: Checkpoint Consolidator
+
+on:
+  workflow_dispatch:
+    inputs:
+      close_legacy_prs:
+        description: "Close consolidated open PRs after merging checkpoint PR"
+        type: boolean
+        required: false
+        default: true
+      dry_run:
+        description: "Run consolidation locally without pushing or creating/merging PR"
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  consolidate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout ruca-logic
+        uses: actions/checkout@v4
+        with:
+          ref: ruca-logic
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Consolidate open PRs into checkpoint-1
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CLOSE_LEGACY_PRS: ${{ inputs.close_legacy_prs }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          python3 - <<'PYEOF'
+          import datetime
+          import json
+          import os
+          import subprocess
+          import sys
+
+          def run(cmd, check=True, capture=True):
+              print(f"+ {' '.join(cmd)}", flush=True)
+              res = subprocess.run(cmd, text=True, capture_output=capture)
+              if capture and res.stdout:
+                  print(res.stdout, flush=True)
+              if capture and res.stderr:
+                  print(res.stderr, file=sys.stderr, flush=True)
+              if check and res.returncode != 0:
+                  raise RuntimeError(f"Command failed ({res.returncode}): {' '.join(cmd)}")
+              return res
+
+          close_legacy_prs = os.environ.get("CLOSE_LEGACY_PRS", "true").lower() == "true"
+          dry_run = os.environ.get("DRY_RUN", "false").lower() == "true"
+
+          run(["git", "config", "user.name", "github-actions[bot]"])
+          run(["git", "config", "user.email", "41898282+github-actions[bot]@users.noreply.github.com"])
+
+          pr_res = run([
+              "gh", "pr", "list",
+              "--state", "open",
+              "--limit", "300",
+              "--json", "number,title,headRefName",
+          ])
+          prs = json.loads(pr_res.stdout or "[]")
+          prs.sort(key=lambda p: p["number"])
+
+          base_branch = "integration/checkpoint-1"
+          ls_remote = run(["git", "ls-remote", "--heads", "origin", base_branch], check=False)
+          if ls_remote.stdout.strip():
+              ts = datetime.datetime.utcnow().strftime("%Y%m%d-%H%M%S")
+              target_branch = f"{base_branch}-{ts}"
+          else:
+              target_branch = base_branch
+
+          run(["git", "checkout", "-B", target_branch, "origin/ruca-logic"])
+
+          allowed_prefixes = ("notes/", "code/", "data/", "lean/")
+          protected_exact = {
+              "code/generate_status.py",
+              "code/build_site.py",
+              "AGENTS.md",
+              "CLAUDE.md",
+              "GEMINI.md",
+              "README.md",
+              "claims/TEMPLATE.yaml",
+              "problems/restricted-stone-game/PROBLEM.md",
+          }
+          protected_prefixes = ("docs/", ".github/", ".claude/")
+
+          def is_allowed(path):
+              if not path.startswith(allowed_prefixes):
+                  return False
+              if path in protected_exact:
+                  return False
+              if path.startswith(protected_prefixes):
+                  return False
+              return True
+
+          consolidated_records = []
+          for pr in prs:
+              num = pr["number"]
+              title = pr.get("title", "")
+              ref_name = f"refs/remotes/origin/pr-{num}"
+              fetch_res = run(["git", "fetch", "origin", f"pull/{num}/head:{ref_name}"], check=False)
+              if fetch_res.returncode != 0:
+                  print(f"Skipping PR #{num}: failed to fetch", flush=True)
+                  continue
+
+              diff_res = run([
+                  "git", "diff", "--name-only", "--diff-filter=ACMR",
+                  f"origin/ruca-logic...{ref_name}",
+              ], check=False)
+              if diff_res.returncode != 0:
+                  diff_res = run([
+                      "git", "ls-tree", "-r", "--name-only", ref_name,
+                  ], check=False)
+
+              files = [f.strip() for f in (diff_res.stdout or "").splitlines() if f.strip()]
+              target_files = [f for f in files if is_allowed(f)]
+
+              imported_count = 0
+              if target_files:
+                  for f in target_files:
+                      co_res = run(["git", "checkout", ref_name, "--", f], check=False)
+                      if co_res.returncode == 0:
+                          imported_count += 1
+
+              consolidated_records.append({
+                  "number": num,
+                  "title": title,
+                  "headRefName": pr.get("headRefName", ""),
+                  "imported_count": imported_count,
+              })
+
+          os.makedirs("notes", exist_ok=True)
+          log_path = "notes/2026-11-25-orchestrator-checkpoint-1.md"
+          total_files = sum(r["imported_count"] for r in consolidated_records)
+          lines = [
+              "# Orchestrator Checkpoint 1 Audit Log",
+              "",
+              f"- Generated at (UTC): {datetime.datetime.utcnow().isoformat()}Z",
+              f"- Target branch: `{target_branch}`",
+              f"- Total open PRs processed: {len(consolidated_records)}",
+              f"- Total imported file operations: {total_files}",
+              "",
+              "| PR | Title | Head Ref | Imported Files |",
+              "| --- | --- | --- | ---: |",
+          ]
+          for r in consolidated_records:
+              safe_title = r["title"].replace("|", "\\|")
+              lines.append(f"| #{r['number']} | {safe_title} | `{r['headRefName']}` | {r['imported_count']} |")
+
+          with open(log_path, "w", encoding="utf-8") as fp:
+              fp.write("\n".join(lines) + "\n")
+
+          run(["python3", "code/generate_status.py"])
+          run(["python3", "code/generate_status.py", "--check"])
+
+          if dry_run:
+              print("dry_run is true; skipping commit, push, PR creation, merge, and legacy PR closing.", flush=True)
+              sys.exit(0)
+
+          run(["git", "add", "-A"])
+          status_res = run(["git", "status", "--porcelain"])
+          if not status_res.stdout.strip():
+              print("No changes to commit.", flush=True)
+              sys.exit(0)
+
+          run(["git", "commit", "-m", "chore: 既存研究PR群のチェックポイント統合 (checkpoint-1)"])
+          run(["git", "push", "-u", "origin", target_branch])
+
+          pr_body = (
+              f"Consolidated {len(consolidated_records)} open PRs into `{target_branch}`.\n"
+              f"See `{log_path}` for details."
+          )
+          create_res = run([
+              "gh", "pr", "create",
+              "--base", "ruca-logic",
+              "--head", target_branch,
+              "--title", "chore: 既存研究PR群のチェックポイント統合 (checkpoint-1)",
+              "--body", pr_body,
+          ])
+          view_res = run(["gh", "pr", "view", target_branch, "--json", "number", "-q", ".number"])
+          checkpoint_pr_number = view_res.stdout.strip()
+          print(f"Created checkpoint PR #{checkpoint_pr_number}", flush=True)
+
+          run(["gh", "pr", "merge", checkpoint_pr_number, "--merge"])
+          print(f"Merged checkpoint PR #{checkpoint_pr_number}", flush=True)
+
+          if close_legacy_prs:
+              comment = f"Consolidated into checkpoint PR #{checkpoint_pr_number} on ruca-logic."
+              for r in consolidated_records:
+                  num = str(r["number"])
+                  run(["gh", "pr", "close", num, "--comment", comment], check=False)
+          PYEOF
