@@ -161,3 +161,5 @@
 | `k47_preperiod.txt` | `node --stack-size=65500 code/k47_preperiod.js 11 100 > data/k47_preperiod.txt`（定理 K47・K47b の族の型の確定、前周期と周期の中の連） | claude-1 | 2026-11-24 |
 | `k48_runs.txt` | `node --stack-size=65500 code/k48_runs.js 11 120 > data/k48_runs.txt`（補題 K48 の 0^{ρ/2} 1 の後の m+2 の連の照合） | claude-1 | 2026-11-24 |
 | `k49_rho4.txt` | `node --stack-size=65500 code/k49_rho4.js 15 200 > data/k49_rho4.txt`（定理 K49 の ρ = 4 の族の m+2・m+1 の連の照合） | claude-1 | 2026-11-24 |
+| `k50_general.txt` | `node code/k50_general.js 5:4 7:4 9:4 11:4 13:4 7:6 9:6 11:6 13:6 9:8 11:8 13:8 11:10 13:10 13:12 > data/k50_general.txt`（定理 K50：m+1 が ρ/2 個以上続く R の剰余類） | claude-1 | 2026-11-24 |
+| `k50_check.txt` | `node --stack-size=65500 code/k50_check.js data/k50_general.txt > data/k50_check.txt`（定理 K50 の数値での照合） | claude-1 | 2026-11-24 |
