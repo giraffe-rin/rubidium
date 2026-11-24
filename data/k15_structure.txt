@@ -1,0 +1,30 @@
+# 定理 K15 の証明の構造（直接の DP、m ≤ 8000）
+# 生成: node code/k15_structure.js 8000
+
+## (1) 主張の確認（k：対象の数、1(10)^k 型と一致した数）
+k=1：250 個中 250 個
+k=2：62 個中 62 個
+k=3：16 個中 16 個
+k=4：4 個中 4 個
+k=5：1 個中 1 個
+
+## (2) 各ブロックの Blk の範囲 t（O/E は 1 つ前の間隔が m+2/m+1、99 は全範囲、−1 は奇数でも崩れる）
+m=17 k=1：99 O-1 O-1 E1
+m=49 k=1：99 O-1 O-1 E1
+m=73 k=2：99 O-1 O-1 E1 O-1 E3
+m=81 k=1：99 O-1 O-1 E1
+m=113 k=1：99 O-1 O-1 E1
+m=145 k=1：99 O-1 O-1 E1
+m=177 k=1：99 O-1 O-1 E1
+m=201 k=2：99 O-1 O-1 E1 O-1 E3
+
+## (3) 2^t·w と h + 2^t·w の所属
+m=297 k=3 w=7（各行：ブロック、2^t·w（t = 0..5）の所属、h + 2^t·w（t = 0..4）の所属）
+  ブロック0 PNPNPN  PPPPP
+  ブロック1(O) NPNPNP  NNPNP
+  ブロック2(O) NPNPNP  NPNPN
+  ブロック3(E) PNNPNP  NPPPP
+  ブロック4(O) NPNPNP  NNPPN
+  ブロック5(E) PNPNNP  PPPPP
+  ブロック6(O) NPNPNP  NNPNP
+  ブロック7(E) PNPNPN  PPPPP
