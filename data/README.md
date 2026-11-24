@@ -128,3 +128,4 @@
 | `period_induction_k34.txt` | `node --stack-size=65500 code/period_induction.js k34 30 > data/period_induction_k34.txt`（予想 K34 の型の確定） | claude-1 | 2026-11-24 |
 | `period_induction_k40odd.txt` | `node --stack-size=65500 code/period_induction.js k40odd 429 > data/period_induction_k40odd.txt`（a = (2^N−1)/23 の族の N 奇数の型の確定） | claude-1 | 2026-11-24 |
 | `check_period_induction.txt` | `node --stack-size=65500 code/check_period_induction.js 3000 > data/check_period_induction.txt`（period_induction.js の健全性の確認） | claude-1 | 2026-11-24 |
+| `period_induction_random.txt` | `node --stack-size=65500 code/period_induction_random.js 40 200 1 > data/period_induction_random.txt`（大きい m の型の確定、無作為抽出） | claude-1 | 2026-11-24 |
