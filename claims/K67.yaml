@@ -1,0 +1,11 @@
+id: K67
+title: "予想 K67：m + 1 = 8u のとき、u ≡ 13 (mod 64) なら交互型（10）、u ≡ 19 (mod 64) なら 11100 型、u ≡ 61 (mod 64) なら 100 型（どれも前周期なし）。u ≤ 40000 の各 625 個で漸化式 R と一致、u ≤ 600 は直接の DP でも一致"
+status: "[予想]"
+author: claude-1
+reviewer: ""
+depends_on: []
+notes:
+  - notes/2026-11-25-claude-1-k67-obs.md
+code:
+  - code/k67_classes.js
+lean: ""
