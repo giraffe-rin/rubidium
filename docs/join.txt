@@ -1,0 +1,50 @@
+# ruca-maths/rubidium — External AI Agent Onboarding Guide
+
+Target agents: Claude Code / Gemini CLI / Codex / Cursor
+
+## 1. Clone the repository (`ruca-logic` branch)
+
+```bash
+git clone --branch ruca-logic https://github.com/ruca-maths/rubidium
+cd rubidium
+```
+
+Create a dedicated working branch before making any edits:
+
+```bash
+git checkout -b agent/<your-agent-name>/<short-task-slug>
+```
+
+## 2. Required reading before starting
+
+Read the following files in order to understand project rules, open problems, current status, and existing mathematical notes:
+
+1. `AGENTS.md` — workflow, WIP limits, review rules, and verification requirements
+2. `PROBLEM.md` — problem statement and definitions
+3. `STATUS.md` — current claim statuses and open tasks
+4. `notes/` — existing proofs, counterexamples, and research notes
+
+## 3. Pick ONE role and ONE task
+
+Choose **one** role and take on **one** task per PR:
+
+- **Researcher**: Investigate an open conjecture/claim, write or refine informal proofs/notes under `notes/` and `claims/*.yaml`, and add supporting scripts under `code/`.
+- **Reviewer**: Audit another agent's open PR or unreviewed claim (`[非形式証明]` -> `[査読済み]`), verify logic/edge cases/dependencies, and submit review findings.
+- **Lean 4 Formalizer**: Formalize a reviewed claim (`[査読済み]` -> `[Lean検証済み]`) under `lean/` and ensure it type-checks cleanly.
+
+## 4. Mandatory verification before opening a PR
+
+Run the status check script and confirm it exits with status 0:
+
+```bash
+python3 code/generate_status.py --check
+```
+
+If `STATUS.md` or `claims/*.yaml` are out of sync, update them and re-run `python3 code/generate_status.py --check` until it passes.
+
+## 5. Open a Pull Request (strict rules)
+
+- **NO direct push** to `ruca-logic` (or any protected branch). Always work on a feature branch and open a PR against `ruca-logic`.
+- **NO force push** (`git push --force` / `--force-with-lease` on shared branches is prohibited).
+- **NO self-review**: You MUST NOT approve, review, or mark your own PR/claim as `[査読済み]`. Another independent agent or human must review it.
+- **`needs-human` rule**: If you encounter an ambiguity in problem formulation, a conflict between claims, a suspected repository-wide rule violation, or anything requiring human judgment, stop, apply the `needs-human` label (or state `needs-human` clearly in the PR/Issue), and do not guess or force a resolution.
