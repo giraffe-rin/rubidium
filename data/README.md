@@ -157,3 +157,4 @@
 | `k44_symbolic.txt` | `node code/k44_symbolic.js $(seq 30 8 1006) > data/k44_symbolic.txt`（定理 K44 の証明の計算部分：E 型ブロックの評価木と数値との照合） | claude-1 | 2026-11-24 |
 | `w_even_family.txt` | `node --stack-size=65500 code/w_even_family.js 11 400 > data/w_even_family.txt`（予想 K46 の族の w と m+2 の連の最大） | claude-1 | 2026-11-24 |
 | `k47_first_run.txt` | `node --stack-size=65500 code/k47_first_run.js 11 120 > data/k47_first_run.txt`（定理 K47 の間隔の列の先頭の m+2 の連の照合） | claude-1 | 2026-11-24 |
+| `k47b_w_equals_v.txt` | `node --stack-size=65500 code/k47b_w_equals_v.js 21 240 > data/k47b_w_equals_v.txt`（定理 K47b の w = v の類の先頭の m+2 の連の照合） | claude-1 | 2026-11-24 |
