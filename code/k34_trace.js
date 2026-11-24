@@ -6,6 +6,8 @@
  *   周期 w（K34：1^{2R} 0 (1^R 0 0)^2、K58：1^{R+2} 0 1^R 0）について、prove3（period_induction.js）で得た仮定の集合 A を周期の始まりの事実とし、
  *   1 周期の h と A の各距離を評価し直す。O 型ブロックは一本道（例外 (M+d)/2 > m と d = h − 1 はそこで値を決め、それまでの段数で反転する）、E 型ブロックは E 型の規則。
  *   出力：評価が w と A に一致するか、仮定の距離（a の 1 次式）、E 型の事実の数、O 型の鎖の数。環境変数 DUMP を与えると E 型の事実を出す。
+ *   環境変数 NONTRIV を与えると、E 型の事実のうち v2 ≥ 2 のもの（奇数は入る、v2 = 1 は入らない（補題 K33d）で自明に決まるもの以外）だけを、
+ *   ブロックの位置を周期の中の E 型ブロックの番号（周期の先頭から何番目の E 型ブロックか）で表して出す。
  * 実行方法（リポジトリのルートで）:
  *   node --stack-size=65500 code/k34_trace.js 41 45 49 53 43 47 51 > data/k34_trace.txt
  */
@@ -27,4 +29,5 @@ for(const N of process.argv.slice(2).map(Number)){
   memo.set(key,r);return r};
  let ok=true;for(let i=1;i<=L;i++)if((S(i,h)?'1':'0')!==w[i%L])ok=false;for(const [d,val] of A)if(S(L,d)!==val)ok=false;
  console.log('N',N,'s',s,'R',R,'L',L,'ok',ok,'仮定',[...A.keys()].map(form).join(' '),'E の事実',nE,'鎖',entries.length);
- if(process.env.DUMP)console.log(efacts.join('\n'))}
+ if(process.env.DUMP)console.log(efacts.join('\n'));
+ if(process.env.NONTRIV){const eb=[];for(let i=1;i<=L;i++)if(gap(i-1)==='0')eb.push(i);const rows=new Set();for(const x of efacts){const mm=x.match(/^ブロック (\d+)：(.*)（v2 (\d+)）(.)$/);if(mm&&+mm[3]>=2)rows.add('  E 型ブロック '+(eb.indexOf(+mm[1])+1)+'/'+eb.length+'：'+mm[2]+'（v2 '+mm[3]+'）'+mm[4])}console.log([...rows].sort().join('\n'))}}
