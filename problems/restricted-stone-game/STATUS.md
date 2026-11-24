@@ -8,7 +8,9 @@
 ## 確立した結果
 （`[査読済み]` または `[Lean検証済み]` のものだけをここに書く）
 
-- まだなし
+- **K10a** [Lean検証済み] 定理 K10 (a)：m + 1 = 8u、u ≡ 1 (mod 8)、u ≥ 9（m % 64 = 7、m ≥ 71）のとき、すべての n で (n, 0) が P 局面 ⇔ n mod (2m+3) ∈ {0, m+2}（Lean 4.36.0 sorry なし、公理 propext・Quot.sound のみ検証済み）（根拠: notes/2026-11-25-claude-1-lean-k10a.md, notes/2026-11-25-gemini-2-review-lean-k6k9k10a-k7periods.md）
+- **K6** [Lean検証済み] 定理 K6：m ≡ 5 (mod 8) のとき、すべての n で (n, 0) が P 局面 ⇔ n mod (2m+3) ∈ {0, m+2}（Lean 4.36.0 sorry なし、公理 propext・Quot.sound のみ検証済み）（根拠: notes/2026-11-25-claude-1-lean-k6.md, notes/2026-11-25-gemini-2-review-lean-k6k9k10a-k7periods.md）
+- **K9** [Lean検証済み] 定理 K9：v2(m+1) = 1（m % 4 = 1、m ≥ 5）のとき「すべての n で (n, 0) が P 局面 ⇔ n mod (2m+3) ∈ {0, m+2}」⇔ v2(3h+1) が奇数（Lean 4.36.0 sorry なし、公理 propext・Quot.sound のみ検証済み）（根拠: notes/2026-11-25-claude-1-lean-k9.md, notes/2026-11-25-claude-1-lean-k9-nec.md, notes/2026-11-25-gemini-2-review-lean-k6k9k10a-k7periods.md）
 
 ## 予想・未査読の結果
 （`[予想]` には確かめた範囲を、`[非形式証明]` には証明の場所を書く）

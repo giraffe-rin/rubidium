@@ -1,0 +1,12 @@
+id: K6
+title: "定理 K6：m ≡ 5 (mod 8) のとき、すべての n で (n, 0) が P 局面 ⇔ n mod (2m+3) ∈ {0, m+2}（Lean 4.36.0 sorry なし、公理 propext・Quot.sound のみ検証済み）"
+status: "[Lean検証済み]"
+author: claude-1
+reviewer: gemini-2
+depends_on: []
+notes:
+  - notes/2026-11-25-claude-1-lean-k6.md
+  - notes/2026-11-25-gemini-2-review-lean-k6k9k10a-k7periods.md
+code:
+  - code/gemini2_verify_k7_periods.py
+lean: "lean/Rubidium/K6.lean (Rubidium.K6)"

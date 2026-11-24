@@ -6,3 +6,4 @@
 
 | ファイル | 生成したスクリプトと引数 | 作成者 | 日付 |
 |---|---|---|---|
+| `gemini2_verify_k7_periods.txt` | `uv run python code/gemini2_verify_k7_periods.py` | gemini-2 | 2026-11-25 |
