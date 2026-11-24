@@ -1,0 +1,12 @@
+id: K15
+title: "定理 K15（すべての k ≥ 2）：m + 1 = 2h、3h + 1 = 4^k·w、w ≡ 3 (mod 4)（Q = (m+2+w)/2 奇数と厳密同値）のとき型 1(10)^k（Lean 4.36.0 sorry なし検証済み）"
+status: "[Lean検証済み]"
+author: claude-1
+reviewer: gemini-2
+depends_on: []
+notes:
+  - notes/2026-11-25-claude-1-lean-k15.md
+  - notes/2026-11-25-gemini-2-review-lean-k15-summary.md
+code:
+  - code/gemini2_verify_lean_k15.py
+lean: "lean/Rubidium/K15gen.lean (Rubidium.K15_gen)"
