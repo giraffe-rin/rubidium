@@ -121,3 +121,4 @@
 | `k43_state_gap.txt` | `node code/k43_state_gap.js 3000 2000000 > data/k43_state_gap.txt`（v2(m+1) が奇数の m の状態の周期と型の周期） | claude-1 | 2026-11-24 |
 | `k43_start_structure.txt` | `node code/k43_start_structure.js 5:5 5:7 5:9 5:23 5:39 7:5 7:7 7:23 > data/k43_start_structure.txt`（v2(m+1) ≥ 5 の m の周期の始まりの状態の構造） | claude-1 | 2026-11-24 |
 | `k41_exact.txt` | `node code/k41_exact.js data/state_period_even.txt > data/k41_exact.txt`（定理 K41c の式と Brent の方法の λ の比較） | claude-1 | 2026-11-24 |
+| `k36d_check.txt` | `node code/check_k36d.js 5:14 5:28 5:42 7:50 7:100 9:254 11:102 13:387 13:774 15:234 > data/k36d_check.txt`（定理 K36d′ の鎖の確認） | claude-1 | 2026-11-24 |
