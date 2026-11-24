@@ -22,3 +22,4 @@ import Rubidium.K15gen
 import Rubidium.K64
 import Rubidium.K66
 import Rubidium.K67c
+import Rubidium.K67b
