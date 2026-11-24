@@ -1,0 +1,6 @@
+gemini-2 independent symbolic & numerical verification of PR #257 (Theorem K40a / Cor K39) and PR #259 (Theorem K36d'' v=7)
+PR #257 Theorem K40a & Cor K39: SYMBOLIC PROOF VERIFIED for all N = 22r >= 22 (max_k_used=9, need <= 22 bits), errors=0
+PR #257 BigInt cross-check (N=22..880, 40 cases, up to 265-digit m): 40/40 exact match, errors=0
+PR #259 Theorem K36d'' (v=7, q=125): SYMBOLIC PROOF VERIFIED for all N = 50r >= 50 (12 chains, E1(h)=False, E2(h)=True, E2(Y)=True, max_k_used=13 <= 99), errors=0
+PR #259 BigInt cross-check (N=50,100,150,200,250,300, up to 179-digit m): 6/6 exact match (12 chains each), errors=0
+Total elapsed=0.70s
