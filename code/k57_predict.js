@@ -7,15 +7,16 @@
  *   ブロック i（g_0..g_{i−1} = m+2 と仮定）の h の鎖はブロック 0 まで i 回の奇数の段をたどり、終点の v2 は t(b_i) − 1、
  *   段数は s_i = (v2(β_0) − 1) + i + Σ_{j<i}(t(b_j) − 1)。v2(β) が N 未満のあいだ（終点の v2(β) = K_i + t(b_i) < N）、
  *   g_i = m+2 ⇔ [終点の v2 が偶数（K3 で入る）] XOR [s_i が奇数] が「入らない」の反対、つまり h ∈ S_i ⇔ (終点で入る) ≠ (s_i が奇数)。
+ *   前提：β₀ ≠ 0 かつ v = v2(β₀) < N（満たさない族は「対象外」と出す）。軌道の途中で b + 3r = 0 になったら、そこで予測をやめる（「…」）。
  *   予測は、最初に g_i = m+1 となる i か、v2(β) が N に達して予測できなくなる i まで行う（その間の (M+d)/2 ≤ m と d ≠ h − 1 は確かめない：数値と比べる）。
  *   引数の各族 q:r:s:N について、予測した先頭の間隔の列と、gapsBig（lazy_bigint.js）で求めた実際の列を比べる。
  * 実行方法（リポジトリのルートで）:
- *   node --stack-size=65500 code/k57_predict.js 29:4641:1:56 29:4641:1:112 29:4641:1:224 29:4641:1:336 17:5:3:30 17:5:3:62 23:1:1:22 23:1:1:88 125:1:1:100 125:1:1:200 random:300:12345 > data/k57_predict.txt
+ *   node --stack-size=65500 code/k57_predict.js 29:4641:1:56 29:4641:1:112 29:4641:1:224 29:4641:1:336 17:5:3:30 17:5:3:62 23:1:1:22 23:1:1:88 125:1:1:100 125:1:1:200 random:300:12345 5:9:9:4 5:9:17:5 3:-1:1:3 27:-1:1:9 > data/k57_predict.txt
  *   引数 random:個数:種 で無作為な族を加える。
  */
 'use strict';
 const { gapsBig } = require('./lazy_bigint');
-const v2 = x => { x = x < 0n ? -x : x; let c = 0; while (x % 2n === 0n) { x /= 2n; c++; } return c; };
+const v2 = x => { if (x === 0n) return Infinity; x = x < 0n ? -x : x; let c = 0; while (x % 2n === 0n) { x /= 2n; c++; } return c; };   // v2(0) = ∞
 const out = ['# 命題 K57：ブロック 0 からの h の鎖の b の軌道による間隔の列の先頭の予測', '# 生成: node --stack-size=65500 code/k57_predict.js ' + process.argv.slice(2).join(' '),
   'q | r | s | N | v | 予測した先頭（最初の m+1 まで、または予測が尽きるまで） | 実際の先頭 | 一致'];
 let tot = 0, ok = 0;
@@ -29,7 +30,9 @@ for (const arg of args) {
   const X = 2n ** BigInt(N); if ((s * X - r) % q !== 0n) { out.push(`${arg}：割り切れない`); continue; }
   const a = (s * X - r) / q, m = 3n * a - 2n; if (a % 2n === 0n) { out.push(`${arg}：a が偶数`); continue; }
   const beta0 = 3n * r + q, v = v2(beta0);
-  const R3 = 3n * r, T = b => { let x = b + R3, t = 0; while (x % 2n === 0n) { x /= 2n; t++; } return [x, t]; };
+  // 命題 K57 の前提：β₀ ≠ 0 かつ v < N（このとき v2(m+1) = v。q(m+1) = 3s·2^N − β₀ による）。満たさなければ対象外
+  if (beta0 === 0n || v >= N) { out.push(`${q} | ${r} | ${s} | ${N} | ${v === Infinity ? '∞' : v} | 対象外（β₀ = 0 または v ≥ N） | ${gapsBig(m, 4, 5e7).gaps} | -`); continue; }
+  const R3 = 3n * r, T = b => { if (b + R3 === 0n) return null; let x = b + R3, t = 0; while (x % 2n === 0n) { x /= 2n; t++; } return [x, t]; };   // b + 3r = 0 なら予測できない
   // ブロック 0：h ∈ S_0 ⇔ v2(h) = v − 1 が偶数
   let pred = (v - 1) % 2 === 0 ? '1' : '0';
   if (pred === '1') {
@@ -38,7 +41,8 @@ for (const arg of args) {
     for (let i = 1; i < 400; i++) {
       // ブロック i の鎖：奇数の点は b_1..b_i（ブロック i, i−1, …, 1）。b_j は i によらない（同じ h から）
       bs.push(b); Ks.push(K);
-      const [nb, t] = T(b);
+      const Tb = T(b); if (Tb === null) { stopped = true; break; }   // b + 3r = 0：v2(β) = ∞ となり予測できない
+      const [nb, t] = Tb;
       const endV2beta = K + t; if (endV2beta >= N) { stopped = true; break; }
       // 段数の偶奇：(v − 1) + i + Σ_{j<i}(t_j − 1)
       let sp = (v - 1) + i; for (let j = 0; j < i - 1; j++) sp += T(bs[j])[1] - 1;
