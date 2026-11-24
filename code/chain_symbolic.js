@@ -14,6 +14,9 @@
  *     鎖の最後の奇数の段の後の距離（終点）の v2 を求める。v2 ≥ 2 なら、終点の形 (α, c, K)（具体的な数）を求めて、行き先の E 型ブロックで評価する。
  *     c が偶数（v2(c) = γ）の入口では、csX の付値が N + γ なので、越える基準を N + γ とし、上の式の c を c/2^γ に置き換える。
  *     奇数の点で d = h − 1 ちょうど（a の係数 3/2、定数 −3/2）なら、O 型ブロックの規則でその距離は入らないので、鎖はそこで値が決まる。
+ *     不動点の区間は、K が v2(c) + 2 を超えてからまとめて進める（d = h − 1 は c/2^K = 3/2、つまり K = v2(c) + 1 のときだけ起こりうるので、それまでは 1 段ずつ確かめる）。
+ *     鎖の条件は、BigInt による厳密な整数の比較で判定する。
+ *     K が R の 1 次式の点でも、係数 b/r（N − K が具体的な数なら定数項も）で鎖の条件を確かめる。
  *   - 鎖の条件：各奇数の点で d = (ba − cs·2^{N−K})/r が 0 < d ≤ 3a − 4、d ≠ h − 1（a が十分大きいとき）を満たすことを、a の係数で確かめる。
  *     不動点の区間では、区間の始めの係数と、K → ∞ の極限 b/r の両方を確かめる（係数は K について単調）。
  *   出力：評価したすべての E 型の事実（ブロック、距離、値）と、すべての鎖（入口、長さ、越えた回数、終点の v2、段の数の偶奇、値）、失敗した点。
@@ -108,10 +111,13 @@ function run(F, base) {
   const x0 = ei => (ei < 0 ? '連の中の h' : E[ei].id);
   function T(b) { let x = b + 3n * r, t = 0; if (x === 0n) return null; while (x % 2n === 0n) { x /= 2n; t++; } return [x, t]; }
   function checkPoint(b, c, K, label) {   // 奇数の点 d = (ba − c(qa + r)/2^K)/r の a の係数と定数（K は具体的な数）
-    const lam = (Number(b) - Number(c) * Number(q) / 2 ** K) / Number(r), kap = -Number(c) / 2 ** K;
-    if (lam === 1.5 && kap === -1.5) return 'H';   // d = h − 1：O 型ブロックの規則で入らない
-    const ok = (lam > 0 || (lam === 0 && kap > 0)) && (lam < 3 || (lam === 3 && kap <= -4));
-    if (!ok) fails.push(`鎖の条件が成り立たない（${label}、b = ${b}、c = ${c}、K = ${K}、係数 ${lam}）`);
+    // 厳密な整数の比較：d = (Aa + B)/D、A = b·2^K − cq、B = −cr、D = r·2^K（a は十分大きい）
+    const P = 2n ** BigInt(K), Aq = b * P - c * q, Bq = -c * r, D = r * P;
+    const sg = x => (x > 0n ? 1 : x < 0n ? -1 : 0), sD = sg(D);
+    if (2n * Aq === 3n * D && 2n * Bq === -3n * D) return 'H';   // d = h − 1 = (3a − 3)/2：O 型ブロックの規則で入らない
+    const pos = sg(Aq) * sD > 0 || (Aq === 0n && sg(Bq) * sD > 0);                       // 0 < d
+    const le = sg(Aq - 3n * D) * sD < 0 || (Aq === 3n * D && sg(Bq + 4n * D) * sD <= 0);   // d ≤ 3a − 4
+    if (!(pos && le)) fails.push('鎖の条件が成り立たない（' + label + '、b = ' + b + '、c = ' + c + '、K = ' + K + '）');
     return 'ok';
   }
   // 不動点の区間（K は区間の始めの具体的な値から N − 1 − t まで）での鎖の条件
@@ -124,6 +130,19 @@ function run(F, base) {
     if (lim === 3) { const k = Number(c) * Number(s) / Number(r); if (!(k > 0 && k * 2 ** (1 + t) >= 4)) fails.push('不動点 b = ' + b + '：区間の終わりで d ≤ 3a − 4 が成り立たない'); }
     if (lim === 1.5) fails.push('不動点 b = ' + b + '：極限の係数が 3/2');
   }
+  // K が R の 1 次式の奇数の点：d = (ba − cs·2^{N−K})/r。N − K が R とともに増えるなら、a の係数は b/r に（2^{N−K} の項は (qa + r)/2^K で K → ∞）近づく。
+  //   N − K が具体的な数 κ なら d = (ba − cs·2^κ)/r で、係数 b/r、定数 −cs·2^κ/r。どちらも 0 < d ≤ 3a − 4、d ≠ h − 1 を確かめる。
+  function checkAffine(b, c, K, label) {
+    const lam = Number(b) / Number(r), NK = sub(N, K);
+    if (NK.r1 === 0) {
+      const kap = -Number(c) * Number(s) * 2 ** NK.r0 / Number(r);
+      const ok = (lam > 0 || (lam === 0 && kap > 0)) && (lam < 3 || (lam === 3 && kap <= -4)) && !(lam === 1.5 && kap === -1.5);
+      if (!ok) fails.push(`鎖の条件が成り立たない（${label}、b = ${b}、c = ${c}、K = N − ${NK.r0}）`);
+    } else {
+      const ok = lam > 0 && (lam < 3 || (lam === 3 && Number(c) * Number(s) / Number(r) > 0)) && lam !== 1.5;
+      if (!ok) fails.push(`鎖の条件が成り立たない（${label}、b = ${b}、c = ${c}、K = ${show(K)}、極限の係数 ${lam}）`);
+    }
+  }
   function Chain(runInfo, al, c, K0, fromEi) {
     const n = runInfo.len, toEi = runInfo.from; const desc = [];
     let beta = r * al + q * c, v = v2n(beta);
@@ -133,11 +152,12 @@ function run(F, base) {
     for (let guard = 0; guard < 10000; guard++) {
       // ここは奇数の点（j 番目の奇数の段の前）。j は済んだ奇数の段の数
       if (K.r1 === 0 && checkPoint(b, cc, K.r0, fmt(al, c, K0)) === 'H') { hStop = true; desc.push(`b=${b}（d = h − 1 で止まる）`); break; }
+      if (K.r1 !== 0) checkAffine(b, cc, K, fmt(al, c, K0));
       const gam = v2n(cc), Ng = add(N, con(gam)), co = cc / 2n ** BigInt(gam);   // c が偶数なら、越える基準は N + v2(c)
       const Tb = T(b); if (!Tb) { fails.push('b + 3r = 0'); return null; }
       const [b2, t] = Tb; const Eexp = add(K, con(t)); const isLast = eq(add(j, con(1)), n); const rel = cmp(Eexp, Ng);
       if (rel < 0) {
-        if (b2 === b && !isLast && (t === 1 || t === 2)) {   // 不動点の区間を一度に進める
+        if (b2 === b && !isLast && (t === 1 || t === 2) && (K.r1 !== 0 || K.r0 > v2n(cc) + 2)) {   // 不動点の区間を一度に進める（d = h − 1 になりうる K = v2(c) + 1 までは 1 段ずつ確かめる）
           // 進める段の数 k：j + k ≤ n − 1 かつ K + k t ≤ N − 1 − t（次の段でもまだ越えない位置まで）、k ≥ 1
           const lim1 = sub(sub(n, con(1)), j);
           let lim2 = sub(sub(Ng, con(1 + t)), K); if (t === 2) { const p = parOf(lim2); lim2 = A(lim2.r1 / 2, (lim2.r0 - p) / 2); if (!Number.isInteger(lim2.r1)) { fails.push('不動点の区間の長さが整数でない'); return null; } }
