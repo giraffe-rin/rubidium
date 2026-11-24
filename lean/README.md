@@ -36,6 +36,7 @@ Lean 4 による形式化を置く場所です。
 | `Rubidium/K29gen.lean` | **定理 K29（すべての奇数 v ≥ 5）** `K29_gen`：m+1 = 2^v·u、u ≡ 1 (mod 4) なら型は 1 0^{(v−1)/2}（u = 1 を含む）。行 b の `k29_S0`（よい q：q ≡ 1 (mod 4) か qu ≡ 3 (mod 8)）、Inh の 1 段 `k29_istep`、`k29_eD`、ブロックの帰納法 `k29g_step`。公理は `propext`・`Classical.choice`・`Quot.sound`。 |
 | `Rubidium/K15gen.lean` | **定理 K15（一般の k ≥ 2）** `K15_gen`：m+1 = 2h、3h+1 = 4^k·w（w ≡ 3 (mod 4)、k ≥ 2）なら型は 1(10)^k。h が奇数のときの半分にする規則 `o_half`′・`o_iter3`（(iii) の例外は h ≡ 5 (mod 16) で除く）、O 型の奇数 `o_odd_iff`、Blk を O 型をはさんで伸ばす `blk_EO`、値の上界つきの Inh `K15I`・`k15_istep`、`k15_step`。公理は `propext`・`Classical.choice`・`Quot.sound`。 |
 | `Rubidium/K64.lean` | **定理 K64** `K64`：m+1 = 2h、3h+1 = 4w（w 奇数）、m ≥ 9、列 X₀ = (m+2+w)/2、X_{t+1} = (m+2+X_t/2)/2 で X_t ≡ 2 (mod 4)（t < j）、X_j 奇数なら型は 1^{j+2} 0。`k64X`、`k64_shift`（O 型の連続で 1 つ前のブロックに移る）、`k64_chain`、`k64_hfact`。公理は `propext`・`Classical.choice`・`Quot.sound`。 |
+| `Rubidium/K66.lean` | **定理 K66** `K66`：(m+1) % 128 = 88（m+1 = 8u、u ≡ 11 (mod 16)）なら `IsP m n 0 ↔ n % (3m+5) ∈ {0, m+2, 2m+4}`（110 型）。`k66_step`・`k66_rows`（始まりの行は Blk m 1 と (a + 4u) が P）。公理は `propext`・`Classical.choice`・`Quot.sound`。 |
 | `Rubidium/Decide.lean` | 計算できる判定 `isPb m r p : Bool`（`Nat.all` による再帰）と、`isPb_iff`：`isPb m r p = true ↔ IsP m r p`。 |
 | `check/PStarts.lean` | `isPb` を実行して、m ≤ 10 の後手必勝の開始局面 (n, 0)（n ≤ 24）を出すスクリプト。出力は `data/lean_pstarts.txt`、JavaScript の全探索との照合は `data/lean_crosscheck.txt`。 |
 | `check/Tables.lean` | Array による DP で全局面 (r, p) の勝敗表を出すスクリプト（証明はない、別言語の実装による照合用）。出力は `data/lean_tables.txt`、`data/tables` との照合は `data/lean_tables_compare.txt`。 |
