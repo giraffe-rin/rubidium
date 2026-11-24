@@ -33,6 +33,7 @@ Lean 4 による形式化を置く場所です。
 | `Rubidium/K38v7.lean` | **定理 K38（v = 7）** `K38_v7`：m+1 = 128u で u ≡ 7 (mod 16)、31 (mod 64)、255 (mod 256) のどれかなら `IsP m n 0 ↔ n % (5m+6) ∈ {0, m+2, 2m+3, 3m+4, 4m+5}`（10000 型）。公理は `propext`・`Classical.choice`・`Quot.sound`。 |
 | `Rubidium/K38gen.lean` | **定理 K38（すべての奇数 v ≥ 5）** `K38_gen`：m+1 = 2^v·u、u ≡ 3 (mod 4)、v2((m+2+u)/2) が偶数で v−1 以下なら、型は 1 0^{(v+1)/2}。O 型のブロックの `o_half`・`o_iter`、E 型の `e_iff`、補題 Inh′ の 1 段 `k38_istep`（b の強い帰納法）、3H/2 の `k38_K`・`k38_N`、ブロックについての帰納法 `k38g_step`。公理は `propext`・`Classical.choice`・`Quot.sound`。 |
 | `Rubidium/K38w.lean` | **定理 K38（もとの形）** `K38`：v ≥ 5 奇数、m+1 = 2^v·u、u ≡ 3 (mod 4)、w = v2(u+1) が奇数で 3 ≤ w ≤ v−2 または w ≥ v+1 なら、型は 1 0^{(v+1)/2}。仮定の書き換え `k38_hyp`、`v2_decomp`（x = 2^{v2 x}·奇数）。 |
+| `Rubidium/K29gen.lean` | **定理 K29（すべての奇数 v ≥ 5）** `K29_gen`：m+1 = 2^v·u、u ≡ 1 (mod 4)、u ≥ 5 なら型は 1 0^{(v−1)/2}。行 b の `k29_S0`（よい q：q ≡ 1 (mod 4) か qu ≡ 3 (mod 8)）、Inh の 1 段 `k29_istep`、`k29_eD`、ブロックの帰納法 `k29g_step`。公理は `propext`・`Classical.choice`・`Quot.sound`。 |
 | `Rubidium/Decide.lean` | 計算できる判定 `isPb m r p : Bool`（`Nat.all` による再帰）と、`isPb_iff`：`isPb m r p = true ↔ IsP m r p`。 |
 | `check/PStarts.lean` | `isPb` を実行して、m ≤ 10 の後手必勝の開始局面 (n, 0)（n ≤ 24）を出すスクリプト。出力は `data/lean_pstarts.txt`、JavaScript の全探索との照合は `data/lean_crosscheck.txt`。 |
 | `check/Tables.lean` | Array による DP で全局面 (r, p) の勝敗表を出すスクリプト（証明はない、別言語の実装による照合用）。出力は `data/lean_tables.txt`、`data/tables` との照合は `data/lean_tables_compare.txt`。 |
