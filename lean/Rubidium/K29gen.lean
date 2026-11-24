@@ -1,7 +1,7 @@
 /-
   Rubidium.K29gen — 定理 K29（すべての奇数 v ≥ 5）の形式化
 
-  定理 K29：v ≥ 5 を奇数、m + 1 = 2^v·u、u ≡ 1 (mod 4)（ここでは u ≥ 5 も仮定）なら、型は前周期なし、周期 1 0^{(v−1)/2}。
+  定理 K29：v ≥ 5 を奇数、m + 1 = 2^v·u、u ≡ 1 (mod 4) なら、型は前周期なし、周期 1 0^{(v−1)/2}。
   K38 の一般の形式化（Rubidium.K38gen）と同じ道具を使う。違いは次のとおり。
   - 追う q（「よい q」）：q ≡ 1 (mod 4)（S₁[q] = F）と qu ≡ 3 (mod 8)（S₁[q] = T）。T(q) := (qu mod 8 = 3)。
     ブロック 1（行 b）で S₁[2^b q] = (T(q) ↔ b が偶数)（`k29_S0`）。E 型のブロック c_j でも、2j ≤ b ≤ v − 3 なら同じ値（`k29_istep`）。
@@ -22,8 +22,8 @@ theorem blk_mono (m s t r : Nat) (hts : t ≤ s) (h : Blk m s r) : Blk m t r :=
 
 section K29g
 
-variable (m v u : Nat) (hv5 : 5 ≤ v) (hvo : v % 2 = 1) (hmu : m + 1 = 2 ^ v * u) (hu : u % 4 = 1) (hu5 : 5 ≤ u)
-include hv5 hvo hmu hu hu5
+variable (m v u : Nat) (hv5 : 5 ≤ v) (hvo : v % 2 = 1) (hmu : m + 1 = 2 ^ v * u) (hu : u % 4 = 1)
+include hv5 hvo hmu hu
 
 theorem k29_le (x : Nat) (hx : x < 2 ^ v) : x * u + u ≤ m + 1 := by
   rw [hmu, ← Nat.succ_mul]; exact Nat.mul_le_mul_right u hx
@@ -40,8 +40,8 @@ theorem k29_S0 (a : Nat) (hrow : ∀ p, IsP m a p) (hblk : Blk m 1 a)
     (hrowb : ∀ p, IsP m (a + (m + 2)) p) (hah : IsP m (a + 2 ^ (v - 1) * u) (2 ^ (v - 1) * u)) :
     ∀ q b, (q % 4 = 1 ∨ (q * u) % 8 = 3) → 2 ^ b * q < 2 ^ v →
       (IsP m (a + (m + 2) + 2 ^ b * (q * u)) (2 ^ b * (q * u)) ↔ ((q * u) % 8 = 3 ↔ b % 2 = 0)) := by
-  have hh := k29_hdef m v u hv5 hvo hmu hu hu5
-  have hm8 := k29_m8 m v u hv5 hvo hmu hu hu5
+  have hh := k29_hdef m v u hv5 hvo hmu hu
+  have hm8 := k29_m8 m v u hv5 hvo hmu hu
   have hhe : (2 ^ (v - 1) * u) % 2 = 0 := by omega
   intro q b hq hlt
   have hq1 : 1 ≤ q := by
@@ -49,16 +49,12 @@ theorem k29_S0 (a : Nat) (hrow : ∀ p, IsP m a p) (hblk : Blk m 1 a)
     · omega
     · apply Nat.pos_of_ne_zero; intro h0; rw [h0, Nat.zero_mul] at h; simp at h
   have hqlt : q < 2 ^ v := Nat.lt_of_le_of_lt (Nat.le_mul_of_pos_left q (Nat.pow_pos (by omega))) hlt
-  have hle := k29_le m v u hv5 hvo hmu hu hu5 q hqlt
+  have hle := k29_le m v u hv5 hvo hmu hu q hqlt
   have hqu1 : 1 ≤ q * u := Nat.mul_pos (by omega) (by omega)
-  -- qu + 1 ≠ h（u ≥ 5）
-  have hne : q * u + 1 ≠ 2 ^ (v - 1) * u := by
-    intro he
-    by_cases hHq : 2 ^ (v - 1) ≤ q
-    · have := Nat.mul_le_mul_right u hHq; omega
-    · have h1 : (2 ^ (v - 1) - q) * u = 1 := by rw [Nat.sub_mul]; omega
-      have h2 : 1 * u ≤ (2 ^ (v - 1) - q) * u := Nat.mul_le_mul_right u (by omega)
-      omega
+  -- qu ≡ 3 (mod 8) なら qu + 1 ≠ h（h = 2^(v-1)·u ≡ 0 (mod 8)）
+  have hH8 : (2 ^ (v - 1) * u) % 8 = 0 := by
+    rw [show v - 1 = (v - 4) + 3 by omega, Nat.pow_add]; simp [Nat.mul_mod, Nat.mul_assoc]
+  have hne : (q * u) % 8 = 3 → q * u + 1 ≠ 2 ^ (v - 1) * u := fun h3 he => by omega
   have hmod4 : q % 4 = 1 → (q * u) % 4 = 1 := fun h => by rw [Nat.mul_mod, h, hu]
   -- (b + qu) が P ⇔ T(q)
   have hbase : IsP m (a + (m + 2) + q * u) (q * u) ↔ (q * u) % 8 = 3 := by
@@ -83,8 +79,8 @@ theorem k29_S0 (a : Nat) (hrow : ∀ p, IsP m a p) (hblk : Blk m 1 a)
       constructor
       · intro _; exact h3
       · intro _
-        exact p_oddb m (2 ^ (v - 1) * u) a X hh (by omega) hrow hrowb hah hqu1 (by omega) hne (by omega) hN
-  have hle2 := k29_le m v u hv5 hvo hmu hu hu5 (2 ^ b * q) hlt
+        exact p_oddb m (2 ^ (v - 1) * u) a X hh (by omega) hrow hrowb hah hqu1 (by omega) (hne h3) (by omega) hN
+  have hle2 := k29_le m v u hv5 hvo hmu hu (2 ^ b * q) hlt
   rw [Nat.mul_assoc] at hle2
   rw [o_iter m (2 ^ (v - 1) * u) a (q * u) hh hhe hrow hrowb hah hqu1 b (by omega), hbase]
 
@@ -119,9 +115,9 @@ theorem k29_istep (p c : Nat) (hc : c = p + (m + 1)) (hrowp : ∀ q, IsP m p q) 
     have hx1 : 1 ≤ 2 ^ b1 * (q * u) := Nat.mul_pos (Nat.pow_pos (by omega)) hqu1
     have hD : 2 ^ (b1 + 1) * (q * u) = 2 * (2 ^ b1 * (q * u)) := by
       rw [Nat.pow_succ, Nat.mul_comm (2 ^ b1) 2, Nat.mul_assoc]
-    have hle := k29_le m v u hv5 hvo hmu hu hu5 (2 ^ (b1 + 1) * q) hlt
+    have hle := k29_le m v u hv5 hvo hmu hu (2 ^ (b1 + 1) * q) hlt
     rw [Nat.mul_assoc, hD] at hle
-    have hh := k29_hdef m v u hv5 hvo hmu hu hu5
+    have hh := k29_hdef m v u hv5 hvo hmu hu
     have hsplit : 2 ^ (v - 1) = 2 ^ b1 * 2 ^ (v - (b1 + 1)) := by rw [← Nat.pow_add]; congr 1; omega
     have hq' : 2 ^ (v - 1) * u + 2 ^ b1 * (q * u) = 2 ^ b1 * ((q + 2 ^ (v - (b1 + 1))) * u) := by
       rw [hsplit, Nat.mul_assoc, ← Nat.mul_add, Nat.add_mul, Nat.add_comm]
@@ -162,7 +158,7 @@ theorem k29_eD (p c k : Nat) (hc : c = p + (m + 1)) (hrowp : ∀ q, IsP m p q) (
     IsP m (c + 2 ^ (v - 2) * (k * u)) (2 ^ (v - 2) * (k * u)) ↔
       (¬ IsP m (c + 2 ^ (v - 3) * (k * u)) (2 ^ (v - 3) * (k * u)) ∧
        ¬ IsP m (p + 2 ^ (v - 3) * ((k + 4) * u)) (2 ^ (v - 3) * ((k + 4) * u))) := by
-  have hh := k29_hdef m v u hv5 hvo hmu hu hu5
+  have hh := k29_hdef m v u hv5 hvo hmu hu
   have e2 : 2 ^ (v - 2) = 2 * 2 ^ (v - 3) := by rw [← Nat.pow_succ']; congr 1; omega
   have e1 : 2 ^ (v - 1) = 4 * 2 ^ (v - 3) := by
     rw [show v - 1 = (v - 3) + 2 by omega, Nat.pow_add, Nat.mul_comm]
@@ -173,7 +169,7 @@ theorem k29_eD (p c k : Nat) (hc : c = p + (m + 1)) (hrowp : ∀ q, IsP m p q) (
   have hk1 : 2 ^ (v - 3) * (k * u) = k * (2 ^ (v - 3) * u) := Nat.mul_left_comm _ _ _
   have hk4 : 2 ^ (v - 3) * ((k + 4) * u) = (k + 4) * (2 ^ (v - 3) * u) := Nat.mul_left_comm _ _ _
   have hle : 2 ^ (v - 2) * (k * u) ≤ m := by
-    have := k29_le m v u hv5 hvo hmu hu hu5 (2 ^ (v - 2) * k) (by
+    have := k29_le m v u hv5 hvo hmu hu (2 ^ (v - 2) * k) (by
       have h4 : 2 ^ v = 4 * 2 ^ (v - 2) := by
         rw [show 2 ^ v = 2 ^ ((v - 2) + 2) by congr 1; omega, Nat.pow_add, Nat.mul_comm]
       have hp : 0 < 2 ^ (v - 2) := Nat.pow_pos (by omega)
@@ -193,7 +189,7 @@ theorem k29g_step (s : Nat) (hs : v = 2 * s + 5) (a : Nat) (hrow : ∀ p, IsP m 
     (∀ j, j ≤ s + 2 → ∀ p, IsP m (a + (m + 2) + j * (m + 1)) p) ∧
     Blk m 1 (a + (m + 2) + (s + 2) * (m + 1)) ∧
     IsP m (a + (m + 2) + (s + 2) * (m + 1) + 2 ^ (v - 1) * u) (2 ^ (v - 1) * u) := by
-  have hh := k29_hdef m v u hv5 hvo hmu hu hu5
+  have hh := k29_hdef m v u hv5 hvo hmu hu
   have hmo : m % 2 = 1 := by omega
   have hh2 : (m + 1) / 2 = 2 ^ (v - 1) * u := by omega
   have hvh : v2 (2 ^ (v - 1) * u) = v - 1 := by rw [v2_pow_mul u (by omega), v2_odd u (by omega), Nat.add_zero]
@@ -203,7 +199,7 @@ theorem k29g_step (s : Nat) (hs : v = 2 * s + 5) (a : Nat) (hrow : ∀ p, IsP m 
     omega
   have hH2 : 2 ≤ 2 ^ (v - 1) * u := Nat.le_trans h2v (Nat.le_mul_of_pos_right _ (by omega))
   have hb := row_long m a hmo (by omega) hrow (by rw [hh2]; exact hah)
-  have S0 := k29_S0 m v u hv5 hvo hmu hu hu5 a hrow hblk hb hah
+  have S0 := k29_S0 m v u hv5 hvo hmu hu a hrow hblk hb hah
   have hpos : ∀ j, a + (m + 2) + (j + 1) * (m + 1) = a + (m + 2) + j * (m + 1) + (m + 1) := by
     intro j; rw [Nat.succ_mul]; omega
   have hpos0 : a + (m + 2) + 0 * (m + 1) = a + (m + 2) := by rw [Nat.zero_mul, Nat.add_zero]
@@ -222,7 +218,7 @@ theorem k29g_step (s : Nat) (hs : v = 2 * s + 5) (a : Nat) (hrow : ∀ p, IsP m 
       ¬ IsP m (a + (m + 2) + (j + 1) * (m + 1) + 2 ^ (v - 1) * u) (2 ^ (v - 1) * u) := by
     intro j Ij Ij1 hjv hrj hrj1
     have hhalf : IsP m (a + (m + 2) + (j + 1) * (m + 1) + 2 ^ (v - 2) * (1 * u)) (2 ^ (v - 2) * (1 * u)) := by
-      rw [k29_eD m v u hv5 hvo hmu hu hu5 _ _ 1 (hpos j) hrj hrj1 (Or.inl rfl)]
+      rw [k29_eD m v u hv5 hvo hmu hu _ _ 1 (hpos j) hrj hrj1 (Or.inl rfl)]
       constructor
       · rw [Ij1 1 (v - 3) (Or.inl rfl) (by omega) (by omega) (by omega)]; omega
       · rw [Ij 5 (v - 3) (Or.inl rfl) (by omega) (by omega) (by omega)]; omega
@@ -255,7 +251,7 @@ theorem k29g_step (s : Nat) (hs : v = 2 * s + 5) (a : Nat) (hrow : ∀ p, IsP m 
           rw [hpos 0]; exact row_next m _ hb0 (by rw [hh2]; exact Nb)
         have hodd1 := odd_of_rows m _ hmo hr1 (Or.inr ⟨_, hpos 0, hb0⟩)
         have hblk1 := blk1_direct m _ hr1 hodd1
-        have I1 : I 1 := k29_istep m v u hv5 hvo hmu hu hu5 _ _ (hpos 0) hb0 hr1 1 (Nat.le_refl 1) hblk1 I0
+        have I1 : I 1 := k29_istep m v u hv5 hvo hmu hu _ _ (hpos 0) hb0 hr1 1 (Nat.le_refl 1) hblk1 I0
         exact ⟨hr1, hblk1, fun _ => ⟨I1, Nof 0 I0 I1 (by omega) hb0 hr1⟩, I0⟩
       · obtain ⟨hrj, hblkj, hIN, _⟩ := ih (by omega) (by omega)
         obtain ⟨Ij, hNj⟩ := hIN (by omega)
@@ -267,7 +263,7 @@ theorem k29g_step (s : Nat) (hs : v = 2 * s + 5) (a : Nat) (hrow : ∀ p, IsP m 
             hrj hblkj (by rw [← hpos j]; exact hr)
         refine ⟨hr, hblk', ?_, by rw [show j + 1 - 1 = j by omega]; exact Ij⟩
         intro hjs
-        have Ij1 : I (j + 1) := k29_istep m v u hv5 hvo hmu hu hu5 _ _ (hpos j) hrj hr (j + 1) (by omega) hblk'
+        have Ij1 : I (j + 1) := k29_istep m v u hv5 hvo hmu hu _ _ (hpos j) hrj hr (j + 1) (by omega) hblk'
           (by intro q b hq hb hbv hlt; exact Ij q b hq (by omega) hbv hlt)
         exact ⟨Ij1, Nof j Ij Ij1 (by omega) hrj hr⟩
   -- 最後の行 c_{s+2}
@@ -284,7 +280,7 @@ theorem k29g_step (s : Nat) (hs : v = 2 * s + 5) (a : Nat) (hrow : ∀ p, IsP m 
     · exact (bundle s (by omega) (by omega)).1
   -- (c_{s+1} + 3H/2) は N
   have h3N : ¬ IsP m (a + (m + 2) + (s + 1) * (m + 1) + 2 ^ (v - 2) * (3 * u)) (2 ^ (v - 2) * (3 * u)) := by
-    rw [k29_eD m v u hv5 hvo hmu hu hu5 _ _ 3 (hpos s) hrs hrL1 (Or.inr rfl)]
+    rw [k29_eD m v u hv5 hvo hmu hu _ _ 3 (hpos s) hrs hrL1 (Or.inr rfl)]
     intro ⟨hA, hB⟩
     by_cases hu8 : u % 8 = 1
     · apply hA
@@ -321,13 +317,13 @@ theorem k29g_rows (s : Nat) (hs : v = 2 * s + 5) :
   | zero =>
     rw [Nat.zero_mul, Nat.zero_add]
     refine ⟨isP_zero m, blk_zero m 1, ?_⟩
-    have hh := k29_hdef m v u hv5 hvo hmu hu hu5
+    have hh := k29_hdef m v u hv5 hvo hmu hu
     rw [K3 m _ _ (Nat.mul_pos (Nat.pow_pos (by omega)) (by omega)) (by omega), ev2_iff_v2 _
       (Nat.mul_pos (Nat.pow_pos (by omega)) (by omega)), v2_pow_mul u (by omega), v2_odd u (by omega)]
     exact ⟨rfl, by omega⟩
   | succ i ih =>
     obtain ⟨hrow, hblk, hah⟩ := ih
-    obtain ⟨hrows, hb, hh'⟩ := k29g_step m v u hv5 hvo hmu hu hu5 s hs _ hrow hblk hah
+    obtain ⟨hrows, hb, hh'⟩ := k29g_step m v u hv5 hvo hmu hu s hs _ hrow hblk hah
     have e : (i + 1) * ((m + 2) + (s + 2) * (m + 1)) = i * ((m + 2) + (s + 2) * (m + 1)) + (m + 2) + (s + 2) * (m + 1) := by
       rw [Nat.succ_mul]; omega
     rw [e]
@@ -335,19 +331,18 @@ theorem k29g_rows (s : Nat) (hs : v = 2 * s + 5) :
 
 end K29g
 
-/-- 定理 K29（すべての奇数 v ≥ 5）：m + 1 = 2^v·u、u ≡ 1 (mod 4)、u ≥ 5 なら、型は 1 0^{(v−1)/2}：
+/-- 定理 K29（すべての奇数 v ≥ 5）：m + 1 = 2^v·u、u ≡ 1 (mod 4) なら、型は 1 0^{(v−1)/2}：
     L = (m+2) + ((v−1)/2)(m+1) として、(n, 0) が P ⇔ n mod L = 0、または n mod L ≥ m+2 かつ (n mod L − (m+2)) が m+1 の倍数。-/
-theorem K29_gen (m v u : Nat) (hv5 : 5 ≤ v) (hvo : v % 2 = 1) (hmu : m + 1 = 2 ^ v * u) (hu : u % 4 = 1)
-    (hu5 : 5 ≤ u) (n : Nat) :
+theorem K29_gen (m v u : Nat) (hv5 : 5 ≤ v) (hvo : v % 2 = 1) (hmu : m + 1 = 2 ^ v * u) (hu : u % 4 = 1) (n : Nat) :
     IsP m n 0 ↔ (n % ((m + 2) + ((v - 1) / 2) * (m + 1)) = 0 ∨
       (m + 2 ≤ n % ((m + 2) + ((v - 1) / 2) * (m + 1)) ∧
         (n % ((m + 2) + ((v - 1) / 2) * (m + 1)) - (m + 2)) % (m + 1) = 0)) := by
   obtain ⟨s, hs⟩ : ∃ s, v = 2 * s + 5 := ⟨(v - 5) / 2, by omega⟩
   have hL : (v - 1) / 2 = s + 2 := by omega
   rw [hL]
-  have hh := k29_hdef m v u hv5 hvo hmu hu hu5
-  obtain ⟨hrowA, hblkA, hahA⟩ := k29g_rows m v u hv5 hvo hmu hu hu5 s hs (n / ((m + 2) + (s + 2) * (m + 1)))
-  obtain ⟨hrows, _, _⟩ := k29g_step m v u hv5 hvo hmu hu hu5 s hs _ hrowA hblkA hahA
+  have hh := k29_hdef m v u hv5 hvo hmu hu
+  obtain ⟨hrowA, hblkA, hahA⟩ := k29g_rows m v u hv5 hvo hmu hu s hs (n / ((m + 2) + (s + 2) * (m + 1)))
+  obtain ⟨hrows, _, _⟩ := k29g_step m v u hv5 hvo hmu hu s hs _ hrowA hblkA hahA
   generalize hLL : (m + 2) + (s + 2) * (m + 1) = L at hrowA hblkA hahA hrows
   have hLpos : 0 < L := by omega
   have hdiv : n = (n / L) * L + n % L := by
