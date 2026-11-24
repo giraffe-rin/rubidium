@@ -20,6 +20,7 @@ Lean 4 による形式化を置く場所です。
 | `Rubidium/K4Full.lean` | **定理 K4 全体** `K4`：m ≥ 1 のとき `(∀ n, IsP m n 0 ↔ n % (m+1) = 0) ↔ ev2 (m+1) = true`。2 の付値 `v2` と補題 `v2_add`（v2 x < v2 y なら v2(x+y) = v2 x）、`ev2_iff_v2`、m が奇数の場合の `row_all_odd`・`blk_step`・`K4_odd`。公理は `propext`・`Quot.sound` だけ。 |
 | `Rubidium/K6.lean` | **定理 K6** `K6`：m % 8 = 5 なら `IsP m n 0 ↔ (n % (2m+3) = 0 ∨ n % (2m+3) = m+2)`。補題 `odd_of_rows`（P の行の後の奇数 d の (r+d, d) は P）、`row_long`、`k6_rows`。公理は `propext`・`Quot.sound` だけ。 |
 | `Rubidium/K9.lean` | **定理 K9 の十分性** `K9_suff`：m % 4 = 1、m ≥ 5、v2(3h+1) が奇数なら `IsP m n 0 ↔ (n % (2m+3) = 0 ∨ n % (2m+3) = m+2)`。不変量 `Blk`（偶数番目のブロック）と `BlkO`（奇数番目）、`blkE_step`、`blkO_of_blk`、`k9_rows`。公理は `propext`・`Quot.sound` だけ。 |
+| `Rubidium/K9.lean`（追加） | **定理 K9 全体** `K9`：m % 4 = 1、m ≥ 5 のとき `(∀ n, IsP m n 0 ↔ (n % (2m+3) = 0 ∨ n % (2m+3) = m+2)) ↔ v2(3h+1) % 2 = 1`。必要性 `K9_nec`（v2(3h+1) が偶数なら (2m+3, 0) は N）。公理は `propext`・`Quot.sound` だけ。 |
 | `Rubidium/Decide.lean` | 計算できる判定 `isPb m r p : Bool`（`Nat.all` による再帰）と、`isPb_iff`：`isPb m r p = true ↔ IsP m r p`。 |
 | `check/PStarts.lean` | `isPb` を実行して、m ≤ 10 の後手必勝の開始局面 (n, 0)（n ≤ 24）を出すスクリプト。出力は `data/lean_pstarts.txt`、JavaScript の全探索との照合は `data/lean_crosscheck.txt`。 |
 | `check/Tables.lean` | Array による DP で全局面 (r, p) の勝敗表を出すスクリプト（証明はない、別言語の実装による照合用）。出力は `data/lean_tables.txt`、`data/tables` との照合は `data/lean_tables_compare.txt`。 |

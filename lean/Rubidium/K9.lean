@@ -158,3 +158,60 @@ theorem K9_suff (m : Nat) (hm4 : m % 4 = 1) (hm5 : 5 ≤ m) (hodd : v2 (3 * ((m 
     · rw [h]; exact hrowb 0
 
 end Rubidium
+
+namespace Rubidium
+
+/-- 定理 K9（⇒ の対偶）：v2(m+1) = 1、m ≥ 5、v2(3h+1) が偶数なら、(2m+3, 0) は N 局面。
+    b = m+2 とおくと、行 b はすべての p で P（`row_long`、a = 0）。(b + h, h) は P：
+    手 k < h の行き先 (b + (h−k), k) は h が奇数なので N。手 h+1 の行き先 (m+1, h+1) は手 h で (h, h)（K3 より P）に移れるので N。
+    手 k ≥ h+2 の行き先 (m+2+h−k, k) は K3 の範囲で、P になるのは k = (3h+1)/2 かつ v2(k) が偶数のときだけだが、v2((3h+1)/2) は奇数。
+    よって (2m+3, 0) から手 h で (b + h, h) に移れる。-/
+theorem K9_nec (m : Nat) (hm4 : m % 4 = 1) (hm5 : 5 ≤ m) (heven : v2 (3 * ((m + 1) / 2) + 1) % 2 = 0) :
+    ¬ IsP m (2 * m + 3) 0 := by
+  have hmo : m % 2 = 1 := by omega
+  have hh2 : 2 ≤ (m + 1) / 2 := by omega
+  have hhh : IsP m ((m + 1) / 2) ((m + 1) / 2) :=
+    (K3 m _ _ (by omega) (by omega)).mpr ⟨rfl, ev2_odd _ (by omega)⟩
+  have hrow0 : ∀ p, IsP m 0 p := isP_zero m
+  have hb : ∀ p, IsP m (0 + (m + 2)) p := row_long m 0 hmo hh2 hrow0 (by rw [Nat.zero_add]; exact hhh)
+  have hv3 : v2 (3 * ((m + 1) / 2) + 1) = v2 ((3 * ((m + 1) / 2) + 1) / 2) + 1 :=
+    v2_even _ (by omega) (by omega)
+  -- (b + h, h) は P
+  have hbh : IsP m (m + 2 + (m + 1) / 2) ((m + 1) / 2) := by
+    rw [isP_iff]
+    intro k hk1 hkm hkr hkp hPk
+    by_cases hlt : k < (m + 1) / 2
+    · rw [show m + 2 + (m + 1) / 2 - k = 0 + (m + 2) + ((m + 1) / 2 - k) by omega] at hPk
+      exact not_isP_of_row m (0 + (m + 2)) ((m + 1) / 2 - k) k hb (by omega) (by omega) (by omega) hPk
+    · by_cases hk1' : k = (m + 1) / 2 + 1
+      · -- 行き先 (m+1, h+1)：手 h で (h, h) に移れる
+        rw [hk1', show m + 2 + (m + 1) / 2 - ((m + 1) / 2 + 1) = m + 1 by omega, isP_iff] at hPk
+        apply hPk ((m + 1) / 2) (by omega) (by omega) (by omega) (by omega)
+        rw [show m + 1 - (m + 1) / 2 = (m + 1) / 2 by omega]
+        exact hhh
+      · rw [K3 m _ k (by omega) (by omega)] at hPk
+        obtain ⟨hkeq, hev⟩ := hPk
+        have hke : (3 * ((m + 1) / 2) + 1) / 2 = m + 2 + (m + 1) / 2 - k := by omega
+        rw [← hke, ev2_iff_v2 _ (by omega)] at hev
+        omega
+  intro hP
+  rw [isP_iff] at hP
+  apply hP ((m + 1) / 2) (by omega) (by omega) (by omega) (by omega)
+  rw [show 2 * m + 3 - (m + 1) / 2 = m + 2 + (m + 1) / 2 by omega]
+  exact hbh
+
+/-- 定理 K9：v2(m+1) = 1（m % 4 = 1）、m ≥ 5 のとき、
+    「すべての n で (n, 0) が P ⇔ n mod (2m+3) ∈ {0, m+2}」⇔ v2(3h+1) が奇数。-/
+theorem K9 (m : Nat) (hm4 : m % 4 = 1) (hm5 : 5 ≤ m) :
+    (∀ n, IsP m n 0 ↔ (n % (2 * m + 3) = 0 ∨ n % (2 * m + 3) = m + 2)) ↔
+      v2 (3 * ((m + 1) / 2) + 1) % 2 = 1 := by
+  constructor
+  · intro hall
+    apply Decidable.byContradiction
+    intro hne
+    apply K9_nec m hm4 hm5 (by omega)
+    exact (hall (2 * m + 3)).mpr (Or.inl (Nat.mod_self _))
+  · intro hodd n
+    exact K9_suff m hm4 hm5 hodd n
+
+end Rubidium
