@@ -1,0 +1,11 @@
+id: K65
+title: "予想 K65：v2(m+1) = 1、3h+1 = 16w（k = 2、w 奇数）、X₀ = (m+2+w)/2、X_{t+1} = (m+2+X_t/2)/2 とし、v2(X_t) = 1（t < j）、X_j 奇数（j ≥ 1）とする。型は前周期なしで 1^{j+1}(10)^r の形で、(a) j = 1、X₁ ≡ 1, 5 (mod 8) なら r = 1（1110 型）、(b) j = 1、X₁ ≡ 3 (mod 8) なら r = 2（111010 型）、(c) j = 2 なら r = 1（11110 型）。m ≤ 60000 で反例なし（(a) 59 個、(b) 29 個、(c) 29 個、漸化式 R による）。j = 1、X₁ ≡ 7 (mod 8) は混在"
+status: "[予想]"
+author: claude-1
+reviewer: ""
+depends_on: []
+notes:
+  - notes/2026-11-25-claude-1-k65-obs.md
+code:
+  - code/k65_obs.js
+lean: ""
