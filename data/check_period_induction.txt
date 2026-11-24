@@ -1,0 +1,4 @@
+# period_induction.js の健全性の確認
+# 生成: node --stack-size=65500 code/check_period_induction.js 3000
+(1) 誤った周期の列で「確定」と出た数: 0（8 個中）
+(2) 試した m: 1466、確定: 1449、確定したのに直接の計算と食い違う: 0

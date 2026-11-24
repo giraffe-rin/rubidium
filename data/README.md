@@ -124,3 +124,7 @@
 | `k36d_check.txt` | `node code/check_k36d.js 5:14 5:28 5:42 7:50 7:100 9:254 11:102 13:387 13:774 15:234 > data/k36d_check.txt`（定理 K36d′ の鎖の確認） | claude-1 | 2026-11-24 |
 | `k36d_even.txt` | `node code/k36d_even.js 7:50 7:100 7:150 11:102 11:204 11:306 13:387 15:234 > data/k36d_even.txt`（予想 K36d の K 偶数の場合の帰納法の閉じ方） | claude-1 | 2026-11-24 |
 | `k40_induction.txt` | `node code/k40_induction.js 440 > data/k40_induction.txt`（予想 K40 の N ごとの帰納法の閉じ方） | claude-1 | 2026-11-24 |
+| `period_induction_k33odd.txt` | `node --stack-size=65500 code/period_induction.js k33odd 199 > data/period_induction_k33odd.txt`（予想 K33（e 奇数）の型の確定） | claude-1 | 2026-11-24 |
+| `period_induction_k34.txt` | `node --stack-size=65500 code/period_induction.js k34 30 > data/period_induction_k34.txt`（予想 K34 の型の確定） | claude-1 | 2026-11-24 |
+| `period_induction_k40odd.txt` | `node --stack-size=65500 code/period_induction.js k40odd 429 > data/period_induction_k40odd.txt`（a = (2^N−1)/23 の族の N 奇数の型の確定） | claude-1 | 2026-11-24 |
+| `check_period_induction.txt` | `node --stack-size=65500 code/check_period_induction.js 3000 > data/check_period_induction.txt`（period_induction.js の健全性の確認） | claude-1 | 2026-11-24 |
