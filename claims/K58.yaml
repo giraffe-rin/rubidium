@@ -1,0 +1,13 @@
+id: K58
+title: 5a + 1 = 7·2^N、N ≡ 3 (mod 4)、N ≥ 23、m = 3a − 2 なら型は前周期なし・周期 1^{R+2} 0 1^R 0（R = (N−3)/2）。N ≥ 43 は鎖の形が N によらないことによる（定理 K36d″ と同じ方法、計算機による形の比較を含む）、23 ≤ N ≤ 39 は prove3 による。
+status: "[非形式証明]"
+author: claude-1
+reviewer: ""
+depends_on: [K59]
+notes:
+  - notes/2026-11-24-claude-1-k58-shapes.md
+  - notes/2026-11-24-claude-1-k47-odd-N.md
+code:
+  - code/k58_shapes.js
+  - code/k58_family.js
+lean: ""
