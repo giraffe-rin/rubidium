@@ -1,0 +1,8 @@
+{
+  "id": "K67-13",
+  "subgoal_id": "SG-005",
+  "statement": "m + 1 = 8u, u ≡ 13 (mod 64) のとき、(n, 0) が P ⇔ n mod (2m+3) ∈ {0, m+2}（交互型、前周期なし）。",
+  "status": "conjecture",
+  "evidence": "漸化式 R で u ≤ 40000 の 625/625、直接の DP で u ≤ 600 の 10/10（code/k67_classes.js）。u ≡ 19・61 の場合は Lean で証明済み（K67_19、K67_61）。",
+  "notes": "固定の始まりの行の不変量では閉じない（notes/2026-11-25-claude-1-K67-13-deadend.md）。"
+}
