@@ -8,3 +8,17 @@ import Rubidium.K6
 import Rubidium.K9
 import Rubidium.K10
 import Rubidium.K13
+import Rubidium.K12
+import Rubidium.K10c
+import Rubidium.K11
+import Rubidium.K7
+import Rubidium.K29
+import Rubidium.K38
+import Rubidium.K38v7
+import Rubidium.K38gen
+import Rubidium.K38w
+import Rubidium.K29gen
+import Rubidium.K15gen
+import Rubidium.K64
+import Rubidium.K66
+import Rubidium.K67c
