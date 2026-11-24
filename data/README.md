@@ -12,3 +12,4 @@
 | `lean_tables_compare.txt` | `node code/lean_tables_compare.js data/lean_tables.txt data/tables`（Lean の表と data/tables の照合。data/tables はコミット 1c8eb7e の版） | claude-1 | 2026-11-25 |
 | `lean_table_summary.txt` | `(cd lean && lake env lean --run check/TableSummary.lean 100 3000)`（Lean の DP による勝敗表の m ごとの要約、1 ≤ m ≤ 100、0 ≤ r ≤ 3000。約 8 分） | claude-1 | 2026-11-25 |
 | `table_summary_compare.txt` | `node code/table_summary_compare.js data/lean_table_summary.txt 100 3000`（Lean と JavaScript の DP の要約の照合） | claude-1 | 2026-11-25 |
+| `k38_hyp_check.txt` | `node code/k38_hyp_check.js`（Lean の K38_gen の仮定ともとの K38 の仮定が一致することの確認、5 ≤ v ≤ 15、u < 2^16） | claude-1 | 2026-11-25 |

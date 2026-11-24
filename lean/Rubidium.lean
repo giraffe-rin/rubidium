@@ -15,3 +15,4 @@ import Rubidium.K7
 import Rubidium.K29
 import Rubidium.K38
 import Rubidium.K38v7
+import Rubidium.K38gen
