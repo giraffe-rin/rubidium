@@ -4,7 +4,7 @@
  *
  * 何を計算するか:
  *   k36d_even.js と同じ評価（E₁ と E₂ での h、E₂ での Y = 2a − 22）をし、その中で呼ばれた鎖（ブロック K+1 の距離 d₀ から周期の始まりまで）を集める。
- *   各鎖について、d₀ を (αa+β)/2^k で表し（α, β は小さい整数）、一本道の規則を記号的に進める（奇数 → ((3·2^k + α)a + β)/2^{k+1}、
+ *   各鎖について、d₀ を (αa+β)/2^k で表し（α は割り算で求め、|β| < 2^40 となる最小の k をとる）、一本道の規則を記号的に進める（奇数 → ((3·2^k + α)a + β)/2^{k+1}、
  *   偶数 → (αa+β)/2^{k+1}）。2·2^k − α = qc かつ β = −c なら 2a − c·4^N/2^k、3·2^k − α = qc かつ β = −c なら M − c·4^N/2^k
  *   （qa + 1 = 4^N による）に入ったとして、そこで入口を終える。
  *   出力：鎖ごとに、d₀、入口の段数と入ったブロック、幾何的な形（2a − c·2^t か M − c·2^t、t を N で表す）、全体の段数（N, K の 1 次式で）、
@@ -28,7 +28,7 @@ for (const Ns1 of Ns) {
   const rows = [];
   for (const d0 of starts) {
     // (αa+β)/2^k で表す
-    let al = null, be = null, kk = null; for (let k = 0; k <= 20 && al === null; k++) { const D = d0 * 2n ** BigInt(k); for (let x = -2000n; x <= 2000n; x++) { const y = D - x * a; if (y > -100000n && y < 100000n) { al = x; be = y; kk = k; break; } } }
+    let al = null, be = null, kk = null; for (let k = 0; k <= 40 && al === null; k++) { const D = d0 * 2n ** BigInt(k); const x = (D + a / 2n) / a; const y = D - x * a; if (y > -(2n ** 40n) && y < 2n ** 40n) { al = x; be = y; kk = k; } }   // α は割り算で求める（β が小さくなる最小の k）
     if (al === null) { rows.push('（d₀ を小さい係数で表せない）'); continue; }
     const name = `(${al}a${be >= 0n ? '+' : ''}${be})/2^${kk}`;
     let A = al, Bt = be, k = kk, j = K + 1, steps = 0, geo = null, d = d0;
@@ -40,7 +40,7 @@ for (const Ns1 of Ns) {
     }
     // 全体の段数と終わり
     let dd = d0, jj = K + 1, s = 0; while (jj > 0) { if (dd % 2n === 0n) dd /= 2n; else { dd = (M + dd) / 2n; jj--; } s++; }
-    let endF = '?'; for (let k2 = 0; k2 <= 12 && endF === '?'; k2++) { const D = dd * 2n ** BigInt(k2); for (let x = -2000n; x <= 2000n; x++) { const y = D - x * a; if (y > -100000n && y < 100000n) { endF = `(${x}a${y >= 0n ? '+' : ''}${y})/2^${k2}`; break; } } }
+    let endF = '?'; for (let k2 = 0; k2 <= 40 && endF === '?'; k2++) { const D = dd * 2n ** BigInt(k2); const x = (D + a / 2n) / a; const y = D - x * a; if (y > -(2n ** 40n) && y < 2n ** 40n && x >= -4000n && x <= 4000n && (y > -1000000n && y < 1000000n)) endF = `(${x}a${y >= 0n ? '+' : ''}${y})/2^${k2}`; }
     if (endF === '?') { const r1 = M - dd, r2 = 2n * a - dd; const t1 = r1 > 0n ? v2(r1) : -1, t2 = r2 > 0n ? v2(r2) : -1; if (r1 > 0n && (r1 >> BigInt(t1)) < 100000n) endF = `M − ${r1 >> BigInt(t1)}·2^${t1}`; else if (r2 > 0n && (r2 >> BigInt(t2)) < 100000n) endF = `2a − ${r2 >> BigInt(t2)}·2^${t2}`; }
     rows.push(`${name} | ${geo || '幾何的な形を検出できない'} | 全体 ${s} 段（N = ${N}、K = ${K}：s − 2K = ${s - 2 * K}、s − K = ${s - K}）| 終わり ${endF}（v2 = ${v2(dd)}）`);
   }
