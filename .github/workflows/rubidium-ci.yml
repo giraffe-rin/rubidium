@@ -1,0 +1,32 @@
+name: Rubidium CI
+
+on:
+  push:
+    branches:
+      - ruca-logic
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Validate claims and STATUS.md
+        run: python3 code/generate_status.py --check
+
+      - name: Check for sorry in Lean 4 files
+        run: |
+          if [ -d lean ]; then
+            if grep -rnE '\bsorry\b' lean --include='*.lean'; then
+              echo "ERROR: 'sorry' found in lean/ files."
+              exit 1
+            fi
+          fi
+          echo "OK: No 'sorry' found in lean/ files."
