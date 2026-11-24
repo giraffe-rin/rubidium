@@ -1,0 +1,214 @@
+name: Autonomous Orchestrator
+
+on:
+  push:
+    branches: [ruca-logic]
+    paths-ignore:
+      - 'problems/restricted-stone-game/STATUS.md'
+      - 'claims/proved/index.json'
+      - 'data/dead_ends.jsonl'
+      - 'data/state.json'
+      - 'data/dag.json'
+  pull_request:
+    branches: [ruca-logic]
+    types: [closed]
+  schedule:
+    - cron: '0 */2 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: autonomous-orchestrator
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+
+jobs:
+  orchestrate:
+    name: Orchestrate Autonomous Research
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout ruca-logic
+        uses: actions/checkout@v4
+        with:
+          ref: ruca-logic
+          token: ${{ secrets.AUTONOMOUS_BOT_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Record dead end for unmerged closed PR
+        if: |
+          github.event_name == 'pull_request' &&
+          github.event.action == 'closed' &&
+          github.event.pull_request.merged == false
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          PR_CLOSED_AT: ${{ github.event.pull_request.closed_at }}
+          PR_LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+        run: |
+          python3 scripts/autonomous_ops.py record-dead-end \
+            --pr-number "$PR_NUMBER" \
+            --title "$PR_TITLE" \
+            --body "$PR_BODY" \
+            --labels "$PR_LABELS" \
+            --url "$PR_URL" \
+            --head-ref "$PR_HEAD_REF" \
+            --closed-at "$PR_CLOSED_AT"
+          python3 scripts/autonomous_ops.py sync-status
+
+      - name: Commit dead-end & status update (if changed)
+        if: |
+          github.event_name == 'pull_request' &&
+          github.event.action == 'closed' &&
+          github.event.pull_request.merged == false
+        run: |
+          git config user.name "rubidium-autonomous-bot"
+          git config user.email "rubidium-autonomous-bot@users.noreply.github.com"
+          if ! git diff --quiet; then
+            git add data/dead_ends.jsonl data/dag.json data/state.json claims/proved/index.json problems/restricted-stone-game/STATUS.md
+            git commit -m "chore(autonomous): record dead end #${{ github.event.pull_request.number }} [skip ci]"
+            git push origin ruca-logic
+          fi
+
+      - name: Clean up broken/stale PRs and count open & daily PRs
+        id: pr_metrics
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const cfg = JSON.parse(fs.readFileSync('config/autonomous.json', 'utf8'));
+            const brokenHours = cfg.limits.broken_pr_close_hours || 24;
+            const staleHours = cfg.limits.stale_pr_close_hours || 72;
+            const now = Date.now();
+
+            const openPrs = await github.paginate(github.rest.pulls.list, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              base: cfg.default_branch || 'ruca-logic',
+              per_page: 100
+            });
+
+            let remainingOpen = 0;
+            for (const pr of openPrs) {
+              const updatedMs = new Date(pr.updated_at).getTime();
+              const ageHours = (now - updatedMs) / (1000 * 60 * 60);
+              const labels = (pr.labels || []).map(l => l.name);
+              const isBroken = labels.includes('ci-failed') && ageHours >= brokenHours;
+              const isStale = ageHours >= staleHours;
+
+              if (isBroken || isStale) {
+                const reason = isBroken
+                  ? `Closing broken PR (\`ci-failed\` inactive for >= ${brokenHours}h).`
+                  : `Closing stale PR (inactive for >= ${staleHours}h).`;
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: pr.number,
+                  body: reason
+                });
+                await github.rest.pulls.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: pr.number,
+                  state: 'closed'
+                });
+              } else {
+                remainingOpen += 1;
+              }
+            }
+
+            const sinceIso = new Date(now - 24 * 60 * 60 * 1000).toISOString();
+            const recentPrs = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'all',
+              base: cfg.default_branch || 'ruca-logic',
+              sort: 'created',
+              direction: 'desc',
+              per_page: 100
+            });
+            const dailyCount = recentPrs.data.filter(pr => pr.created_at >= sinceIso).length;
+
+            core.setOutput('open_prs', String(remainingOpen));
+            core.setOutput('daily_prs', String(dailyCount));
+            core.info(`Remaining open PRs: ${remainingOpen}, Daily PRs (24h): ${dailyCount}`);
+
+      - name: Sync status and evaluate circuit breaker
+        id: breaker
+        run: |
+          python3 scripts/autonomous_ops.py sync-status
+          python3 scripts/autonomous_ops.py check-circuit-breaker \
+            --open-prs "${{ steps.pr_metrics.outputs.open_prs }}" \
+            --daily-prs "${{ steps.pr_metrics.outputs.daily_prs }}"
+
+      - name: Commit synced status & state (if changed)
+        run: |
+          git config user.name "rubidium-autonomous-bot"
+          git config user.email "rubidium-autonomous-bot@users.noreply.github.com"
+          if ! git diff --quiet; then
+            git add claims/proved/index.json data/state.json data/dag.json problems/restricted-stone-game/STATUS.md
+            git commit -m "chore(autonomous): sync status and proved index [skip ci]"
+            git push origin ruca-logic
+          fi
+
+      - name: Halt research and disable orchestrator workflow
+        if: steps.breaker.outputs.halt_now == 'true'
+        uses: actions/github-script@v7
+        env:
+          HALT_REASON: ${{ steps.breaker.outputs.halt_reason }}
+          GOAL_ACHIEVED: ${{ steps.breaker.outputs.goal_achieved }}
+        with:
+          script: |
+            const fs = require('fs');
+            const statusMd = fs.existsSync('problems/restricted-stone-game/STATUS.md')
+              ? fs.readFileSync('problems/restricted-stone-game/STATUS.md', 'utf8')
+              : '';
+            const title = process.env.GOAL_ACHIEVED === 'true'
+              ? '[Autonomous Halt] Main theorem proved!'
+              : `[Autonomous Halt] Circuit breaker triggered (${process.env.HALT_REASON})`;
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body: [
+                `Autonomous orchestrator halted with reason: \`${process.env.HALT_REASON}\`.`,
+                '',
+                'This workflow has automatically disabled itself to prevent unnecessary runs.',
+                '',
+                '---',
+                '',
+                statusMd
+              ].join('\n')
+            });
+
+            await github.rest.actions.disableWorkflow({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'autonomous-orchestrator.yml'
+            });
+
+      - name: Dispatch autonomous agent cycle
+        if: steps.breaker.outputs.can_dispatch == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.AUTONOMOUS_BOT_TOKEN || secrets.GITHUB_TOKEN }}
+          AUTONOMOUS_BOT_TOKEN: ${{ secrets.AUTONOMOUS_BOT_TOKEN }}
+        run: |
+          if [ -x scripts/run_agent_cycle.sh ]; then
+            bash scripts/run_agent_cycle.sh
+          elif [ -f scripts/run_agent_cycle.sh ]; then
+            bash scripts/run_agent_cycle.sh
+          else
+            echo "scripts/run_agent_cycle.sh not found; dispatch hook skipped."
+          fi

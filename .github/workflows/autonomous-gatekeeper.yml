@@ -1,0 +1,306 @@
+name: Autonomous Gatekeeper
+
+on:
+  pull_request:
+    branches: [ruca-logic]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: autonomous-gatekeeper-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  immutable-core-guard:
+    name: Immutable Core Guard
+    runs-on: ubuntu-latest
+    outputs:
+      violation: ${{ steps.check.outputs.violation }}
+      violation_files: ${{ steps.check.outputs.violation_files }}
+      has_lean: ${{ steps.check.outputs.has_lean }}
+      has_code: ${{ steps.check.outputs.has_code }}
+      has_conjecture: ${{ steps.check.outputs.has_conjecture }}
+      has_notes: ${{ steps.check.outputs.has_notes }}
+    steps:
+      - name: Checkout base branch scripts and config
+        uses: actions/checkout@v4
+        with:
+          ref: ruca-logic
+
+      - name: Fetch changed PR files via GitHub API
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              per_page: 100
+            });
+            const names = files.map(f => f.filename);
+            fs.writeFileSync('/tmp/pr_files.json', JSON.stringify(names, null, 2));
+            core.info(`Fetched ${names.length} changed file(s).`);
+
+      - name: Run immutable core check
+        id: check
+        continue-on-error: true
+        run: |
+          python3 scripts/autonomous_ops.py check-immutable --files-json /tmp/pr_files.json
+
+      - name: Enforce immutable core violation
+        if: steps.check.outputs.violation == 'true'
+        uses: actions/github-script@v7
+        env:
+          VIOLATION_FILES: ${{ steps.check.outputs.violation_files }}
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const files = (process.env.VIOLATION_FILES || '').split(',').filter(Boolean);
+            const listMd = files.map(f => `- \`${f}\``).join('\n');
+
+            try {
+              await github.rest.issues.createLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: 'immutable-violation',
+                color: 'b60205',
+                description: 'PR attempted to modify immutable core or out-of-scope files'
+              });
+            } catch (_) {}
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              labels: ['immutable-violation']
+            });
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              body: [
+                '### Immutable Core Violation Detected',
+                '',
+                'This PR modified protected immutable core files or paths outside `allowed_globs` in `config/autonomous.json`:',
+                listMd,
+                '',
+                'Closing this PR and deleting its branch automatically without human review.'
+              ].join('\n')
+            });
+
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+              state: 'closed'
+            });
+
+            if (pr.head.repo && pr.head.repo.full_name === `${context.repo.owner}/${context.repo.repo}`) {
+              try {
+                await github.rest.git.deleteRef({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ref: `heads/${pr.head.ref}`
+                });
+              } catch (err) {
+                core.warning(`Branch deletion skipped: ${err.message}`);
+              }
+            }
+            core.setFailed(`Immutable core violation on: ${files.join(', ')}`);
+
+      - name: Fail on unexpected check-immutable error
+        if: steps.check.outcome == 'failure' && steps.check.outputs.violation != 'true'
+        run: exit 1
+
+  verify-lean:
+    name: Verify Lean 4
+    needs: immutable-core-guard
+    if: needs.immutable-core-guard.outputs.has_lean == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+
+      - name: Fetch changed PR files
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              per_page: 100
+            });
+            fs.writeFileSync('/tmp/pr_files.json', JSON.stringify(files.map(f => f.filename)));
+
+      - name: Static Lean check (no sorry/admit/axiom/unsafe)
+        run: |
+          git fetch origin ruca-logic --depth=1
+          git show origin/ruca-logic:scripts/autonomous_ops.py > /tmp/autonomous_ops.py
+          python3 /tmp/autonomous_ops.py verify-lean-static --files-json /tmp/pr_files.json
+
+      - name: Build, Axiom Audit, and LeanChecker
+        uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: lean
+          build: true
+          axiom-audit: true
+          axiom-audit-allow: "propext,Classical.choice,Quot.sound"
+          leanchecker: true
+
+  verify-code-and-redteam:
+    name: Verify Code & Red Team
+    needs: immutable-core-guard
+    if: needs.immutable-core-guard.outputs.has_code == 'true' || needs.immutable-core-guard.outputs.has_conjecture == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      counterexample_found: ${{ steps.redteam.outputs.counterexample_found }}
+      counterexample_test: ${{ steps.redteam.outputs.counterexample_test }}
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Fetch changed PR files
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              per_page: 100
+            });
+            fs.writeFileSync('/tmp/pr_files.json', JSON.stringify(files.map(f => f.filename)));
+
+      - name: Python syntax check (compileall)
+        run: |
+          if [ -d code ]; then
+            python3 -m compileall -q code
+          fi
+
+      - name: Run pytest (if tests exist)
+        run: |
+          if [ -d tests ] && ls tests/test_*.py >/dev/null 2>&1; then
+            python3 -m unittest discover -s tests -p "test_*.py" -v
+          fi
+
+      - name: Run Red Team schema & counterexample check
+        id: redteam
+        run: |
+          git fetch origin ruca-logic --depth=1
+          git show origin/ruca-logic:scripts/autonomous_ops.py > /tmp/autonomous_ops.py
+          git show origin/ruca-logic:config/autonomous.json > /tmp/autonomous.json
+          python3 /tmp/autonomous_ops.py --config /tmp/autonomous.json redteam-check --files-json /tmp/pr_files.json
+
+  finalize-pr:
+    name: finalize-pr
+    needs: [immutable-core-guard, verify-lean, verify-code-and-redteam]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Handle Red Team counterexample
+        if: needs.verify-code-and-redteam.outputs.counterexample_found == 'true'
+        uses: actions/github-script@v7
+        env:
+          COUNTEREXAMPLE_TEST: ${{ needs.verify-code-and-redteam.outputs.counterexample_test }}
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            try {
+              await github.rest.issues.createLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: 'falsified-by-redteam',
+                color: 'd93f0b',
+                description: 'Conjecture falsified by automated Red Team test'
+              });
+            } catch (_) {}
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              labels: ['falsified-by-redteam']
+            });
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              body: `### Falsified by Red Team\n\nCounterexample detected by \`${process.env.COUNTEREXAMPLE_TEST || 'redteam test'}\`. Closing PR and deleting branch automatically.`
+            });
+
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+              state: 'closed'
+            });
+
+            if (pr.head.repo && pr.head.repo.full_name === `${context.repo.owner}/${context.repo.repo}`) {
+              try {
+                await github.rest.git.deleteRef({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ref: `heads/${pr.head.ref}`
+                });
+              } catch (err) {
+                core.warning(`Branch deletion skipped: ${err.message}`);
+              }
+            }
+            core.setFailed('Counterexample found by Red Team.');
+
+      - name: Handle CI failure
+        if: |
+          needs.verify-code-and-redteam.outputs.counterexample_found != 'true' &&
+          (needs.immutable-core-guard.result != 'success' ||
+           (needs.verify-lean.result != 'success' && needs.verify-lean.result != 'skipped') ||
+           (needs.verify-code-and-redteam.result != 'success' && needs.verify-code-and-redteam.result != 'skipped'))
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            try {
+              await github.rest.issues.createLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: 'ci-failed',
+                color: 'e11d21',
+                description: 'Automated verification failed'
+              });
+            } catch (_) {}
+
+            if (pr.state === 'open') {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                labels: ['ci-failed']
+              });
+            }
+            core.setFailed('One or more verification checks failed.');
+
+      - name: Enable auto-merge on passing non-draft PR
+        if: |
+          needs.immutable-core-guard.result == 'success' &&
+          (needs.verify-lean.result == 'success' || needs.verify-lean.result == 'skipped') &&
+          (needs.verify-code-and-redteam.result == 'success' || needs.verify-code-and-redteam.result == 'skipped') &&
+          github.event.pull_request.draft == false
+        env:
+          GH_TOKEN: ${{ secrets.AUTONOMOUS_BOT_TOKEN || secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh pr merge "$PR_NUMBER" --auto --squash --delete-branch
