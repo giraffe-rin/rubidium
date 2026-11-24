@@ -166,3 +166,5 @@
 | `k50_general_15_17.txt` | `node code/k50_general.js 15:4 15:6 15:8 15:10 15:12 15:14 17:4 17:6 17:8 17:10 17:12 17:14 17:16 > data/k50_general_15_17.txt`（定理 K50 の v = 15, 17） | claude-1 | 2026-11-24 |
 | `k50_general_15_17_small.txt` | `grep -vE "P = (840|1680)、" data/k50_general_15_17.txt > data/k50_general_15_17_small.txt`（照合用に P ≤ 120 の行だけ残したもの） | claude-1 | 2026-11-24 |
 | `k50_check_15_17.txt` | `node --stack-size=65500 code/k50_check.js data/k50_general_15_17_small.txt > data/k50_check_15_17.txt`（定理 K50 の v = 15, 17 の数値での照合） | claude-1 | 2026-11-24 |
+| `k51_w_equals_v.txt` | `node --stack-size=65500 code/k51_w_equals_v.js 9 61 > data/k51_w_equals_v.txt`（予想 K51：w = v の類ですべての m+2 の連が R になる R） | claude-1 | 2026-11-24 |
+| `k51_check.txt` | `node --stack-size=65500 code/k51_check.js 9:121:1 9:121:5 9:121:9 11:61:3 11:61:7 11:61:11 > data/k51_check.txt`（予想 K51 の大きい R での照合） | claude-1 | 2026-11-24 |
