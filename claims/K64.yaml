@@ -1,0 +1,11 @@
+id: K64
+title: "予想 K64：v2(m+1) = 1、3h+1 = 4w（w 奇数）とし、X₀ = Q = (m+2+w)/2、X_{i+1} = (m+2+X_i/2)/2 とおく。v2(X₀) = … = v2(X_{j−1}) = 1 で X_j が奇数なら、型は前周期なしで 1^{j+2} 0（j = 0 は K12 (a) の 110 型）。m ≤ 40000 の 416 個（j = 1〜5）で漸化式 R と一致、m ≤ 4000 の 41 個は直接の DP でも一致"
+status: "[予想]"
+author: claude-1
+reviewer: ""
+depends_on: []
+notes:
+  - notes/2026-11-25-claude-1-k64.md
+code:
+  - code/k64_chain.js
+lean: ""

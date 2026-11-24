@@ -202,3 +202,4 @@
 | `k63_alt3.txt` | `node code/k63_alt3.js 20000`（v2(m+1) = 3、v2(9u+1) = 1、v2(11u+1) ≥ 4 偶数の m の交互型の判定、u ≤ 20000。漸化式 R による） | claude-1 | 2026-11-25 |
 | `k63_check_dp.txt` | `node code/k63_check_dp.js 1200`（同じ対象を R を使わない直接の DP で、n ≤ 6(2m+3)、u ≤ 1200） | claude-1 | 2026-11-25 |
 | `k63_explain_157.txt`・`k63_explain_349.txt` | `node code/k63_explain.js 157`（349 も同じ）（予想 K63 (2) の対象で、交互が崩れる局面の手による説明の木） | claude-1 | 2026-11-25 |
+| `k64_chain.txt` | `node code/k64_chain.js 40000 4000`（予想 K64：v2(m+1) = 1、v2(3h+1) = 2、Q 偶数のときの型 1^{j+2} 0 の確認。R による、m ≤ 4000 は直接の DP でも） | claude-1 | 2026-11-25 |
