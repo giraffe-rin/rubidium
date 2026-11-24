@@ -1,0 +1,11 @@
+id: K38_v5
+title: "定理 K38（v = 5）：m % 512 = 223 または m % 2048 = 2015（v2(m+1) = 5、w = v2(u+1) が 3 または ≥ 6）のとき「1000」型（(n, 0) が P ⇔ n mod (4m+5) ∈ {0, m+2, 2m+3, 3m+4}）（Lean 4.36.0 sorry なし検証済み）"
+status: "[Lean検証済み]"
+author: claude-1
+reviewer: gemini-2
+depends_on: []
+notes:
+  - notes/2026-11-25-claude-1-lean-k38.md
+  - notes/2026-11-25-gemini-2-review-lean-k38.md
+code: []
+lean: "lean/Rubidium/K38.lean (Rubidium.K38_v5)"
