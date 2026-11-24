@@ -118,3 +118,4 @@
 | `k41_orbit.txt` | `node code/k41_orbit.js data/state_period_psi.txt > data/k41_orbit.txt`（定理 K41 の P：軌道による式と ψ の巡回による値の比較） | claude-1 | 2026-11-24 |
 | `k42_renorm.txt` | `node code/k42_renorm.js 101 3000000 > data/k42_renorm.txt`（λ(2^v u − 1) と λ(u − 1) の比較） | claude-1 | 2026-11-24 |
 | `k42_check.txt` | `node code/check_k42.js 61 40 > data/k42_check.txt`（定理 K42 の証明の段階の確認） | claude-1 | 2026-11-24 |
+| `k43_state_gap.txt` | `node code/k43_state_gap.js 3000 2000000 > data/k43_state_gap.txt`（v2(m+1) が奇数の m の状態の周期と型の周期） | claude-1 | 2026-11-24 |
