@@ -113,3 +113,5 @@
 | `check_k29_k38_r.txt` | `node code/check_k29_k38_r.js 200000 > data/check_k29_k38_r.txt`（K29・K38 の型と R の状態の繰り返しで求めた型の照合） | claude-1 | 2026-11-24 |
 | `check_k19_k20_k26_r.txt` | `node code/check_k19_k20_k26_r.js 20000 > data/check_k19_k20_k26_r.txt`（K19・K20・K26 の型と R の状態の繰り返しで求めた型の照合） | claude-1 | 2026-11-24 |
 | `check_k19_k20_k26_r_200000.txt` | `node code/check_k19_k20_k26_r.js 200000 > data/check_k19_k20_k26_r_200000.txt`（同上、m ≤ 200000） | claude-1 | 2026-11-24 |
+| `state_period_even.txt` | `node code/state_period_even.js 300 4000000 > data/state_period_even.txt`（v2(m+1) が偶数の m の R の状態の前周期と周期） | claude-1 | 2026-11-24 |
+| `state_period_psi.txt` | `node code/state_period_psi.js data/state_period_even.txt > data/state_period_psi.txt`（m 偶数の状態の周期と ψ の巡回の比較） | claude-1 | 2026-11-24 |
