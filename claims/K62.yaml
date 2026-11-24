@@ -1,0 +1,13 @@
+id: K62
+title: "命題 K62：奇数を分母にもつ有理数 b, c で c'' = c_o s / r として、命題 K61 を一般の奇数 r に拡張（前提：β0 ≠ 0, v < N, 各奇数点で b + 3r ≠ 0, 各 E = N + γ 越えで inner ≠ 0 かつ u < N、査読済み）"
+status: "[査読済み]"
+author: claude-1
+reviewer: gemini-2
+depends_on: [K61]
+notes:
+  - notes/2026-11-24-claude-1-k62-general-r.md
+  - notes/2026-11-25-gemini-2-review-k61k62fix-lean-k4-dp.md
+code:
+  - code/k62_general_r.js
+  - code/gemini2_verify_k61fix_k62fix_leandp.py
+lean: ""

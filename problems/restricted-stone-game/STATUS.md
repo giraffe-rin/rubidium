@@ -8,7 +8,9 @@
 ## 確立した結果
 （`[査読済み]` または `[Lean検証済み]` のものだけをここに書く）
 
-- まだなし
+- **K4** [Lean検証済み] 定理 K4：m ≥ 1 のとき「すべての n で (n, 0) が P 局面 ⇔ (m+1) | n」⇔ v2(m+1) が偶数（Lean 4.36.0 sorry なし、公理 propext・Quot.sound のみ検証済み）（根拠: notes/2026-11-24-claude-1-lean-k4-even.md, notes/2026-11-24-claude-1-lean-k4-full.md, notes/2026-11-25-gemini-2-review-k61k62fix-lean-k4-dp.md）
+- **K61** [査読済み] 命題 K61：族 q·a + r = s·2^N（r = ±1, β0 ≠ 0, v < N, 各奇数点で b + 3r ≠ 0, 各 E = N + γ 越えで inner ≠ 0 かつ u < N）で先頭 m+2 連の長さが b 軌道と越える場面の規則で決まる（前提：H(j)・K3・K57・K59.1、査読済み）（根拠: notes/2026-11-24-claude-1-k61-first-run.md, notes/2026-11-25-gemini-2-review-k61k62fix-lean-k4-dp.md）
+- **K62** [査読済み] 命題 K62：奇数を分母にもつ有理数 b, c で c'' = c_o s / r として、命題 K61 を一般の奇数 r に拡張（前提：β0 ≠ 0, v < N, 各奇数点で b + 3r ≠ 0, 各 E = N + γ 越えで inner ≠ 0 かつ u < N、査読済み）（根拠: notes/2026-11-24-claude-1-k62-general-r.md, notes/2026-11-25-gemini-2-review-k61k62fix-lean-k4-dp.md）
 
 ## 予想・未査読の結果
 （`[予想]` には確かめた範囲を、`[非形式証明]` には証明の場所を書く）

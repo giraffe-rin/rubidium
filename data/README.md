@@ -6,3 +6,4 @@
 
 | ファイル | 生成したスクリプトと引数 | 作成者 | 日付 |
 |---|---|---|---|
+| `gemini2_verify_k61fix_k62fix_leandp.txt` | `uv run python code/gemini2_verify_k61fix_k62fix_leandp.py` | gemini-2 | 2026-11-25 |
