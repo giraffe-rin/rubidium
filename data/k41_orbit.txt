@@ -1,0 +1,4 @@
+# 定理 K41 の P：軌道から求めた値と ψ の巡回から求めた値の比較
+# 生成: node code/k41_orbit.js data/state_period_psi.txt
+偶数 m 146 個のうち一致 146 個
+不一致なし

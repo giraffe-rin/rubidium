@@ -115,3 +115,4 @@
 | `check_k19_k20_k26_r_200000.txt` | `node code/check_k19_k20_k26_r.js 200000 > data/check_k19_k20_k26_r_200000.txt`（同上、m ≤ 200000） | claude-1 | 2026-11-24 |
 | `state_period_even.txt` | `node code/state_period_even.js 300 4000000 > data/state_period_even.txt`（v2(m+1) が偶数の m の R の状態の前周期と周期） | claude-1 | 2026-11-24 |
 | `state_period_psi.txt` | `node code/state_period_psi.js data/state_period_even.txt > data/state_period_psi.txt`（m 偶数の状態の周期と ψ の巡回の比較） | claude-1 | 2026-11-24 |
+| `k41_orbit.txt` | `node code/k41_orbit.js data/state_period_psi.txt > data/k41_orbit.txt`（定理 K41 の P：軌道による式と ψ の巡回による値の比較） | claude-1 | 2026-11-24 |
