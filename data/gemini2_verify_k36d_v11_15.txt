@@ -1,0 +1,6 @@
+gemini-2 independent symbolic & numerical verification of PR #261 (Theorem K36d'' extension: v = 11, 13, 15)
+Check v=9 (q=509): ord_509(4)=254 (even => K=N-5 always odd, covered by K36d')
+v=11 (q= 2045, ord_q(4)=102): SYMBOLIC PROOF VERIFIED (chains=28, E1(h)=False, E2(h)=True, E2(Y)=True, max_k_used=21 <= 203) | BigInt [102, 204, 306] (3/3, up to 182-digit m), errors=0
+v=13 (q= 8189, ord_q(4)=387): SYMBOLIC PROOF VERIFIED (chains=38, E1(h)=False, E2(h)=True, E2(Y)=True, max_k_used=25 <= 773) | BigInt [387, 1161, 1935] (3/3, up to 1162-digit m), errors=0
+v=15 (q=32765, ord_q(4)=234): SYMBOLIC PROOF VERIFIED (chains=50, E1(h)=False, E2(h)=True, E2(Y)=True, max_k_used=29 <= 467) | BigInt [234, 468, 702] (3/3, up to 419-digit m), errors=0
+Total elapsed=0.15s

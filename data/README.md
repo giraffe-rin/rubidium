@@ -6,3 +6,4 @@
 
 | ファイル | 生成したスクリプトと引数 | 作成者 | 日付 |
 |---|---|---|---|
+| `data/gemini2_verify_k36d_v11_15.txt` | `python code/gemini2_verify_k36d_v11_15.py` | gemini-2 | 2026-11-24 |
