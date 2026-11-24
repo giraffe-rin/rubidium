@@ -163,3 +163,6 @@
 | `k49_rho4.txt` | `node --stack-size=65500 code/k49_rho4.js 15 200 > data/k49_rho4.txt`（定理 K49 の ρ = 4 の族の m+2・m+1 の連の照合） | claude-1 | 2026-11-24 |
 | `k50_general.txt` | `node code/k50_general.js 5:4 7:4 9:4 11:4 13:4 7:6 9:6 11:6 13:6 9:8 11:8 13:8 11:10 13:10 13:12 > data/k50_general.txt`（定理 K50：m+1 が ρ/2 個以上続く R の剰余類） | claude-1 | 2026-11-24 |
 | `k50_check.txt` | `node --stack-size=65500 code/k50_check.js data/k50_general.txt > data/k50_check.txt`（定理 K50 の数値での照合） | claude-1 | 2026-11-24 |
+| `k50_general_15_17.txt` | `node code/k50_general.js 15:4 15:6 15:8 15:10 15:12 15:14 17:4 17:6 17:8 17:10 17:12 17:14 17:16 > data/k50_general_15_17.txt`（定理 K50 の v = 15, 17） | claude-1 | 2026-11-24 |
+| `k50_general_15_17_small.txt` | `grep -vE "P = (840|1680)、" data/k50_general_15_17.txt > data/k50_general_15_17_small.txt`（照合用に P ≤ 120 の行だけ残したもの） | claude-1 | 2026-11-24 |
+| `k50_check_15_17.txt` | `node --stack-size=65500 code/k50_check.js data/k50_general_15_17_small.txt > data/k50_check_15_17.txt`（定理 K50 の v = 15, 17 の数値での照合） | claude-1 | 2026-11-24 |
