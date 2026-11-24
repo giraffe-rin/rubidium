@@ -1,0 +1,4 @@
+# 定理 K41c：状態の周期の正確な式と、Brent の方法で求めた λ の比較
+# 生成: node code/k41_exact.js data/state_period_even.txt
+偶数 m 146 個のうち一致 146 個
+不一致なし
