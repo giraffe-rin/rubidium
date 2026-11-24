@@ -28,6 +28,7 @@ Lean 4 による形式化を置く場所です。
 | `Rubidium/K11.lean` | **定理 K11** `K11`：m+1 = 2^v·u（v ≥ 5 奇数、u 奇数）なら `¬ Alt m`。行 m+2 のブロックの一般の補題 `g_even`・`g_odd`、偶数の規則のくり返し `g_iter`（指数 i の帰納法）、行 2m+3 の `g_blk2_even`。公理は `propext`・`Classical.choice`・`Quot.sound`。 |
 | `Rubidium/K11.lean`（追加） | `not_alt_seven`：m = 7 は交互型でない。**定理 K10c（完全な形）** `K10c_full`：m+1 = 8u（u 奇数）で交互型なら u ≥ 3、v2(9u+1) 奇数、v2(11u+1) 偶数。 |
 | `Rubidium/K7.lean` | **定理 K7′**（周期性）`K7'`：すべての m で `∃ N₀ T, 0 < T ∧ ∀ r ≥ N₀, ∀ p, (IsP m (r+T) p ↔ IsP m r p)`。窓（直前の m 行）の一致から先が決まる `window_step`・`window_all`、鳩の巣原理 `pigeon`、窓の 2 進の符号 `enc`・`win`。公理は `propext`・`Classical.choice`・`Quot.sound`。 |
+| `Rubidium/K29.lean` | **定理 K29.2** `K29_v5`：m % 128 = 31（v2(m+1) = 5、u ≡ 1 (mod 4)）なら `IsP m n 0 ↔ n % (3m+4) ∈ {0, m+2, 2m+3}`（100 型）。汎用の補題 `p_oddb`（O 型のブロックの奇数）、`e_even`（E 型のブロックの偶数）。公理は `propext`・`Classical.choice`・`Quot.sound`。 |
 | `Rubidium/Decide.lean` | 計算できる判定 `isPb m r p : Bool`（`Nat.all` による再帰）と、`isPb_iff`：`isPb m r p = true ↔ IsP m r p`。 |
 | `check/PStarts.lean` | `isPb` を実行して、m ≤ 10 の後手必勝の開始局面 (n, 0)（n ≤ 24）を出すスクリプト。出力は `data/lean_pstarts.txt`、JavaScript の全探索との照合は `data/lean_crosscheck.txt`。 |
 | `check/Tables.lean` | Array による DP で全局面 (r, p) の勝敗表を出すスクリプト（証明はない、別言語の実装による照合用）。出力は `data/lean_tables.txt`、`data/tables` との照合は `data/lean_tables_compare.txt`。 |
