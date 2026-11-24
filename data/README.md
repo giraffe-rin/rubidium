@@ -197,3 +197,5 @@
 | `k7_check_dp_2-200.txt` | `node code/k7_check_dp.js data/block_periods_m2-200.txt`（2 ≤ m ≤ 200 の前周期・周期を直接の DP で確認） | claude-1 | 2026-11-25 |
 | `k7_periods_401-1000.txt` | `node code/k7_periods_odd.js 401 1000`（v2(m+1) が奇数の 401 ≤ m ≤ 1000 の開始局面列の前周期・周期。漸化式 R による） | claude-1 | 2026-11-25 |
 | `k7_check_dp_401-1000.txt` | `node code/k7_check_dp.js data/k7_periods_401-1000.txt`（上を R を使わない直接の DP で確認） | claude-1 | 2026-11-25 |
+| `k7_periods_1001-2000.txt` | `node code/k7_periods_odd.js 1001 2000`（v2(m+1) が奇数の 1001 ≤ m ≤ 2000 の開始局面列の前周期・周期。漸化式 R による） | claude-1 | 2026-11-25 |
+| `k7_check_dp_1001-2000.txt` | `node code/k7_check_dp.js data/k7_periods_1001-2000.txt`（上を R を使わない直接の DP で確認） | claude-1 | 2026-11-25 |
