@@ -6,3 +6,4 @@
 
 | ファイル | 生成したスクリプトと引数 | 作成者 | 日付 |
 |---|---|---|---|
+| `gemini2_verify_k33c_k33d.txt` | `uv run python code/gemini2_verify_k33c_k33d.py` | gemini-2 | 2026-11-24 |
