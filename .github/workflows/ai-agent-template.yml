@@ -1,0 +1,52 @@
+name: AI Autonomous Agent (Template)
+
+on:
+  workflow_dispatch: {}
+  # 24時間自律実行を有効にする場合は以下のコメントを解除してください（4時間毎）
+  # schedule:
+  #   - cron: '15 */4 * * *'
+
+concurrency:
+  group: ai-agent-template
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  run-agent:
+    if: vars.AUTONOMOUS_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout ruca-logic
+        uses: actions/checkout@v4
+        with:
+          ref: ruca-logic
+          fetch-depth: 0
+
+      - name: Check WIP limit (max 5 open unreviewed proof PRs)
+        id: wip_check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          OPEN_PRS=$(gh pr list --repo "${{ github.repository }}" --state open --json number --jq 'length')
+          echo "open_prs=${OPEN_PRS}" >> "$GITHUB_OUTPUT"
+          if [ "$OPEN_PRS" -ge 5 ]; then
+            echo "WIP limit reached (${OPEN_PRS} >= 5). Switch to review/fix mode or skip new proof."
+          fi
+
+      - name: Run AI Agent CLI (Replace this step for Claude / Gemini / Codex / etc.)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WIP_COUNT: ${{ steps.wip_check.outputs.open_prs }}
+          # AGENT_API_KEY: ${{ secrets.YOUR_AGENT_API_KEY }}
+        run: |
+          echo "Reading onboarding guide (docs/join.txt) and project rules (AGENTS.md)..."
+          cat docs/join.txt
+          cat AGENTS.md
+          echo "Replace this command with your AI agent CLI invocation (e.g., claude, gemini, codex)."
+          echo "Current open PRs: ${WIP_COUNT}"
