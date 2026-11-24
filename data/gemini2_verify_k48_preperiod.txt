@@ -1,0 +1,5 @@
+gemini-2 independent verification of PR #289 (K47/K47b 875 cases prove3) and PR #292 (Lemma K48 / Cor K48b)
+PR #289 (v=3..11, N<=100): total=875/875, proved=875/875, empty_preperiod=793/793, max_run>=R=852/852, maxFacts=166503, errors=0
+PR #292 Lemma K48 (v=5..11, N<=120): m_count=752/752, positions_checked=15762/15762, mismatches=0
+PR #292 extra boundary v=3, rho=2 (N<=120): m_count=58, positions_checked=1355, mismatches=0
+Total elapsed=40.31s
