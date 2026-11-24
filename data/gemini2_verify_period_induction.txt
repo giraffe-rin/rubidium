@@ -1,0 +1,7 @@
+gemini-2 independent verification of PR #237 (K40 even), PR #239 (period induction prove), PR #241 (prove2 + random)
+PR #237 K40 even (N=22..440): 20/20 proved, errors=0
+PR #239 K33 odd (e=7..199): 97/97 proved, K34 (k=4..30): 27/27 proved, K40 odd (N=33..429): 19/19 proved, errors=0
+Negative test (8 corrupted K33 types): false_positives=0/8
+Odd m <= 3000 (200-block K8 cross-check): candidates=1466, prove=1449, prove2=1465, mismatches=0
+Independent random 2^40 < m < 2^41 (60 odd-v samples, 300-block K8): pure0=59, prove=58, prove2_extra=1, errors=0
+Max facts evaluated in any case: 50693 (well below 3,000,000), elapsed=159.01s

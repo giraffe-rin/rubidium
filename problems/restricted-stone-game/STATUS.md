@@ -3,12 +3,15 @@
 チーム全体で「今わかっていること」をまとめる場所です。
 更新ルールは `AGENTS.md` 第 4・5 節を参照してください。各項目には根拠のログファイル名を書きます。
 
-最終更新：2026-11-23（初期化）
+最終更新：2026-11-24（gemini-2：PR #237・#239・#241 周期帰納法 prove/prove2 健全性と K40・K33 奇数・K34・無作為 193 例の独立査読・Python 独立検証）
 
 ## 確立した結果
 （`[査読済み]` または `[Lean検証済み]` のものだけをここに書く）
 
-- まだなし
+- **予想 K40（`q = 23`、`N = 22, 44, …, 440` 偶数 20 例）の型確定** `[査読済み]`（査読者：gemini-2、PR #237、根拠：`notes/2026-11-24-claude-1-k40-induction.md`、`notes/2026-11-24-gemini-2-review-period-induction.md`、`data/gemini2_verify_period_induction.txt`）：`a = (2^N - 1)/23`、`m = 3a - 2` の全 20 例で前周期なし・周期 `1^{N/2 - 1} 0` を厳密独立 Python 検証器で確認（`errors = 0`、`N/2` 偶数 10 例で `v2(X) = 4` も確認）。
+- **周期帰納法証明器 `prove` / `prove2` の数学的健全性（`m` 奇数・純周期・末尾 0）** `[査読済み]`（査読者：gemini-2、PR #239・#241、根拠：`notes/2026-11-24-claude-1-period-induction.md`、`notes/2026-11-24-claude-1-period-induction-random.md`、`notes/2026-11-24-gemini-2-review-period-induction.md`）：定理 K8・K3・補題 `Q_s` に基づく数学的健全性を確認。実装上の `tooMany`/`over` 検査漏れおよび偶数 `m` ガードは今後向けの堅牢化事項として指摘（今回の全検証では最大評価事実数 `50,693 ≪ 3,000,000` で影響なし）。
+- **予想 K33（`e` 奇数 97 例）・予想 K34（27 例）・予想 K40（`N` 奇数 19 例）の型確定（計 143 例）** `[査読済み]`（査読者：gemini-2、PR #239、根拠：`notes/2026-11-24-claude-1-period-induction.md`、`notes/2026-11-24-gemini-2-review-period-induction.md`、`data/gemini2_verify_period_induction.txt`）：K33（`e = 7..199`、97/97）、K34（`k = 4..30`、27/27）、K40 奇数（`N = 33..429`、19/19）すべてを厳密独立 Python 検証器で確定（`errors = 0`）。
+- **大きい `m`（`2^40 < m < 2^41`、`v2(m+1)` 奇数）の無作為 193 例および奇数 `m ≤ 3000`（1,465/1,466 例）の検証** `[査読済み]`（査読者：gemini-2、PR #241、根拠：`notes/2026-11-24-claude-1-period-induction-random.md`、`notes/2026-11-24-gemini-2-review-period-induction.md`、`data/gemini2_verify_period_induction.txt`）：`SEED=1` の 193/193 例・独立別シード 60 例中 59/59 例・奇数 `m ≤ 3000`（prove 1,449 / prove2 1,465 / 候補 1,466、食い違い 0）を厳密独立検証で確認。
 
 ## 予想・未査読の結果
 （`[予想]` には確かめた範囲を、`[非形式証明]` には証明の場所を書く）
