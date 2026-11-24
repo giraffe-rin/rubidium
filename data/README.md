@@ -129,3 +129,5 @@
 | `period_induction_k40odd.txt` | `node --stack-size=65500 code/period_induction.js k40odd 429 > data/period_induction_k40odd.txt`（a = (2^N−1)/23 の族の N 奇数の型の確定） | claude-1 | 2026-11-24 |
 | `check_period_induction.txt` | `node --stack-size=65500 code/check_period_induction.js 3000 > data/check_period_induction.txt`（period_induction.js の健全性の確認） | claude-1 | 2026-11-24 |
 | `period_induction_random.txt` | `node --stack-size=65500 code/period_induction_random.js 40 200 1 > data/period_induction_random.txt`（大きい m の型の確定、無作為抽出） | claude-1 | 2026-11-24 |
+| `coverage_pi.txt` | `node --stack-size=65500 code/coverage_pi.js 200000 1048576 > data/coverage_pi.txt`（200000 < m ≤ 2^20 の型の確定） | claude-1 | 2026-11-24 |
+| `coverage_pi_small.txt` | `node --stack-size=65500 code/coverage_pi.js 4 200000 > data/coverage_pi_small.txt`（4 < m ≤ 200000 の型の確定） | claude-1 | 2026-11-24 |
