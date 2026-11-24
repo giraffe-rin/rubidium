@@ -25,6 +25,7 @@ for (let m = 1; m <= MMAX; m++) {
   if ((m + 1) % 2048 === 1768) thms.push('K68_221');
   if ((m + 1) % 2048 === 824) thms.push('K68_103');
   if ([1560, 1944, 1976].includes((m + 1) % 2048)) thms.push('K68c');
+  if ((m + 1) % 4096 === 3256) thms.push('K68_407');
   if (m % 128 === 31) thms.push('K29_v5');
   if (v >= 5 && v % 2 === 1 && u % 4 === 1) thms.push('K29_gen');
   if (v >= 5 && v % 2 === 1 && u % 4 === 3) { const w = v2(u + 1); if ((w % 2 === 1 && w >= 3 && w <= v - 2) || w >= v + 1) thms.push('K38'); }
