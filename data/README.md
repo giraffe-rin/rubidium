@@ -183,3 +183,4 @@
 | `k33_odd_extend.txt` | `node --stack-size=65500 code/k33_odd_extend.js 9 399 > data/k33_odd_extend.txt`（予想 K33（e 奇数）の型の確定、e ≤ 399） | claude-1 | 2026-11-24 |
 | `k58_family.txt` | `node --stack-size=65500 code/k58_family.js 21 401 > data/k58_family.txt`（v = 3、ρ = 2、N 奇数の型の確定：予想 K34・K58） | claude-1 | 2026-11-24 |
 | `k59_first_run.txt` | `node --stack-size=65500 code/k59_first_run.js 401 > data/k59_first_run.txt`（定理 K59 の先頭の m+2 の連の照合） | claude-1 | 2026-11-24 |
+| `k34_trace.txt` | `node --stack-size=65500 code/k34_trace.js 41 45 49 53 43 47 51 > data/k34_trace.txt`（予想 K34・K58 の帰納法の 1 段の分解） | claude-1 | 2026-11-24 |

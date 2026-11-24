@@ -22,7 +22,7 @@ for(const e of process.argv.slice(2).map(Number)){
   if(i===0){if(d%2n===1n)r=true;else if(A.has(d))r=A.get(d);else throw new Error('不明 '+d)}
   else if(gap(i-1)==='1'){ // O 型：一本道を B まで、または E 型ブロックに着くまで進む
    nO++;let j=i,dd=d,s=0;
-   while(j>0&&gap(j-1)==='1'){if(dd%2n===0n)dd/=2n;else{if(dd===h-1n){r=false;break}if((M+dd)/2n>m){r=true;break}dd=(M+dd)/2n;j--}s++}
+   while(j>0&&gap(j-1)==='1'){if(dd%2n===0n)dd/=2n;else{if(dd===h-1n){r=s%2===0?false:true;break}if((M+dd)/2n>m){r=s%2===0?true:false;break}dd=(M+dd)/2n;j--}s++}
    if(r===undefined){const b=S(j,dd);r=s%2===0?b:!b}
    chains.push([i,j]);
   } else { nE++; // E 型
@@ -38,7 +38,7 @@ if (process.env.DUMP) { const e = +process.env.DUMP; const X = 2n ** BigInt(e), 
   const form = d => { for (let k = 0n; k <= 6n; k++) { const t = d * 2n ** k; const al = (t + X / 2n) / X; const be = t - al * X; if (be > -(X / 4n) && be < X / 4n) { const bs = be === 0n ? '' : (be < 0n ? '−' : '+') + (be < 0n ? -be : be); return `(${al}X${bs})/2^${k}`; } } return '?'; };
   const S = (i, d) => { const key = i + ':' + d; if (memo.has(key)) return memo.get(key); let r;
     if (i === 0) { r = d % 2n === 1n ? true : A.get(d); }
-    else if (gap(i - 1) === '1') { let j = i, dd = d, s = 0; while (j > 0 && gap(j - 1) === '1') { if (dd % 2n === 0n) dd /= 2n; else { if (dd === h - 1n) { r = false; break; } if ((M + dd) / 2n > m) { r = true; break; } dd = (M + dd) / 2n; j--; } s++; } if (r === undefined) { const b = S(j, dd); r = s % 2 === 0 ? b : !b; } }
+    else if (gap(i - 1) === '1') { let j = i, dd = d, s = 0; while (j > 0 && gap(j - 1) === '1') { if (dd % 2n === 0n) dd /= 2n; else { if (dd === h - 1n) { r = s % 2 === 0 ? false : true; break; } if ((M + dd) / 2n > m) { r = s % 2 === 0 ? true : false; break; } dd = (M + dd) / 2n; j--; } s++; } if (r === undefined) { const b = S(j, dd); r = s % 2 === 0 ? b : !b; } }
     else { if (d % 2n === 1n) r = true; else if (S(i, d / 2n)) r = false; else { const ee = h + d / 2n; r = !(ee <= m && S(i - 1, ee)); } rows.push(`ブロック ${i === e ? 'e' : i === L ? 'L' : i}：${form(d)}（v2 = ${v2(d)}）${r ? '入' : '不'}`); }
     memo.set(key, r); return r; };
   for (let i = 1; i <= L; i++) S(i, h); for (const [d] of A) S(L, d);
