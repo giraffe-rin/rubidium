@@ -123,3 +123,4 @@
 | `k41_exact.txt` | `node code/k41_exact.js data/state_period_even.txt > data/k41_exact.txt`（定理 K41c の式と Brent の方法の λ の比較） | claude-1 | 2026-11-24 |
 | `k36d_check.txt` | `node code/check_k36d.js 5:14 5:28 5:42 7:50 7:100 9:254 11:102 13:387 13:774 15:234 > data/k36d_check.txt`（定理 K36d′ の鎖の確認） | claude-1 | 2026-11-24 |
 | `k36d_even.txt` | `node code/k36d_even.js 7:50 7:100 7:150 11:102 11:204 11:306 13:387 15:234 > data/k36d_even.txt`（予想 K36d の K 偶数の場合の帰納法の閉じ方） | claude-1 | 2026-11-24 |
+| `k40_induction.txt` | `node code/k40_induction.js 440 > data/k40_induction.txt`（予想 K40 の N ごとの帰納法の閉じ方） | claude-1 | 2026-11-24 |
