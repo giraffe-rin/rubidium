@@ -192,3 +192,6 @@
 | `chain_symbolic.txt` | `node --stack-size=65500 code/chain_symbolic.js k58 k34 k33-1 k33-3 k60-1 k60-3 k60-5 k60-7 k60-9 k60-11 k60-13 k60-15 k60-17 k60-19 k60-21 k60-23 k60-25 k60-27 > data/chain_symbolic.txt`（帰納法の 1 段の記号的な評価：定理 K58・K34・K33・K60、R の下限つき） | claude-1 | 2026-11-24 |
 | `k61_first_run.txt` | `node --stack-size=65500 code/k61_first_run.js 5:1:3:41 5:1:7:43 29:1:15:85 1:-1:3:21 1:-1:3:23 5:1:83:5 5:1:243:5 k47rand:300:7 random:200:2026 enum:5:12:31:511 > data/k61_first_run.txt`（命題 K61：先頭の m+2 の連の長さの予測と実際。2026-11-25 に u < N などの条件と小さい族の全列挙を加えて作り直した） | claude-1 | 2026-11-24 |
 | `k62_general_r.txt` | `node --stack-size=65500 code/k62_general_r.js 29:4641:1:56 29:4641:1:112 497:5:839:109 k47rand:3000:13 random:5000:17 5:1:83:5 5:1:243:5 enum:5:12:31:15:255 > data/k62_general_r.txt`（命題 K62：一般の奇数 r での先頭の m+2 の連の予測。2026-11-25 に u < N などの条件と小さい族の全列挙を加えて作り直した） | claude-1 | 2026-11-24 |
+| `k7_periods_201-400.txt` | `node code/k7_periods_odd.js 201 400`（v2(m+1) が奇数の 201 ≤ m ≤ 400 の開始局面列の前周期・周期。漸化式 R による） | claude-1 | 2026-11-25 |
+| `k7_check_dp.txt` | `node code/k7_check_dp.js data/k7_periods_201-400.txt`（上の前周期・周期を R を使わない直接の DP で確認） | claude-1 | 2026-11-25 |
+| `k7_check_dp_2-200.txt` | `node code/k7_check_dp.js data/block_periods_m2-200.txt`（2 ≤ m ≤ 200 の前周期・周期を直接の DP で確認） | claude-1 | 2026-11-25 |
