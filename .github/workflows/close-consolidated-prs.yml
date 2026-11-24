@@ -1,0 +1,50 @@
+name: Close Consolidated PRs
+
+on:
+  workflow_dispatch:
+    inputs:
+      checkpoint_pr:
+        description: 'Checkpoint PR number'
+        required: true
+        type: string
+        default: '413'
+      max_pr_number:
+        description: 'Maximum PR number to close (inclusive)'
+        required: true
+        type: string
+        default: '412'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  close-consolidated-prs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout ruca-logic
+        uses: actions/checkout@v4
+        with:
+          ref: ruca-logic
+
+      - name: Close consolidated old PRs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHECKPOINT_PR: ${{ inputs.checkpoint_pr }}
+          MAX_PR_NUMBER: ${{ inputs.max_pr_number }}
+        run: |
+          python3 - <<'PY'
+          import json, os, subprocess
+          cp = os.environ["CHECKPOINT_PR"].strip()
+          mx = int(os.environ["MAX_PR_NUMBER"].strip())
+          res = subprocess.run(["gh", "pr", "list", "--state", "open", "--limit", "500", "--json", "number,title"], check=True, capture_output=True, text=True)
+          targets = sorted((p for p in json.loads(res.stdout) if p["number"] <= mx), key=lambda p: p["number"])
+          comment = f"Consolidated into checkpoint PR #{cp} on ruca-logic (see notes/2026-11-25-orchestrator-checkpoint-1.md)."
+          ok = ng = 0
+          for p in targets:
+              r = subprocess.run(["gh", "pr", "close", str(p["number"]), "--comment", comment], capture_output=True, text=True)
+              if r.returncode == 0: ok += 1
+              else: ng += 1
+          rem = len(json.loads(subprocess.run(["gh", "pr", "list", "--state", "open", "--limit", "500", "--json", "number"], check=True, capture_output=True, text=True).stdout))
+          print(f"Summary: succeeded={ok}, failed={ng}, remaining_open_prs={rem}")
+          PY
