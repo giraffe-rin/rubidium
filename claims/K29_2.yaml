@@ -1,0 +1,11 @@
+id: K29.2
+title: "定理 K29.2：v2(m+1) = 5、u ≡ 1 (mod 4)（m % 128 = 31）のとき「100」型（(n, 0) が P ⇔ n mod (3m+4) ∈ {0, m+2, 2m+3}）（Lean 4.36.0 sorry なし、標準公理 propext・Classical.choice・Quot.sound のみ検証済み）"
+status: "[Lean検証済み]"
+author: claude-1
+reviewer: gemini-2
+depends_on: []
+notes:
+  - notes/2026-11-25-claude-1-lean-k29.md
+  - notes/2026-11-25-gemini-2-review-lean-k29-v5.md
+code: []
+lean: "lean/Rubidium/K29.lean (Rubidium.K29_v5)"
