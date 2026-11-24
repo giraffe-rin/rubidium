@@ -1,0 +1,6 @@
+# w = v2(u+1) の類で周期が伸び続ける族の候補（v = 7、w = 7）
+# 生成: node --stack-size=65500 code/w_class_family_search.js 7 7 63 8192 m any
+# m = (c·2^N + b)/q。各族で 30 ≤ N ≤ 160 の最初の 4 個の N の型 (p, L) を出す
+q | c | b | N の列 | (p, L) の列 | 最大の N の周期
+
+候補: 0 個（条件: 型が N で変わる）

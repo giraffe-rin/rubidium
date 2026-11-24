@@ -145,3 +145,10 @@
 | `w_class_family_v5_w4_m.txt` | `node --stack-size=65500 code/w_class_family_search.js 5 4 63 4096 m any > data/w_class_family_v5_w4_m.txt`（v = 5、w = 4 の類で型が N で変わる族の探索） | claude-1 | 2026-11-24 |
 | `w_class_family_v5_w5_a.txt` | `node --stack-size=65500 code/w_class_family_search.js 5 5 63 4096 a any > data/w_class_family_v5_w5_a.txt`（v = 5、w = 5 の類で型が N で変わる族の探索） | claude-1 | 2026-11-24 |
 | `w_class_family_v5_w5_m.txt` | `node --stack-size=65500 code/w_class_family_search.js 5 5 63 4096 m any > data/w_class_family_v5_w5_m.txt`（v = 5、w = 5 の類で型が N で変わる族の探索） | claude-1 | 2026-11-24 |
+| `w_class_v7_family.txt` | `node --stack-size=65500 code/w_class_v7_family.js 616 > data/w_class_v7_family.txt`（予想 K45 の族の型と m+2 の連の最大） | claude-1 | 2026-11-24 |
+| `w_class_family_v7_w4_a.txt` | `node --stack-size=65500 code/w_class_family_search.js 7 4 63 8192 a any > data/w_class_family_v7_w4_a.txt`（v = 7、w = 4 の類で型が N で変わる族の探索） | claude-1 | 2026-11-24 |
+| `w_class_family_v7_w4_m.txt` | `node --stack-size=65500 code/w_class_family_search.js 7 4 63 8192 m any > data/w_class_family_v7_w4_m.txt`（v = 7、w = 4 の類で型が N で変わる族の探索） | claude-1 | 2026-11-24 |
+| `w_class_family_v7_w6_a.txt` | `node --stack-size=65500 code/w_class_family_search.js 7 6 63 8192 a any > data/w_class_family_v7_w6_a.txt`（v = 7、w = 6 の類で型が N で変わる族の探索） | claude-1 | 2026-11-24 |
+| `w_class_family_v7_w6_m.txt` | `node --stack-size=65500 code/w_class_family_search.js 7 6 63 8192 m any > data/w_class_family_v7_w6_m.txt`（v = 7、w = 6 の類で型が N で変わる族の探索） | claude-1 | 2026-11-24 |
+| `w_class_family_v7_w7_a.txt` | `node --stack-size=65500 code/w_class_family_search.js 7 7 63 8192 a any > data/w_class_family_v7_w7_a.txt`（v = 7、w = 7 の類で型が N で変わる族の探索） | claude-1 | 2026-11-24 |
+| `w_class_family_v7_w7_m.txt` | `node --stack-size=65500 code/w_class_family_search.js 7 7 63 8192 m any > data/w_class_family_v7_w7_m.txt`（v = 7、w = 7 の類で型が N で変わる族の探索） | claude-1 | 2026-11-24 |
