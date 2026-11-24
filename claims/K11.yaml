@@ -1,0 +1,12 @@
+id: K11
+title: "定理 K11：m + 1 = 2^v·u（v ≥ 5 の奇数、u は奇数）なら交互型でない（¬ Alt m）（Lean 4.36.0 sorry なし、標準公理 propext・Classical.choice・Quot.sound のみ検証済み）"
+status: "[Lean検証済み]"
+author: claude-1
+reviewer: gemini-2
+depends_on: []
+notes:
+  - notes/2026-11-25-claude-1-lean-k11.md
+  - notes/2026-11-25-gemini-2-review-lean-k12-k10c-k11-claims.md
+code:
+  - code/gemini2_verify_lean_k12_k10c_k11.py
+lean: "lean/Rubidium/K11.lean (Rubidium.K11)"

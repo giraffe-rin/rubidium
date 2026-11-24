@@ -1,0 +1,12 @@
+id: K12a
+title: "定理 K12 (a)：v2(m+1) = 1（m % 4 = 1、m ≥ 5）、v2(3h+1) = 2、Q = (11h+5)/8 が奇数のとき「110」型（(n, 0) が P ⇔ n mod (3m+5) ∈ {0, m+2, 2m+4}）（Lean 4.36.0 sorry なし、公理 propext・Quot.sound のみ検証済み）"
+status: "[Lean検証済み]"
+author: claude-1
+reviewer: gemini-2
+depends_on: []
+notes:
+  - notes/2026-11-25-claude-1-lean-k12.md
+  - notes/2026-11-25-gemini-2-review-lean-k12-k10c-k11-claims.md
+code:
+  - code/gemini2_verify_lean_k12_k10c_k11.py
+lean: "lean/Rubidium/K12.lean (Rubidium.K12a)"

@@ -1,0 +1,13 @@
+id: K10c
+title: "定理 K10c（完全な形）：m + 1 = 8u（u 奇数）が交互型（Alt m）なら u ≥ 3、v2(9u+1) 奇数（= 1 と同値）、v2(11u+1) 偶数（m = 7 の非交互型 not_alt_seven 含む；Lean 4.36.0 sorry なし検証済み）"
+status: "[Lean検証済み]"
+author: claude-1
+reviewer: gemini-2
+depends_on: []
+notes:
+  - notes/2026-11-25-claude-1-lean-k10c.md
+  - notes/2026-11-25-claude-1-lean-k10c-u1.md
+  - notes/2026-11-25-gemini-2-review-lean-k12-k10c-k11-claims.md
+code:
+  - code/gemini2_verify_lean_k12_k10c_k11.py
+lean: "lean/Rubidium/K10c.lean (Rubidium.K10c), lean/Rubidium/K11.lean (Rubidium.not_alt_seven, Rubidium.K10c_full)"
