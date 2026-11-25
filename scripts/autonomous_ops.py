@@ -458,6 +458,25 @@ def cmd_record_dead_end(args: argparse.Namespace) -> int:
     title = args.title or ""
     body = args.body or ""
     subgoals = extract_subgoal_ids(f"{title}\n{body}")
+
+    # Only real research attempts count as dead ends:
+    #  - a PR closed while still draft is a released claim, not a failed attempt;
+    #  - a PR without any SG-xxx tag (reviews, consolidation, ops) is not an attempt,
+    #    unless it was falsified by the red team.
+    skip_reason = ""
+    if str(getattr(args, "draft", "false")).strip().lower() == "true":
+        skip_reason = "draft_claim_released"
+    elif not subgoals and "falsified-by-redteam" not in labels:
+        skip_reason = "no_subgoal_tag"
+    if skip_reason:
+        print(
+            json.dumps(
+                {"recorded": False, "reason": skip_reason, "pr_number": pr_number},
+                ensure_ascii=False,
+            )
+        )
+        return 0
+
     closed_at = args.closed_at or dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     entry = {
@@ -758,6 +777,204 @@ def cmd_check_circuit_breaker(args: argparse.Namespace) -> int:
     return 0
 
 
+CLAIM_TITLE_RE = re.compile(r"^\s*\[?\s*(SG-\d+)\b", re.IGNORECASE)
+
+
+def subgoal_sort_key(sg_id: str) -> tuple[int, str]:
+    m = re.search(r"(\d+)", sg_id)
+    return (int(m.group(1)) if m else 10**9, sg_id)
+
+
+def normalize_pr(raw: dict[str, Any]) -> dict[str, Any]:
+    """Accept both `gh pr list --json` and GitHub REST pull request shapes."""
+    head = raw.get("head") if isinstance(raw.get("head"), dict) else {}
+    head_repo = head.get("repo") if isinstance(head.get("repo"), dict) else {}
+    head_repo_owner = head_repo.get("owner") if isinstance(head_repo.get("owner"), dict) else {}
+    owner_obj = raw.get("headRepositoryOwner") if isinstance(raw.get("headRepositoryOwner"), dict) else {}
+    author_obj = raw.get("author") if isinstance(raw.get("author"), dict) else {}
+    user_obj = raw.get("user") if isinstance(raw.get("user"), dict) else {}
+
+    draft = raw.get("isDraft", raw.get("draft", False))
+    return {
+        "number": int(raw.get("number", 0)),
+        "title": str(raw.get("title", "") or ""),
+        "draft": bool(draft),
+        "head_ref": str(raw.get("headRefName", head.get("ref", "")) or ""),
+        "head_owner": str(owner_obj.get("login", head_repo_owner.get("login", "")) or ""),
+        "author": str(author_obj.get("login", user_obj.get("login", "")) or ""),
+    }
+
+
+def claim_subgoal_of(pr: dict[str, Any]) -> str | None:
+    """A PR claims a subgoal only when its title starts with `SG-xxx`."""
+    m = CLAIM_TITLE_RE.match(pr.get("title", ""))
+    return m.group(1).upper() if m else None
+
+
+def pr_matches_me(pr: dict[str, Any], me: str) -> bool:
+    if not me:
+        return False
+    me_norm = me.strip()
+    head_ref = pr.get("head_ref", "")
+    owner = pr.get("head_owner", "")
+    candidates = [head_ref] + ([f"{owner}:{head_ref}"] if owner else [])
+    if me_norm.endswith("/"):
+        # Prefix form, e.g. `agent/claude-1/` matches all of that agent's branches.
+        return any(c.startswith(me_norm) for c in candidates)
+    return me_norm in candidates
+
+
+def cmd_next_task(args: argparse.Namespace) -> int:
+    """Deterministically decide what a research agent should do next.
+
+    Priority: continue own valid claim > work on an unclaimed ready subgoal >
+    decompose an unclaimed ready subgoal flagged needs_decomposition >
+    write red-team tests for registered conjectures > stop.
+    """
+    repo_root = Path(args.repo_root).resolve()
+    cfg = load_config(repo_root, args.config)
+    dag_path = repo_root / cfg.get("dag_file", "data/dag.json")
+    conjectures_dir = repo_root / normalize_rel_path(cfg.get("conjectures_dir", "claims/conjectures"))
+    max_open_prs = int(cfg.get("limits", {}).get("max_open_prs", 3))
+
+    raw_text: str
+    if args.prs_json == "-":
+        raw_text = sys.stdin.read()
+    elif Path(args.prs_json).is_file():
+        raw_text = Path(args.prs_json).read_text(encoding="utf-8")
+    else:
+        raw_text = args.prs_json
+    raw_prs = json.loads(raw_text)
+    if not isinstance(raw_prs, list):
+        print("--prs-json must resolve to a JSON array of pull requests", file=sys.stderr)
+        return 1
+    prs = sorted((normalize_pr(p) for p in raw_prs if isinstance(p, dict)), key=lambda p: p["number"])
+    me = args.me or ""
+
+    dag = load_json_or_default(dag_path, {"subgoals": []})
+    subgoals: dict[str, dict[str, Any]] = {}
+    for sg in dag.get("subgoals", []):
+        sg_id = str(sg.get("id", "")).upper()
+        if sg_id:
+            subgoals[sg_id] = sg
+    proved = {sg_id for sg_id, sg in subgoals.items() if str(sg.get("status", "open")) == "proved"}
+
+    def deps_proved(sg: dict[str, Any]) -> bool:
+        return all(str(d).upper() in proved for d in sg.get("dependencies", []) or [])
+
+    # Claims: the lowest-numbered open PR whose title starts with SG-xxx owns that subgoal.
+    claims: dict[str, list[dict[str, Any]]] = {}
+    for pr in prs:
+        sg_id = claim_subgoal_of(pr)
+        if sg_id:
+            claims.setdefault(sg_id, []).append(pr)
+    owners = {sg_id: plist[0] for sg_id, plist in claims.items()}
+
+    my_claims: list[dict[str, Any]] = []
+    for pr in prs:
+        if not pr_matches_me(pr, me):
+            continue
+        sg_id = claim_subgoal_of(pr)
+        if sg_id is None:
+            continue
+        sg = subgoals.get(sg_id)
+        if sg is None:
+            status = "unknown_subgoal"
+        elif sg_id in proved:
+            status = "already_proved"
+        elif owners[sg_id]["number"] != pr["number"]:
+            status = "lost"
+        elif not deps_proved(sg):
+            status = "blocked"
+        else:
+            status = "valid"
+        my_claims.append({"pr": pr["number"], "subgoal": sg_id, "status": status})
+
+    open_non_draft = sum(1 for pr in prs if not pr["draft"])
+    wip = {
+        "open_non_draft": open_non_draft,
+        "max_open_prs": max_open_prs,
+        "can_mark_ready": open_non_draft < max_open_prs,
+    }
+    claimed_summary = {
+        sg_id: {"pr": pr["number"], "draft": pr["draft"], "head_ref": pr["head_ref"]}
+        for sg_id, pr in sorted(owners.items(), key=lambda kv: subgoal_sort_key(kv[0]))
+    }
+    release = [c["pr"] for c in my_claims if c["status"] != "valid"]
+
+    result: dict[str, Any] = {
+        "action": "stop",
+        "subgoal": "",
+        "pr": None,
+        "reason": "",
+        "release_prs": release,
+        "my_claims": my_claims,
+        "claimed": claimed_summary,
+        "wip": wip,
+    }
+
+    valid = [c for c in my_claims if c["status"] == "valid"]
+    if valid:
+        result.update(
+            action="continue",
+            subgoal=valid[0]["subgoal"],
+            pr=valid[0]["pr"],
+            reason="you own a valid claim on this subgoal",
+        )
+    else:
+        ready = [
+            sg_id
+            for sg_id, sg in subgoals.items()
+            if sg_id not in proved and sg_id not in owners and deps_proved(sg)
+        ]
+        ready.sort(key=lambda s: (int(subgoals[s].get("failures", 0)), subgoal_sort_key(s)))
+        work = [s for s in ready if not subgoals[s].get("needs_decomposition")]
+        decompose = [s for s in ready if subgoals[s].get("needs_decomposition")]
+        conjectures = sorted(conjectures_dir.rglob("*.json")) if conjectures_dir.is_dir() else []
+
+        if work:
+            sg = subgoals[work[0]]
+            result.update(
+                action="work",
+                subgoal=work[0],
+                reason=f"dependencies proved, unclaimed, failures={int(sg.get('failures', 0))}",
+            )
+        elif decompose:
+            result.update(
+                action="decompose",
+                subgoal=decompose[0],
+                reason="unclaimed ready subgoal flagged needs_decomposition; split it into smaller subgoals in data/dag.json",
+            )
+        elif conjectures:
+            result.update(
+                action="redteam",
+                reason=f"no claimable subgoal; {len(conjectures)} conjecture(s) registered for counterexample search",
+            )
+        else:
+            blocked = sorted(
+                (s for s in subgoals if s not in proved and s not in owners),
+                key=subgoal_sort_key,
+            )
+            result.update(
+                action="stop",
+                reason=(
+                    "no claimable subgoal (all ready subgoals are claimed"
+                    + (f"; blocked by dependencies: {', '.join(blocked)}" if blocked else "")
+                    + ") and no conjectures to red-team"
+                ),
+            )
+
+    write_github_output(
+        {
+            "action": result["action"],
+            "subgoal": result["subgoal"],
+            "pr": "" if result["pr"] is None else str(result["pr"]),
+        }
+    )
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Deterministic autonomous research operations for ruca-maths/rubidium."
@@ -795,6 +1012,11 @@ def build_parser() -> argparse.ArgumentParser:
     p_de.add_argument("--url", default="")
     p_de.add_argument("--head-ref", default="")
     p_de.add_argument("--closed-at", default="")
+    p_de.add_argument(
+        "--draft",
+        default="false",
+        help="'true' if the PR was still a draft when closed (released claim; not recorded)",
+    )
     p_de.set_defaults(func=cmd_record_dead_end)
 
     p_sync = sub.add_parser("sync-status", help="Deterministically regenerate proved index and STATUS.md")
@@ -804,6 +1026,21 @@ def build_parser() -> argparse.ArgumentParser:
     p_cb.add_argument("--open-prs", required=True, type=int)
     p_cb.add_argument("--daily-prs", required=True, type=int)
     p_cb.set_defaults(func=cmd_check_circuit_breaker)
+
+    p_nt = sub.add_parser("next-task", help="Decide the next task for a research agent from the DAG and open PRs")
+    p_nt.add_argument(
+        "--prs-json",
+        required=True,
+        help="JSON file, inline JSON array, or '-' (stdin) of open PRs "
+        "(e.g. `gh pr list --state open --base ruca-logic --json number,title,isDraft,headRefName,headRepositoryOwner,author`)",
+    )
+    p_nt.add_argument(
+        "--me",
+        default="",
+        help="Your PR head branch (e.g. agent/claude-1/sg005), owner:branch, or a prefix ending in '/' "
+        "(e.g. agent/claude-1/) to evaluate your own claims",
+    )
+    p_nt.set_defaults(func=cmd_next_task)
 
     return parser
 

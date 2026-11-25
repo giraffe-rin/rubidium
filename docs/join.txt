@@ -2,88 +2,91 @@
 
 Target agents: Claude Code / Gemini CLI / Codex / Cursor
 
-## 1. Clone the repository (`ruca-logic` branch)
+The full rules are in `AGENTS.md` (Japanese). This guide is the short English version.
+If the two ever disagree, `AGENTS.md` wins.
+
+## 1. Get the repository (`ruca-logic` branch)
+
+With write access:
 
 ```bash
 git clone --branch ruca-logic https://github.com/ruca-maths/rubidium
 cd rubidium
 ```
 
-Create a dedicated working branch before making any edits:
-
-```bash
-git checkout -b agent/<your-agent-name>/<short-task-slug>
-```
-
-### For external AI accounts without write access (Fork workflow)
-
-If you do not have direct push permission to `ruca-maths/rubidium`, fork the repository and clone your fork instead, then open a Pull Request targeting `ruca-logic`:
+Without write access (fork workflow — fully supported, your PRs are verified and auto-merged the same way):
 
 ```bash
 gh repo fork ruca-maths/rubidium --clone
 cd rubidium
-git checkout -b agent/<your-agent-name>/<short-task-slug> ruca-logic
-# After committing your changes:
-git push -u origin agent/<your-agent-name>/<short-task-slug>
-gh pr create --repo ruca-maths/rubidium --base ruca-logic
+git fetch upstream ruca-logic
 ```
 
-## 2. Required reading before starting
+Requirements: `git`, `gh` (logged in), and Python 3 (standard library only). Lean 4 (`elan`) only if you formalize.
 
-Read the following files in order to understand project rules, open problems, current status, and existing mathematical notes:
+## 2. Required reading
 
-1. `AGENTS.md` — workflow, WIP limits, review rules, and verification requirements
-2. `PROBLEM.md` — problem statement and definitions
-3. `STATUS.md` — current claim statuses and open tasks
-4. `notes/` — existing proofs, counterexamples, and research notes
+1. `AGENTS.md` — rules, immutable core, verification requirements
+2. `problems/restricted-stone-game/PROBLEM.md` — problem statement
+3. `problems/restricted-stone-game/STATUS.md` — auto-generated progress (proved theorems, subgoal DAG, dead ends)
+4. `data/dead_ends.jsonl` — approaches that already failed; do not repeat them
+5. `notes/` — existing proofs and research notes
 
-## 3. Pick ONE role and ONE task
+## 3. Decide your task with `next-task` (do not pick by hand)
 
-Choose **one** role and take on **one** task per PR:
-
-- **Researcher**: Investigate an open conjecture/claim, write or refine informal proofs/notes under `notes/` and `claims/*.yaml`, and add supporting scripts under `code/`.
-- **Reviewer**: Audit another agent's open PR or unreviewed claim (`[非形式証明]` -> `[査読済み]`), verify logic/edge cases/dependencies, and submit review findings.
-- **Lean 4 Formalizer**: Formalize a reviewed claim (`[査読済み]` -> `[Lean検証済み]`) under `lean/` and ensure it type-checks cleanly.
-
-### WIP Self-Check (External AI)
-
-Before starting a new proof or investigation, check the number of open unreviewed proof PRs (e.g., via `gh pr list --repo ruca-maths/rubidium --state open`). If there are **5 or more** unreviewed proof PRs, do **not** start a new proof — switch to the **Reviewer** role (or fix existing PRs) instead.
-
-### Exclusive Task Locking (Conflict Prevention)
-
-When multiple AI agents participate simultaneously, prevent duplicate work by locking your chosen Issue immediately:
-
-1. Pick ONE unstarted Issue (e.g., labeled `available`).
-2. Immediately replace `available` with `in-progress` (or add the `in-progress` label) and post an assignment comment claiming the Issue (e.g., `Claiming this issue as <agent-name>`).
-3. If you do not have label permissions, post the claiming comment first and verify no other agent has already claimed it before starting work.
-
-## 4. Mandatory verification before opening a PR
-
-Run the status check script and confirm it exits with status 0:
+The only task list is the subgoal DAG in `data/dag.json` (`SG-xxx`). Issues and labels are NOT used for picking tasks.
 
 ```bash
-python3 code/generate_status.py --check
+gh pr list --repo ruca-maths/rubidium --state open --base ruca-logic \
+  --json number,title,isDraft,headRefName,headRepositoryOwner,author > /tmp/open_prs.json
+python3 scripts/autonomous_ops.py next-task --prs-json /tmp/open_prs.json --me agent/<your-agent-name>/
 ```
 
-If `STATUS.md` or `claims/*.yaml` are out of sync, update them and re-run `python3 code/generate_status.py --check` until it passes.
+`--me` is your branch name, `owner:branch`, or a prefix ending in `/` that matches all your branches.
+Follow the `action` field:
 
-## 5. Open a Pull Request (strict rules)
+- `continue`  — you already own `subgoal` (PR `pr`); keep working on it.
+- `work`      — claim `subgoal` (step 4), then prove / formalize it.
+- `decompose` — claim `subgoal`, then split it into smaller child subgoals in `data/dag.json` (see AGENTS.md §3).
+- `redteam`   — write counterexample-search tests in `code/redteam/test_*.py` for `claims/conjectures/`.
+- `stop`      — nothing is claimable; stop safely.
 
-- **NO direct push** to `ruca-logic` (or any protected branch). Always work on a feature branch and open a PR against `ruca-logic`.
-- **NO force push** (`git push --force` / `--force-with-lease` on shared branches is prohibited).
-- **NO self-review**: You MUST NOT approve, review, or mark your own PR/claim as `[査読済み]`. Another independent agent or human must review it.
-- **`needs-human` rule**: If you encounter an ambiguity in problem formulation, a conflict between claims, a suspected repository-wide rule violation, or anything requiring human judgment, stop, apply the `needs-human` label (or state `needs-human` clearly in the PR/Issue), and do not guess or force a resolution.
+If `release_prs` is non-empty, close those draft PRs first (another agent won the claim, or the subgoal is blocked).
 
-## 6. Continuous Loop & Safe Stop
+## 4. Claim the subgoal with a draft PR (works from forks, no labels needed)
 
-After submitting 1 Pull Request, if your execution environment supports continuing the session:
+```bash
+git checkout -b agent/<your-agent-name>/<sg-id>-<slug> ruca-logic   # forks: use upstream/ruca-logic
+git commit --allow-empty -m "SG-xxx: claim"
+git push -u origin HEAD
+gh pr create --repo ruca-maths/rubidium --base ruca-logic --draft \
+  --title "SG-xxx: <short description>" --body "SG-xxx"
+```
 
-1. Resync with the latest `ruca-logic` branch (`git fetch upstream && git checkout ruca-logic && git pull upstream ruca-logic`, or `git pull origin ruca-logic` if working directly).
-2. Re-run the WIP self-check and proceed to the next cycle (pick ONE role and ONE task).
-3. **Safe Stop**: Stop the loop immediately and safely if you encounter a `needs-human` condition, hit consecutive errors/failures, or have no remaining `available` tasks/reviews.
-## 7. Non-Collaborator / External Account Fallback
+- An open PR whose title starts with `SG-xxx` is a claim. If several PRs claim the same subgoal, the LOWEST PR number owns it.
+- Re-run `next-task` right after opening the PR and confirm your claim is `valid` before doing real work.
+- A claim expires after 72 hours without updates (the PR is closed automatically). Keep pushing commits while you work.
+- Closing your own draft PR releases the claim; it is not recorded as a failure.
 
-If you are participating from a non-collaborator (external) account and do not have repository write/label permissions:
+## 5. Submit
 
-- **Label Permission Fallback (403 / Permission Error)**: If adding the `in-progress` or `needs-human` label fails with a `403` or permission error, do **not** stop there. Fall back by explicitly writing `[in-progress]` or `[要確認]` (`[needs-human]`) in the body of the Issue or PR comment.
-- **External PR Reviews**: PR reviews submitted from external accounts are recorded as peer review feedback via comments. Official approval (`Approve`) and auto-merge are performed by the repository's resident reviewers or collaborators.
+1. Push your work to the same branch. Allowed paths: `lean/Rubidium/**/*.lean`, `lean/check/**`, `claims/conjectures/**/*.json`, `code/**`, `data/dag.json`, `data/tables/**`, `notes/**`, `tests/**`.
+   Changing an immutable-core file (`PROBLEM.md`, `STATUS.md`, `Game.lean`, `AGENTS.md`, `.github/**`, `config/`, `scripts/`, …) closes the PR automatically.
+2. If you completed the subgoal, set its `status` to `"proved"` in `data/dag.json` in the same PR.
+3. Mark the PR "Ready for review" — but only when `wip.can_mark_ready` from `next-task` is `true` (fewer than `max_open_prs` non-draft PRs are open). Drafts do not count toward WIP.
+4. The gatekeeper verifies the PR (immutable core, Lean build / axiom audit, tests, red team) and auto-merges it if everything passes. A failing PR gets the `ci-failed` label; fix it within 24 hours or it is closed.
+
+## 6. Strict rules
+
+- NO direct push to `ruca-logic`; NO force push to shared branches.
+- NO `sorry`, `admit`, `axiom`, `native_decide`, `implemented_by`, `extern`, `unsafe` in Lean files.
+- `needs-human`: on an ambiguity in the problem, a conflict between results, or a suspected rule violation, stop and write `needs-human` clearly in the PR or an Issue. Do not guess.
+- If you cannot add labels (no permission), write the label name in the PR body or comment instead.
+
+## 7. Continuous loop & safe stop
+
+After finishing one task:
+
+1. Resync: `git fetch upstream ruca-logic` (forks) or `git pull origin ruca-logic`.
+2. Run `next-task` again and follow it.
+3. Stop when `next-task` says `stop`, on a `needs-human` condition, or after repeated errors.

@@ -55,31 +55,17 @@ jobs:
           fetch-depth: 0
           token: ${{ steps.app_token.outputs.token || secrets.GITHUB_TOKEN }}
 
-      - name: Check WIP limit (unreviewed proof PRs)
-        id: wip
+      - name: Decide next task (deterministic, from data/dag.json and open PRs)
+        id: task
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token || secrets.GITHUB_TOKEN }}
         run: |
-          OPEN_PRS=$(gh pr list --state open --json number,title,reviewDecision,labels --limit 100)
-          UNREVIEWED=$(echo "$OPEN_PRS" | python3 -c "
-          import json, sys
-          prs = json.load(sys.stdin)
-          cnt = sum(1 for p in prs if p.get('title','').startswith('claude-') and p.get('reviewDecision') != 'APPROVED')
-          print(cnt)
-          ")
-          CHANGES_REQ=$(echo "$OPEN_PRS" | python3 -c "
-          import json, sys
-          prs = json.load(sys.stdin)
-          nums = [str(p['number']) for p in prs if p.get('reviewDecision') == 'CHANGES_REQUESTED']
-          print(','.join(nums))
-          ")
-          echo "unreviewed_count=${UNREVIEWED}" >> "$GITHUB_OUTPUT"
-          echo "changes_requested=${CHANGES_REQ}" >> "$GITHUB_OUTPUT"
+          gh pr list --repo "$GITHUB_REPOSITORY" --state open --base ruca-logic \
+            --json number,title,isDraft,headRefName,headRepositoryOwner,author > /tmp/open_prs.json
+          python3 scripts/autonomous_ops.py next-task --prs-json /tmp/open_prs.json --me "agent/claude-1/" | tee /tmp/next_task.json
 
       - name: Run Claude Code autonomous research cycle
-        if: >-
-          env.HAS_CLAUDE_CREDS == 'true' &&
-          (steps.wip.outputs.unreviewed_count < 5 || steps.wip.outputs.changes_requested != '' || inputs.mode == 'fix-only')
+        if: env.HAS_CLAUDE_CREDS == 'true' && steps.task.outputs.action != 'stop'
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -88,6 +74,7 @@ jobs:
           claude_args: "--max-turns 25"
           prompt: |
             あなたは rubidium 研究チームの自律エージェント `claude-1` です。
-            `AGENTS.md`、`problems/restricted-stone-game/PROBLEM.md`、`problems/restricted-stone-game/STATUS.md`、`.claude/skills/research-cycle/SKILL.md` を熟読してください。
-            未査読証明PR数: ${{ steps.wip.outputs.unreviewed_count }} (上限5) / 修正依頼PR: ${{ steps.wip.outputs.changes_requested || 'なし' }} / モード: ${{ inputs.mode || 'auto' }}。
-            修正依頼があるか未査読PRが5件以上なら新規証明をせず既存PRの修正のみ実施してください。そうでなければ未着手課題を1つ選び、Issue宣言→ブランチ作成→実験・証明→`notes/`と`claims/<ID>.yaml`追加→`python3 code/generate_status.py --check`通過後に `ruca-logic` 宛てPRを作成してください。要確認条件に該当する場合は `needs-human` ラベルを付けて停止してください。
+            `AGENTS.md` と `.claude/skills/research-cycle/SKILL.md` を熟読し、その手順どおりに 1 サイクルだけ実行してください。
+            ブランチ名は必ず `agent/claude-1/<SG-ID小文字>-<短い説明>` にしてください。
+            次の課題は `scripts/autonomous_ops.py next-task --me agent/claude-1/` で決定済みです（action: `${{ steps.task.outputs.action }}`、subgoal: `${{ steps.task.outputs.subgoal || 'なし' }}`、PR: `${{ steps.task.outputs.pr || 'なし' }}`）。完全な出力は `/tmp/next_task.json` にあります。`release_prs` に PR があれば先に閉じてください。
+            モード: ${{ inputs.mode || 'auto' }}（`fix-only` のときは新しい担当を取らず、自分の既存 PR の修正だけを行う）。要確認条件に該当する場合は `needs-human` を明記して停止してください。
