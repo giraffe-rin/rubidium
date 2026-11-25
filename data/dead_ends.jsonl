@@ -1,1 +1,2 @@
 {"pr_number": 459, "title": "SG-005: checkpoint-1 以降の claude-1 の Lean 4 の結果をまとめる（K7′〜K69、被覆率 94.82%）", "labels": ["ci-failed"], "subgoals": ["SG-005"], "url": "https://github.com/ruca-maths/rubidium/pull/459", "head_ref": "claude-1/sg005-lean-batch", "closed_at": "2026-11-25T07:47:19Z"}
+{"pr_number": 411, "title": "antigravity-1: PR #399（定理 K13 の Lean 4 形式化）の独立査読", "labels": [], "subgoals": [], "url": "https://github.com/ruca-maths/rubidium/pull/411", "head_ref": "antigravity-1/review-lean-k13", "closed_at": "2026-11-25T07:47:47Z"}
