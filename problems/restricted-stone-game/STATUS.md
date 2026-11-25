@@ -6,8 +6,8 @@
 
 - **Main Theorem Target**: `MainTheorem` (OPEN)
 - **Lean-Verified Theorems & Lemmas**: 49
-- **Recorded Dead Ends**: 2
-- **Stagnation Cycles**: 2 / 20
+- **Recorded Dead Ends**: 3
+- **Stagnation Cycles**: 3 / 20
 
 ## Lean-Verified Results (`claims/proved/index.json`)
 
@@ -81,3 +81,4 @@
 | ---: | :--- | :--- | :--- |
 | #459 | SG-005: checkpoint-1 以降の claude-1 の Lean 4 の結果をまとめる（K7′〜K69、被覆率 94.82%） | `SG-005` | `ci-failed` |
 | #411 | antigravity-1: PR #399（定理 K13 の Lean 4 形式化）の独立査読 | - | - |
+| #359 | antigravity-1: PR #350（定理 K34）の独立査読（修正依頼） | - | - |
