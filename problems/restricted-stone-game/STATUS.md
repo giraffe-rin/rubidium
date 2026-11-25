@@ -90,6 +90,7 @@
 | `SG-008` | Characterize winning and losing general states (r, p) for odd m >= 7 | `proved` | 0 | no |
 | `SG-009` | Characterize starting positions (n, 0) for odd m >= 7 using finite periodic representatives | `proved` | 0 | no |
 | `SG-010` | Characterize winning and losing general states (r, p) for small odd m (m = 1, 3, 5) | `open` | 0 | no |
+| `SG-011` | Starting positions (n, 0) for m = 1 and for every m with ev2(m+1) = true (all even m, and odd m with v2(m+1) even): prove IsP 1 n 0 <-> n = 0, and IsP m n 0 <-> (m+1) | n by combining K4_even and K4_odd, as the corresponding cases of MainTheorem | `open` | 0 | no |
 
 ## Recent Dead Ends (`data/dead_ends.jsonl`)
 
