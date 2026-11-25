@@ -93,19 +93,25 @@ def matches_any_glob(path_str: str, globs: list[str]) -> bool:
     return any(glob_to_regex(g).match(norm) is not None for g in globs)
 
 
+def read_json_arg(arg: str) -> str:
+    """Return JSON text from '-' (stdin), an inline JSON value, or a file path.
+
+    Inline JSON is detected before touching the filesystem, because a long
+    inline value would otherwise raise `File name too long` in Path.is_file().
+    """
+    if arg == "-":
+        return sys.stdin.read()
+    if arg.lstrip().startswith(("[", "{")):
+        return arg
+    candidate = Path(arg)
+    if candidate.is_file():
+        return candidate.read_text(encoding="utf-8")
+    return arg
+
+
 def load_files_json(files_json_arg: str) -> list[str]:
     """Load file list from a JSON file path or an inline JSON array string."""
-    raw_text: str
-    if files_json_arg == "-":
-        raw_text = sys.stdin.read()
-    else:
-        candidate = Path(files_json_arg)
-        if candidate.is_file():
-            raw_text = candidate.read_text(encoding="utf-8")
-        else:
-            raw_text = files_json_arg
-
-    data = json.loads(raw_text)
+    data = json.loads(read_json_arg(files_json_arg))
     if not isinstance(data, list):
         raise ValueError("--files-json must resolve to a JSON array of file paths")
 
@@ -837,14 +843,7 @@ def cmd_next_task(args: argparse.Namespace) -> int:
     conjectures_dir = repo_root / normalize_rel_path(cfg.get("conjectures_dir", "claims/conjectures"))
     max_open_prs = int(cfg.get("limits", {}).get("max_open_prs", 3))
 
-    raw_text: str
-    if args.prs_json == "-":
-        raw_text = sys.stdin.read()
-    elif Path(args.prs_json).is_file():
-        raw_text = Path(args.prs_json).read_text(encoding="utf-8")
-    else:
-        raw_text = args.prs_json
-    raw_prs = json.loads(raw_text)
+    raw_prs = json.loads(read_json_arg(args.prs_json))
     if not isinstance(raw_prs, list):
         print("--prs-json must resolve to a JSON array of pull requests", file=sys.stderr)
         return 1
