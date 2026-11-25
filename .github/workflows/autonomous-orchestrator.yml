@@ -9,7 +9,10 @@ on:
       - 'data/dead_ends.jsonl'
       - 'data/state.json'
       - 'data/dag.json'
-  pull_request:
+  # Fork PR のクローズでも dead end を記録して push できるよう pull_request_target を使う。
+  # このワークフローは ruca-logic だけを checkout し、PR のコードは実行しない
+  # （PR のタイトル・本文は env 経由でスクリプトに渡している）。
+  pull_request_target:
     branches: [ruca-logic]
     types: [closed]
   schedule:
@@ -44,7 +47,7 @@ jobs:
 
       - name: Record dead end for unmerged closed PR
         if: |
-          github.event_name == 'pull_request' &&
+          github.event_name == 'pull_request_target' &&
           github.event.action == 'closed' &&
           github.event.pull_request.merged == false
         env:
@@ -55,9 +58,12 @@ jobs:
           PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
           PR_CLOSED_AT: ${{ github.event.pull_request.closed_at }}
           PR_LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+          PR_DRAFT: ${{ github.event.pull_request.draft }}
         run: |
+          # draft のまま閉じた PR（担当の放棄）と SG-xxx の無い PR は、スクリプト側で記録対象外になる
           python3 scripts/autonomous_ops.py record-dead-end \
             --pr-number "$PR_NUMBER" \
+            --draft "$PR_DRAFT" \
             --title "$PR_TITLE" \
             --body "$PR_BODY" \
             --labels "$PR_LABELS" \
@@ -68,7 +74,7 @@ jobs:
 
       - name: Commit dead-end & status update (if changed)
         if: |
-          github.event_name == 'pull_request' &&
+          github.event_name == 'pull_request_target' &&
           github.event.action == 'closed' &&
           github.event.pull_request.merged == false
         run: |
@@ -123,7 +129,8 @@ jobs:
                   pull_number: pr.number,
                   state: 'closed'
                 });
-              } else {
+              } else if (!pr.draft) {
+                // draft PR は担当の確保（claim）なので WIP には数えない
                 remainingOpen += 1;
               }
             }

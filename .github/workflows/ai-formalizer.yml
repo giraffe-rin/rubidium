@@ -26,6 +26,10 @@ jobs:
   formalize:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # secrets は step の if: から参照できないため、job の env で真偽値に変換して使う
+    env:
+      HAS_APP_CREDS: ${{ secrets.RUBIDIUM_APP_ID != '' && secrets.RUBIDIUM_APP_PRIVATE_KEY != '' }}
+      HAS_CLAUDE_CREDS: ${{ secrets.ANTHROPIC_API_KEY != '' || secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
     if: >-
       (github.event_name == 'workflow_dispatch') ||
       (github.event_name == 'issues' && github.event.label.name == 'lean4' && vars.AUTONOMOUS_ENABLED == 'true') ||
@@ -35,7 +39,7 @@ jobs:
       - name: Generate GitHub App Token (if configured)
         id: app_token
         continue-on-error: true
-        if: secrets.RUBIDIUM_APP_ID != '' && secrets.RUBIDIUM_APP_PRIVATE_KEY != ''
+        if: env.HAS_APP_CREDS == 'true'
         uses: actions/create-github-app-token@v1
         with:
           app-id: ${{ secrets.RUBIDIUM_APP_ID }}
@@ -54,7 +58,7 @@ jobs:
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
 
       - name: Run Lean 4 formalization agent
-        if: secrets.ANTHROPIC_API_KEY != '' || secrets.CLAUDE_CODE_OAUTH_TOKEN != ''
+        if: env.HAS_CLAUDE_CREDS == 'true'
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -63,5 +67,6 @@ jobs:
           claude_args: "--max-turns 30"
           prompt: |
             あなたは rubidium 研究チームの Lean 4 形式化担当エージェント `lean-formalizer` です。
-            対象主張ID: ${{ inputs.claim_id || 'claims/ 内の [査読済み] かつ lean 未設定の基盤定理から1件選択' }}。
-            `lean/` 配下で `sorry` を一切残さずに形式化し、`lake build` を通した上で `claims/<ID>.yaml` と `STATUS.md` を更新し、`lean-formalizer/<claim-id>` ブランチから `ruca-logic` 宛てPRを作成してください。
+            `AGENTS.md` と `.claude/skills/research-cycle/SKILL.md` を熟読し、その手順どおりに 1 サイクルだけ実行してください。
+            課題は `python3 scripts/autonomous_ops.py next-task --prs-json <open PR 一覧> --me agent/lean-formalizer/` で決めてください${{ inputs.claim_id && format('（指定された対象: {0}。next-task の結果と食い違う場合は next-task を優先し、理由を PR に書く）', inputs.claim_id) || '' }}。
+            ブランチ名は `agent/lean-formalizer/<SG-ID小文字>-<短い説明>` にし、`lean/Rubidium/` 配下で `sorry` を残さず形式化して `lake build` を通してください。`STATUS.md` は自動生成なので編集しないでください。

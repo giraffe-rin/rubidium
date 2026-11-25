@@ -27,6 +27,10 @@ jobs:
   review:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    # secrets は step の if: から参照できないため、job の env で真偽値に変換して使う
+    env:
+      HAS_APP_CREDS: ${{ secrets.RUBIDIUM_APP_ID != '' && secrets.RUBIDIUM_APP_PRIVATE_KEY != '' }}
+      HAS_GEMINI_KEY: ${{ secrets.GEMINI_API_KEY != '' }}
     if: >-
       (github.event_name == 'workflow_dispatch') ||
       (vars.AUTONOMOUS_ENABLED == 'true' && !startsWith(github.head_ref, 'gemini-'))
@@ -35,7 +39,7 @@ jobs:
       - name: Generate GitHub App Token (if configured)
         id: app_token
         continue-on-error: true
-        if: secrets.RUBIDIUM_APP_ID != '' && secrets.RUBIDIUM_APP_PRIVATE_KEY != ''
+        if: env.HAS_APP_CREDS == 'true'
         uses: actions/create-github-app-token@v1
         with:
           app-id: ${{ secrets.RUBIDIUM_APP_ID }}
@@ -51,11 +55,16 @@ jobs:
         id: target
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token || secrets.GITHUB_TOKEN }}
+          EVENT_PR_NUMBER: ${{ github.event.pull_request.number }}
+          INPUT_PR_NUMBER: ${{ inputs.pr_number }}
         run: |
-          if [ -n "${{ github.event.pull_request.number }}" ]; then
-            PR_NUM="${{ github.event.pull_request.number }}"
-          elif [ -n "${{ inputs.pr_number }}" ]; then
-            PR_NUM="${{ inputs.pr_number }}"
+          if [ -n "$EVENT_PR_NUMBER" ]; then
+            PR_NUM="$EVENT_PR_NUMBER"
+          elif [ -n "$INPUT_PR_NUMBER" ]; then
+            case "$INPUT_PR_NUMBER" in
+              *[!0-9]*) echo "pr_number must be numeric" >&2; exit 1 ;;
+            esac
+            PR_NUM="$INPUT_PR_NUMBER"
           else
             PR_NUM=$(gh pr list --state open --json number,title,reviewDecision,headRefName --limit 50 | python3 -c "
           import json, sys
@@ -69,7 +78,7 @@ jobs:
           echo "pr_number=${PR_NUM}" >> "$GITHUB_OUTPUT"
 
       - name: Run Gemini CLI independent review
-        if: steps.target.outputs.pr_number != '' && secrets.GEMINI_API_KEY != ''
+        if: steps.target.outputs.pr_number != '' && env.HAS_GEMINI_KEY == 'true'
         uses: google-github-actions/run-gemini-cli@v0
         with:
           gemini_api_key: ${{ secrets.GEMINI_API_KEY }}

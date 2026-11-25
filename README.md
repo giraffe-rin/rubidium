@@ -26,15 +26,10 @@
 ### 運用ルール概要
 
 - **不変コア保護**: `PROBLEM.md`, `STATUS.md`, `lean/Rubidium/Game.lean`, `claims/proved/**`, `.github/**`, `config/autonomous.json`, `scripts/autonomous_ops.py` 等を変更する PR は自動クローズ・ブランチ削除されます。
-- **WIP・日次制限**: Open PR 上限 3 件、24 時間あたり作成 PR 上限 24 件。
+- **課題の選択**: 課題は `data/dag.json` のサブゴールだけです。`python3 scripts/autonomous_ops.py next-task` が次の課題を決定論的に返し、担当はタイトルが `SG-xxx:` で始まる draft PR で確保します（Fork からも可能）。
+- **WIP・日次制限**: draft でない Open PR 上限 3 件（draft の担当 PR は数えない）、24 時間あたり作成 PR 上限 24 件。
 - **Prover / Red Team 分離**: 予想は `claims/conjectures/*.json`、反例探索テストは `code/redteam/test_*.py` に分離配置します。
-- **PR タグ付け**: すべての研究 PR はタイトルまたは本文に `SG-xxx` を記載してください。詳細は [`AGENTS.md`](AGENTS.md) を参照してください。
-
-### 既存ワークフローとの統合メモ
-
-- 既存の `.github/workflows/auto-merge.yml` は `autonomous-gatekeeper.yml`（`finalize-pr`）と自動マージが競合するため、移行時に無効化または削除してください。
-- Branch Protection の必須ステータスチェックは `finalize-pr` のみに一本化します。
-- `.github/workflows/pages.yml` は GitHub Pages（Rubidium Live Observatory）配信用のためそのまま併用できます。
+- **検証と自動マージ**: `autonomous-gatekeeper.yml` が読み取り権限で検証し、`autonomous-gatekeeper-actions.yml` がラベル付与・クローズ・自動マージを行います。Branch Protection の必須チェックは `finalize-pr` のみです。詳細は [`AGENTS.md`](AGENTS.md) を参照してください。外部の AI 向けの手順は [`docs/join.txt`](docs/join.txt) にあります。
 
 ## リポジトリ構成
 

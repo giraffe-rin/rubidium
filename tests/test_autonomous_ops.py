@@ -389,6 +389,232 @@ class TestAutonomousOps(unittest.TestCase):
         self.assertEqual(out["goal_achieved"], "true")
         self.assertEqual(out["can_dispatch"], "false")
 
+    # ---------------------------------------------------------------- next-task
+
+    def _write_dag(self, subgoals: list[dict]) -> None:
+        (self.root / "data" / "dag.json").write_text(
+            json.dumps({"problem": "restricted-stone-game", "subgoals": subgoals}),
+            encoding="utf-8",
+        )
+
+    def _sg(self, sg_id: str, status: str = "open", deps: list[str] | None = None,
+            failures: int = 0, decompose: bool = False) -> dict:
+        return {
+            "id": sg_id,
+            "title": sg_id,
+            "status": status,
+            "dependencies": deps or [],
+            "failures": failures,
+            "needs_decomposition": decompose,
+        }
+
+    def _next_task(self, prs: list[dict], me: str = "") -> tuple[dict, dict[str, str]]:
+        self.gh_out.unlink(missing_ok=True)
+        args = ["next-task", "--prs-json", json.dumps(prs)]
+        if me:
+            args += ["--me", me]
+        proc, out = run_ops(self.root, args, self.gh_out)
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        return json.loads(proc.stdout), out
+
+    def _base_dag(self) -> None:
+        self._write_dag(
+            [
+                self._sg("SG-001", "proved"),
+                self._sg("SG-002", "proved", ["SG-001"]),
+                self._sg("SG-003", "proved", ["SG-002"]),
+                self._sg("SG-004", "open", ["SG-002"]),
+                self._sg("SG-005", "open", ["SG-003"], failures=1),
+                self._sg("SG-006", "open", ["SG-004", "SG-005"]),
+            ]
+        )
+
+    def test_next_task_picks_ready_unclaimed_subgoal_by_failures_then_id(self) -> None:
+        self._base_dag()
+        result, out = self._next_task([])
+        # SG-004 (failures 0) before SG-005 (failures 1); SG-006 is blocked.
+        self.assertEqual(result["action"], "work")
+        self.assertEqual(result["subgoal"], "SG-004")
+        self.assertEqual(out["action"], "work")
+        self.assertEqual(out["subgoal"], "SG-004")
+
+    def test_next_task_skips_claimed_subgoal_and_accepts_gh_and_rest_shapes(self) -> None:
+        self._base_dag()
+        prs = [
+            # gh pr list --json shape
+            {"number": 460, "title": "SG-004: even m", "isDraft": False,
+             "headRefName": "agent/antigravity/sg004", "headRepositoryOwner": {"login": "ruca-maths"}},
+            # REST shape, not a claim (title does not start with SG-xxx)
+            {"number": 461, "title": "review of PR #460 (SG-004)", "draft": False,
+             "head": {"ref": "gemini-2/review", "repo": {"owner": {"login": "ruca-maths"}}}},
+        ]
+        result, _ = self._next_task(prs)
+        self.assertEqual(result["action"], "work")
+        self.assertEqual(result["subgoal"], "SG-005")
+        self.assertEqual(result["claimed"]["SG-004"]["pr"], 460)
+        self.assertNotIn("SG-005", result["claimed"])
+        self.assertEqual(result["wip"]["open_non_draft"], 2)
+
+    def test_next_task_claim_conflict_lowest_pr_number_wins(self) -> None:
+        self._base_dag()
+        prs = [
+            {"number": 471, "title": "SG-005: periodicity", "isDraft": True,
+             "headRefName": "agent/b/sg005", "headRepositoryOwner": {"login": "b-user"}},
+            {"number": 470, "title": "SG-005: periodicity", "isDraft": True,
+             "headRefName": "agent/a/sg005", "headRepositoryOwner": {"login": "a-user"}},
+        ]
+        winner, _ = self._next_task(prs, me="agent/a/sg005")
+        self.assertEqual(winner["action"], "continue")
+        self.assertEqual(winner["subgoal"], "SG-005")
+        self.assertEqual(winner["pr"], 470)
+        self.assertEqual(winner["release_prs"], [])
+
+        loser, _ = self._next_task(prs, me="b-user:agent/b/sg005")
+        self.assertEqual(loser["my_claims"], [{"pr": 471, "subgoal": "SG-005", "status": "lost"}])
+        self.assertEqual(loser["release_prs"], [471])
+        # The loser is pointed at the remaining ready subgoal instead.
+        self.assertEqual(loser["action"], "work")
+        self.assertEqual(loser["subgoal"], "SG-004")
+
+    def test_next_task_me_prefix_matches_agent_branches(self) -> None:
+        self._base_dag()
+        prs = [{"number": 490, "title": "SG-004: even m", "isDraft": True,
+                "headRefName": "agent/claude-1/sg004-even", "headRepositoryOwner": {"login": "u"}}]
+        result, _ = self._next_task(prs, me="agent/claude-1/")
+        self.assertEqual(result["action"], "continue")
+        self.assertEqual(result["pr"], 490)
+        other, _ = self._next_task(prs, me="agent/claude-10/")
+        self.assertEqual(other["my_claims"], [])
+        self.assertEqual(other["subgoal"], "SG-005")
+
+    def test_next_task_blocked_claim_is_a_planning_claim(self) -> None:
+        self._base_dag()
+        prs = [{"number": 480, "title": "SG-006: general (r, p)", "isDraft": True,
+                "headRefName": "agent/c/sg006", "headRepositoryOwner": {"login": "c"}}]
+        result, _ = self._next_task(prs, me="agent/c/sg006")
+        self.assertEqual(
+            result["my_claims"], [{"pr": 480, "subgoal": "SG-006", "status": "valid", "mode": "plan"}]
+        )
+        self.assertEqual(result["release_prs"], [])
+        self.assertEqual(result["action"], "continue")
+        self.assertEqual(result["mode"], "plan")
+        self.assertEqual(result["blocked_by"], ["SG-004", "SG-005"])
+
+    def test_next_task_plans_blocked_subgoal_when_ready_ones_are_claimed(self) -> None:
+        self._write_dag(
+            [
+                self._sg("SG-001", "proved"),
+                self._sg("SG-004", "open", ["SG-001"]),
+                self._sg("SG-005", "proved", ["SG-001"]),
+                self._sg("SG-006", "open", ["SG-004", "SG-005"]),
+                self._sg("SG-007", "open", ["SG-004", "SG-005", "SG-006"]),
+            ]
+        )
+        prs = [{"number": 460, "title": "SG-004: even m", "isDraft": False,
+                "headRefName": "agent/antigravity/sg004"}]
+        # SG-006 (1 unproved dependency) before SG-007 (2 unproved dependencies).
+        result, out = self._next_task(prs)
+        self.assertEqual(result["action"], "plan")
+        self.assertEqual(result["subgoal"], "SG-006")
+        self.assertEqual(result["blocked_by"], ["SG-004"])
+        self.assertEqual(out["action"], "plan")
+
+        # Once SG-006 is claimed for planning, the next agent plans SG-007.
+        prs.append({"number": 470, "title": "SG-006: plan", "isDraft": True, "headRefName": "agent/p/sg006"})
+        result, _ = self._next_task(prs)
+        self.assertEqual(result["action"], "plan")
+        self.assertEqual(result["subgoal"], "SG-007")
+
+        # Subgoals marked no_plan are not offered; nothing else left -> stop.
+        self._write_dag(
+            [
+                self._sg("SG-001", "proved"),
+                self._sg("SG-004", "open", ["SG-001"]),
+                dict(self._sg("SG-006", "open", ["SG-004"]), no_plan=True),
+            ]
+        )
+        result, _ = self._next_task(prs[:1])
+        self.assertEqual(result["action"], "stop")
+        self.assertIn("no_plan: SG-006", result["reason"])
+
+    def test_next_task_plan_takes_priority_over_redteam(self) -> None:
+        self._write_dag(
+            [self._sg("SG-001", "proved"), self._sg("SG-002", "open", ["SG-001"]),
+             self._sg("SG-003", "open", ["SG-002"])]
+        )
+        (self.root / "claims" / "conjectures" / "c1.json").write_text(
+            json.dumps({"id": "C1", "subgoal_id": "SG-002", "statement": "s"}), encoding="utf-8"
+        )
+        prs = [{"number": 9, "title": "SG-002: x", "isDraft": True, "headRefName": "x"}]
+        result, _ = self._next_task(prs)
+        self.assertEqual(result["action"], "plan")
+        self.assertEqual(result["subgoal"], "SG-003")
+
+    def test_next_task_drafts_do_not_count_toward_wip(self) -> None:
+        self._base_dag()
+        prs = [
+            {"number": n, "title": f"notes {n}", "isDraft": False, "headRefName": f"b{n}"}
+            for n in (1, 2, 3)
+        ] + [{"number": 4, "title": "SG-004: x", "isDraft": True, "headRefName": "b4"}]
+        result, _ = self._next_task(prs)
+        self.assertEqual(result["wip"]["open_non_draft"], 3)
+        self.assertFalse(result["wip"]["can_mark_ready"])
+
+    def test_next_task_decompose_then_redteam_then_stop(self) -> None:
+        # Only ready subgoal needs decomposition -> decompose
+        self._write_dag(
+            [self._sg("SG-001", "proved"), self._sg("SG-002", "open", ["SG-001"], 3, True)]
+        )
+        result, _ = self._next_task([])
+        self.assertEqual(result["action"], "decompose")
+        self.assertEqual(result["subgoal"], "SG-002")
+
+        # Claimed by someone else, conjecture registered -> redteam
+        prs = [{"number": 9, "title": "SG-002: split", "isDraft": True, "headRefName": "x"}]
+        (self.root / "claims" / "conjectures" / "c1.json").write_text(
+            json.dumps({"id": "C1", "subgoal_id": "SG-002", "statement": "s"}), encoding="utf-8"
+        )
+        result, _ = self._next_task(prs)
+        self.assertEqual(result["action"], "redteam")
+
+        # No conjectures either -> stop
+        (self.root / "claims" / "conjectures" / "c1.json").unlink()
+        result, out = self._next_task(prs)
+        self.assertEqual(result["action"], "stop")
+        self.assertEqual(out["action"], "stop")
+
+    def test_next_task_rejects_non_array_input(self) -> None:
+        self._base_dag()
+        proc, _ = run_ops(self.root, ["next-task", "--prs-json", "{}"])
+        self.assertEqual(proc.returncode, 1)
+
+    # ------------------------------------------------- record-dead-end filtering
+
+    def test_record_dead_end_skips_drafts_and_untagged_prs(self) -> None:
+        self._base_dag()
+        dead_ends = self.root / "data" / "dead_ends.jsonl"
+
+        proc, _ = run_ops(self.root, ["record-dead-end", "--pr-number", "201",
+                                      "--title", "SG-004: claim", "--draft", "true"])
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        self.assertIn("draft_claim_released", proc.stdout)
+
+        proc, _ = run_ops(self.root, ["record-dead-end", "--pr-number", "202",
+                                      "--title", "review of PR #460", "--labels", "[]"])
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        self.assertIn("no_subgoal_tag", proc.stdout)
+        self.assertFalse(dead_ends.exists())
+
+        # Untagged but falsified by red team -> still recorded
+        proc, _ = run_ops(self.root, ["record-dead-end", "--pr-number", "203",
+                                      "--title", "conjecture C9", "--labels", "falsified-by-redteam"])
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        self.assertEqual(len(dead_ends.read_text(encoding="utf-8").splitlines()), 1)
+
+        dag = json.loads((self.root / "data" / "dag.json").read_text(encoding="utf-8"))
+        sg4 = next(s for s in dag["subgoals"] if s["id"] == "SG-004")
+        self.assertEqual(sg4["failures"], 0)
+
 
 if __name__ == "__main__":
     unittest.main()

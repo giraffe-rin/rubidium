@@ -6,6 +6,10 @@ on:
       - ruca-logic
   pull_request:
 
+permissions:
+  contents: read
+  pull-requests: read
+
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -16,10 +20,18 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          python-version: "3.12"
 
-      - name: Validate claims and STATUS.md
-        run: python3 code/generate_status.py --check
+      - name: Unit tests for the autonomous control script
+        run: python3 -m unittest discover -s tests -p "test_*.py" -v
+
+      - name: Validate data/dag.json and preview next task
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr list --repo "$GITHUB_REPOSITORY" --state open --base ruca-logic \
+            --json number,title,isDraft,headRefName,headRepositoryOwner,author \
+            | python3 scripts/autonomous_ops.py next-task --prs-json - --me "ruca-maths:agent/claude-1/"
 
       - name: Check for sorry in Lean 4 files
         run: |

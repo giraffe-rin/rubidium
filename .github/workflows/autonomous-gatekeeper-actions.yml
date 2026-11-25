@@ -1,0 +1,270 @@
+name: Autonomous Gatekeeper Actions
+
+# `Autonomous Gatekeeper`（検証専用・pull_request）の完了を受けて、
+# 書き込み権限が必要な処理（ラベル・コメント・クローズ・自動マージ）を行う。
+#
+# workflow_run はデフォルトブランチ上の定義で動き、Fork PR でも書き込み権限と secrets を持つ。
+# そのため、このワークフローでは次を守る:
+#   - PR のコードは checkout も実行もしない（ruca-logic のスクリプトだけを使う）。
+#   - 検証ワークフローの artifact や出力は信用しない。
+#     PR は head リポジトリ・ブランチ・head SHA から API で特定し、
+#     不変コア検査は ruca-logic のスクリプトで再実行し、
+#     検証結果は GitHub API のジョブ／ステップ結果から読む。
+
+on:
+  workflow_run:
+    workflows: ["Autonomous Gatekeeper"]
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: read
+
+concurrency:
+  group: autonomous-gatekeeper-actions-${{ github.event.workflow_run.head_repository.full_name }}-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: false
+
+jobs:
+  act:
+    name: Apply gatekeeper verdict
+    if: >-
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion != 'cancelled' &&
+      github.event.workflow_run.conclusion != 'skipped'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout ruca-logic (trusted scripts only)
+        uses: actions/checkout@v4
+        with:
+          ref: ruca-logic
+          persist-credentials: false
+
+      - name: Resolve pull request for this run
+        id: pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const run = context.payload.workflow_run;
+            const cfg = JSON.parse(fs.readFileSync('config/autonomous.json', 'utf8'));
+            const base = cfg.default_branch || 'ruca-logic';
+
+            // Fork PR では workflow_run.pull_requests が空になるため、head から PR を探す。
+            const headOwner = run.head_repository && run.head_repository.owner
+              ? run.head_repository.owner.login
+              : context.repo.owner;
+            const candidates = await github.paginate(github.rest.pulls.list, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              base,
+              head: `${headOwner}:${run.head_branch}`,
+              per_page: 100
+            });
+            const pr = candidates.find(p => p.head.sha === run.head_sha);
+            if (!pr) {
+              core.info(`No open PR on ${base} with head ${headOwner}:${run.head_branch}@${run.head_sha} (closed or superseded by a newer push). Nothing to do.`);
+              core.setOutput('found', 'false');
+              return;
+            }
+
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+              per_page: 100
+            });
+            fs.writeFileSync('/tmp/pr_files.json', JSON.stringify(files.map(f => f.filename), null, 2));
+
+            const sameRepo = !!(pr.head.repo && pr.head.repo.full_name === `${context.repo.owner}/${context.repo.repo}`);
+            core.setOutput('found', 'true');
+            core.setOutput('number', String(pr.number));
+            core.setOutput('draft', String(!!pr.draft));
+            core.setOutput('same_repo', String(sameRepo));
+            core.setOutput('head_ref', pr.head.ref);
+            core.info(`Resolved PR #${pr.number} (draft=${pr.draft}, same_repo=${sameRepo}).`);
+
+      - name: Re-run immutable core check with trusted script
+        id: imm
+        if: steps.pr.outputs.found == 'true'
+        continue-on-error: true
+        run: |
+          python3 scripts/autonomous_ops.py check-immutable --files-json /tmp/pr_files.json
+
+      - name: Decide verdict from job results
+        id: verdict
+        if: steps.pr.outputs.found == 'true'
+        uses: actions/github-script@v7
+        env:
+          IMM_VIOLATION: ${{ steps.imm.outputs.violation }}
+          IMM_OUTCOME: ${{ steps.imm.outcome }}
+        with:
+          script: |
+            const run = context.payload.workflow_run;
+            const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRun, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: run.id,
+              filter: 'latest',
+              per_page: 100
+            });
+            const redteamJob = jobs.find(j => j.name === 'Verify Code & Red Team');
+            const flagStep = redteamJob && (redteamJob.steps || []).find(s => s.name === 'Flag Red Team counterexample');
+            const counterexample = !!(flagStep && flagStep.conclusion === 'failure');
+
+            let verdict;
+            if (process.env.IMM_VIOLATION === 'true') {
+              verdict = 'violation';
+            } else if (process.env.IMM_OUTCOME === 'failure') {
+              // 検査スクリプト自体が想定外に失敗した場合は、安全側に倒して ci_failed 扱い
+              verdict = 'ci_failed';
+            } else if (counterexample) {
+              verdict = 'counterexample';
+            } else if (run.conclusion === 'success') {
+              verdict = 'pass';
+            } else {
+              verdict = 'ci_failed';
+            }
+            core.info(`Gatekeeper run ${run.html_url} concluded '${run.conclusion}' -> verdict '${verdict}'.`);
+            core.setOutput('verdict', verdict);
+
+      - name: Close PR on immutable core violation
+        if: steps.verdict.outputs.verdict == 'violation'
+        uses: actions/github-script@v7
+        env:
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          SAME_REPO: ${{ steps.pr.outputs.same_repo }}
+          HEAD_REF: ${{ steps.pr.outputs.head_ref }}
+          VIOLATION_FILES: ${{ steps.imm.outputs.violation_files }}
+        with:
+          github-token: ${{ secrets.AUTONOMOUS_BOT_TOKEN || secrets.GITHUB_TOKEN }}
+          script: |
+            const num = Number(process.env.PR_NUMBER);
+            const files = (process.env.VIOLATION_FILES || '').split(',').filter(Boolean);
+            const listMd = files.map(f => `- \`${f}\``).join('\n');
+            try {
+              await github.rest.issues.createLabel({
+                owner: context.repo.owner, repo: context.repo.repo,
+                name: 'immutable-violation', color: 'b60205',
+                description: 'PR attempted to modify immutable core or out-of-scope files'
+              });
+            } catch (_) {}
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: num, labels: ['immutable-violation']
+            });
+            await github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo, issue_number: num,
+              body: [
+                '### Immutable Core Violation Detected',
+                '',
+                'This PR modified protected immutable core files or paths outside `allowed_globs` in `config/autonomous.json`:',
+                listMd,
+                '',
+                'Closing this PR automatically without human review.'
+              ].join('\n')
+            });
+            await github.rest.pulls.update({
+              owner: context.repo.owner, repo: context.repo.repo,
+              pull_number: num, state: 'closed'
+            });
+            if (process.env.SAME_REPO === 'true') {
+              try {
+                await github.rest.git.deleteRef({
+                  owner: context.repo.owner, repo: context.repo.repo,
+                  ref: `heads/${process.env.HEAD_REF}`
+                });
+              } catch (err) {
+                core.warning(`Branch deletion skipped: ${err.message}`);
+              }
+            }
+
+      - name: Close PR on Red Team counterexample
+        if: steps.verdict.outputs.verdict == 'counterexample'
+        uses: actions/github-script@v7
+        env:
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          SAME_REPO: ${{ steps.pr.outputs.same_repo }}
+          HEAD_REF: ${{ steps.pr.outputs.head_ref }}
+        with:
+          github-token: ${{ secrets.AUTONOMOUS_BOT_TOKEN || secrets.GITHUB_TOKEN }}
+          script: |
+            const num = Number(process.env.PR_NUMBER);
+            const runUrl = context.payload.workflow_run.html_url;
+            try {
+              await github.rest.issues.createLabel({
+                owner: context.repo.owner, repo: context.repo.repo,
+                name: 'falsified-by-redteam', color: 'd93f0b',
+                description: 'Conjecture falsified by automated Red Team test'
+              });
+            } catch (_) {}
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: num, labels: ['falsified-by-redteam']
+            });
+            await github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo, issue_number: num,
+              body: `### Falsified by Red Team\n\nCounterexample detected by an automated Red Team test (see ${runUrl}). Closing PR automatically.`
+            });
+            await github.rest.pulls.update({
+              owner: context.repo.owner, repo: context.repo.repo,
+              pull_number: num, state: 'closed'
+            });
+            if (process.env.SAME_REPO === 'true') {
+              try {
+                await github.rest.git.deleteRef({
+                  owner: context.repo.owner, repo: context.repo.repo,
+                  ref: `heads/${process.env.HEAD_REF}`
+                });
+              } catch (err) {
+                core.warning(`Branch deletion skipped: ${err.message}`);
+              }
+            }
+
+      - name: Label PR on CI failure
+        if: steps.verdict.outputs.verdict == 'ci_failed'
+        uses: actions/github-script@v7
+        env:
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        with:
+          script: |
+            const num = Number(process.env.PR_NUMBER);
+            try {
+              await github.rest.issues.createLabel({
+                owner: context.repo.owner, repo: context.repo.repo,
+                name: 'ci-failed', color: 'e11d21',
+                description: 'Automated verification failed'
+              });
+            } catch (_) {}
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: num, labels: ['ci-failed']
+            });
+
+      - name: Clear stale ci-failed label on pass
+        if: steps.verdict.outputs.verdict == 'pass'
+        uses: actions/github-script@v7
+        env:
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        with:
+          script: |
+            try {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: Number(process.env.PR_NUMBER), name: 'ci-failed'
+              });
+            } catch (_) {}
+
+      - name: Enable auto-merge on passing non-draft PR
+        if: steps.verdict.outputs.verdict == 'pass' && steps.pr.outputs.draft == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.AUTONOMOUS_BOT_TOKEN || secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        run: |
+          # checkout していないジョブでも動くよう、対象リポジトリを明示する
+          if ! gh pr merge "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --auto --squash --delete-branch; then
+            echo "Auto-merge could not be enabled; trying an immediate merge (requirements may already be met)."
+            gh pr merge "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --squash --delete-branch
+          fi
