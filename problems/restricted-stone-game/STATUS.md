@@ -5,7 +5,7 @@
 ## Overview
 
 - **Main Theorem Target**: `MainTheorem` (OPEN)
-- **Lean-Verified Theorems & Lemmas**: 58
+- **Lean-Verified Theorems & Lemmas**: 61
 - **Recorded Dead Ends**: 3
 - **Stagnation Cycles**: 0 / 20
 
@@ -65,6 +65,9 @@
 | `theorem` | `win_length` | `lean/Rubidium/K7.lean` | 138 |
 | `theorem` | `win_eq` | `lean/Rubidium/K7.lean` | 141 |
 | `theorem` | `K7'` | `lean/Rubidium/K7.lean` | 157 |
+| `theorem` | `isP_quotient_period` | `lean/Rubidium/K7.lean` | 174 |
+| `theorem` | `isP_mod_period` | `lean/Rubidium/K7.lean` | 191 |
+| `theorem` | `K7_odd_general_states` | `lean/Rubidium/K7.lean` | 215 |
 | `theorem` | `blkE_step` | `lean/Rubidium/K9.lean` | 23 |
 | `theorem` | `blkO_of_blk` | `lean/Rubidium/K9.lean` | 67 |
 | `theorem` | `k9_rows` | `lean/Rubidium/K9.lean` | 90 |
@@ -83,6 +86,7 @@
 | `SG-005` | Formalize periodicity and preperiod bounds for odd m >= 7 | `proved` | 1 | no |
 | `SG-006` | Characterize winning/losing positions for general states (r, p) | `open` | 0 | no |
 | `SG-007` | Prove MainTheorem characterizing starting positions (n, 0) for all m >= 1 | `open` | 0 | no |
+| `SG-008` | Characterize winning and losing general states (r, p) for odd m >= 7 | `proved` | 0 | no |
 
 ## Recent Dead Ends (`data/dead_ends.jsonl`)
 

@@ -1,5 +1,5 @@
 {
-  "count": 58,
+  "count": 61,
   "theorems": [
     {
       "name": "nat_all_iff",
@@ -312,6 +312,24 @@
       "kind": "theorem",
       "file": "lean/Rubidium/K7.lean",
       "line": 157
+    },
+    {
+      "name": "isP_quotient_period",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K7.lean",
+      "line": 174
+    },
+    {
+      "name": "isP_mod_period",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K7.lean",
+      "line": 191
+    },
+    {
+      "name": "K7_odd_general_states",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K7.lean",
+      "line": 215
     },
     {
       "name": "blkE_step",
