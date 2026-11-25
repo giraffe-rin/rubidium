@@ -82,7 +82,8 @@
       ],
       "lean_files": [],
       "failures": 0,
-      "needs_decomposition": false
+      "needs_decomposition": false,
+      "no_plan": true
     },
     {
       "id": "SG-007",
