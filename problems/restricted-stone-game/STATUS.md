@@ -87,6 +87,7 @@
 | `SG-006` | Characterize winning/losing positions for general states (r, p) | `open` | 0 | no |
 | `SG-007` | Prove MainTheorem characterizing starting positions (n, 0) for all m >= 1 | `open` | 0 | no |
 | `SG-008` | Characterize winning and losing general states (r, p) for odd m >= 7 | `proved` | 0 | no |
+| `SG-009` | Characterize starting positions (n, 0) for odd m >= 7 using finite periodic representatives | `open` | 0 | no |
 
 ## Recent Dead Ends (`data/dead_ends.jsonl`)
 

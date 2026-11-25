@@ -78,7 +78,7 @@
         "SG-004",
         "SG-005",
         "SG-008",
-        "SG-009"
+        "SG-010"
       ],
       "lean_files": [],
       "failures": 0,
@@ -91,7 +91,8 @@
       "dependencies": [
         "SG-004",
         "SG-005",
-        "SG-006"
+        "SG-006",
+        "SG-009"
       ],
       "lean_files": [],
       "failures": 0,
@@ -112,6 +113,18 @@
     },
     {
       "id": "SG-009",
+      "title": "Characterize starting positions (n, 0) for odd m >= 7 using finite periodic representatives",
+      "status": "open",
+      "dependencies": [
+        "SG-005",
+        "SG-008"
+      ],
+      "lean_files": [],
+      "failures": 0,
+      "needs_decomposition": false
+    },
+    {
+      "id": "SG-010",
       "title": "Characterize winning and losing general states (r, p) for small odd m (m = 1, 3, 5)",
       "status": "open",
       "dependencies": [
