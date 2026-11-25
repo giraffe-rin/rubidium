@@ -1,0 +1,1066 @@
+/-
+  Rubidium.K68f7 — v2(m+1) = 3 の類（u mod 8192）の型の証明（code/k68_gen.js で生成、code/k68_search.js 8192 の結果の第 7 組）
+
+  証明の方法は K68e と同じ（始まりの行の不変量 Blk m 3）。
+-/
+import Rubidium.K67b
+
+namespace Rubidium
+
+set_option maxHeartbeats 8000000
+set_option linter.unusedSectionVars false
+
+section K68g7735
+
+variable (m u : Nat) (hmu : m + 1 = 8 * u) (hu : u % 8192 = 7735)
+include hmu hu
+
+theorem k68g7735_blk (c : Nat) (hc : ∀ p, IsP m c p) (hblkc : Blk m 1 c) (ha' : ∀ p, IsP m (c + (m + 1)) p) :
+    Blk m 3 (c + (m + 1)) := by
+  have hv4u : v2 (4 * u) = 2 := by
+    rw [show 4 * u = 2 * (2 * u) by omega, v2_two_mul _ (by omega), v2_two_mul _ (by omega), v2_odd u (by omega)]
+  intro d
+  induction d using Nat.strongRecOn with
+  | _ d ih =>
+    intro hd1 hdm hds
+    constructor
+    · intro hP
+      apply Decidable.byContradiction
+      intro hodd
+      have hde : d % 2 = 0 := even_of_v2_pos d (by omega)
+      have hv : v2 d = v2 (d / 2) + 1 := v2_even d (by omega) hde
+      rw [isP_iff] at hP
+      apply hP (d / 2) (by omega) (by omega) (by omega) (by omega)
+      rw [show c + (m + 1) + d - d / 2 = c + (m + 1) + d / 2 by omega]
+      exact (ih (d / 2) (by omega) (by omega) (by omega) (by omega)).mpr (by omega)
+    · intro hev
+      rw [isP_iff]
+      intro k hk1 hkm hkr hkd hPk
+      by_cases hlt : k < d
+      · rw [show c + (m + 1) + d - k = c + (m + 1) + (d - k) by omega] at hPk
+        by_cases hk : k = d - k
+        · have hde : d % 2 = 0 := by omega
+          have hd2 : d / 2 = k := by omega
+          have hv : v2 d = v2 k + 1 := by rw [v2_even d (by omega) hde, hd2]
+          rw [← hk] at hPk
+          have := (ih k hlt hk1 (by omega) (by omega)).mp hPk
+          omega
+        · exact not_isP_of_row m _ (d - k) k ha' (by omega) (by omega) hk hPk
+      · rw [show c + (m + 1) + d - k = c + (m + 1 + d - k) by omega] at hPk
+        by_cases hk : k = m + 1 + d - k
+        · have hde : d % 2 = 0 := by omega
+          have hv1 : v2 d = v2 (d / 2) + 1 := v2_even d (by omega) hde
+          have hkx : k = d / 2 + 4 * u := by omega
+          have hvk : v2 k = 1 := by rw [hkx, v2_add (d / 2) (4 * u) (by omega) (by omega) (by omega)]; omega
+          rw [← hk] at hPk
+          rw [hblkc k hk1 hkm (by omega), hvk] at hPk; omega
+        · exact not_isP_of_row m c (m + 1 + d - k) k hc (by omega) (by omega) hk hPk
+
+theorem k68g7735_step (a : Nat) (hrow : ∀ p, IsP m a p) (hblk : Blk m 3 a) :
+    (∀ p, IsP m (a + (m + 2)) p) ∧
+    (∀ p, IsP m (a + (m + 2) + (m + 2)) p) ∧
+    (∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 1)) p) ∧
+    (∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2)) p) ∧
+    (∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2)) p) ∧
+    (∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 1)) p) ∧
+    (∀ p, IsP m (a + (7 * m + 11)) p) ∧
+    Blk m 3 (a + (7 * m + 11)) ∧
+    IsP m (a + 4 * u) (4 * u) ∧
+    IsP m (a + (m + 2) + 4 * u) (4 * u) ∧
+    IsP m (a + (m + 2) + (m + 2) + (m + 1) + 4 * u) (4 * u) ∧
+    IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + 4 * u) (4 * u) := by
+  have hmh : m + 1 = 2 * (4 * u) := by omega
+  have hmo : m % 2 = 1 := by omega
+  have hh : (m + 1) / 2 = 4 * u := by omega
+  have hv4u : v2 (4 * u) = 2 := by
+    rw [show 4 * u = 2 * (2 * u) by omega, v2_two_mul _ (by omega), v2_two_mul _ (by omega), v2_odd u (by omega)]
+  have hr0 := hrow
+  have F0 : IsP m (a + 4 * u) (4 * u) := by
+    have hv : v2 (4 * u) = 2 := by
+      have : (4 * u) % 8 = 4 := by omega
+      rw [v2_even (4 * u) (by omega) (by omega),
+        v2_even (4 * u / 2) (by omega) (by omega),
+        v2_odd (4 * u / 2 / 2) (by omega)]
+    exact (hblk _ (by omega) (by omega) (by omega)).mpr (by omega)
+  have hr1 : ∀ p, IsP m (a + (m + 2)) p := row_long m (a) hmo (by omega) hr0 (by rw [hh]; exact F0)
+  have F1 : ¬ IsP m (a + (36 * u + 4) / 8) ((36 * u + 4) / 8) := by
+    have hv : v2 ((36 * u + 4) / 8) = 3 := by
+      have : ((36 * u + 4) / 8) % 16 = 8 := by omega
+      rw [v2_even ((36 * u + 4) / 8) (by omega) (by omega),
+        v2_even ((36 * u + 4) / 8 / 2) (by omega) (by omega),
+        v2_even ((36 * u + 4) / 8 / 2 / 2) (by omega) (by omega),
+        v2_odd ((36 * u + 4) / 8 / 2 / 2 / 2) (by omega)]
+    intro h; have := (hblk _ (by omega) (by omega) (by omega)).mp h; omega
+  have F2 : IsP m (a + (m + 2) + (4 * u + 0) / 4) ((4 * u + 0) / 4) := by
+    refine (o_odd_iff m (4 * u) (a) ((4 * u + 0) / 4) hmh hr0 hr1 F0 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (4 * u + 0) / 4) / 2 = (36 * u + 4) / 8 by omega]; exact F1
+  have F3 : ¬ IsP m (a + (m + 2) + (4 * u + 0) / 2) ((4 * u + 0) / 2) := by
+    rw [show (4 * u + 0) / 2 = 2 * ((4 * u + 0) / 4) by omega]
+    exact fun h => (o_half' m (4 * u) (a) ((4 * u + 0) / 4) hmh hr0 hr1 F0 (by omega) (by omega) (by omega)).mp h F2
+  have F4 : IsP m (a + (m + 2) + 4 * u) (4 * u) := by
+    rw [show 4 * u = 2 * ((4 * u + 0) / 2) by omega]
+    exact (o_half' m (4 * u) (a) ((4 * u + 0) / 2) hmh hr0 hr1 F0 (by omega) (by omega) (by omega)).mpr F3
+  have hr2 : ∀ p, IsP m (a + (m + 2) + (m + 2)) p := row_long m (a + (m + 2)) hmo (by omega) hr1 (by rw [hh]; exact F4)
+  have F5 : IsP m (a + (548 * u + 68) / 128) ((548 * u + 68) / 128) := by
+    have hv : v2 ((548 * u + 68) / 128) = 2 := by
+      have : ((548 * u + 68) / 128) % 8 = 4 := by omega
+      rw [v2_even ((548 * u + 68) / 128) (by omega) (by omega),
+        v2_even ((548 * u + 68) / 128 / 2) (by omega) (by omega),
+        v2_odd ((548 * u + 68) / 128 / 2 / 2) (by omega)]
+    exact (hblk _ (by omega) (by omega) (by omega)).mpr (by omega)
+  have F6 : ¬ IsP m (a + (m + 2) + (36 * u + 4) / 64) ((36 * u + 4) / 64) := by
+    intro h; apply (o_odd_iff m (4 * u) (a) ((36 * u + 4) / 64) hmh hr0 hr1 F0 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (36 * u + 4) / 64) / 2 = (548 * u + 68) / 128 by omega]; exact F5
+  have F7 : IsP m (a + (m + 2) + (36 * u + 4) / 32) ((36 * u + 4) / 32) := by
+    rw [show (36 * u + 4) / 32 = 2 * ((36 * u + 4) / 64) by omega]
+    exact (o_half' m (4 * u) (a) ((36 * u + 4) / 64) hmh hr0 hr1 F0 (by omega) (by omega) (by omega)).mpr F6
+  have F8 : ¬ IsP m (a + (m + 2) + (36 * u + 4) / 16) ((36 * u + 4) / 16) := by
+    rw [show (36 * u + 4) / 16 = 2 * ((36 * u + 4) / 32) by omega]
+    exact fun h => (o_half' m (4 * u) (a) ((36 * u + 4) / 32) hmh hr0 hr1 F0 (by omega) (by omega) (by omega)).mp h F7
+  have F9 : IsP m (a + (m + 2) + (36 * u + 4) / 8) ((36 * u + 4) / 8) := by
+    rw [show (36 * u + 4) / 8 = 2 * ((36 * u + 4) / 16) by omega]
+    exact (o_half' m (4 * u) (a) ((36 * u + 4) / 16) hmh hr0 hr1 F0 (by omega) (by omega) (by omega)).mpr F8
+  have F10 : ¬ IsP m (a + (m + 2) + (m + 2) + (4 * u + 0) / 4) ((4 * u + 0) / 4) := by
+    intro h; apply (o_odd_iff m (4 * u) (a + (m + 2)) ((4 * u + 0) / 4) hmh hr1 hr2 F4 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (4 * u + 0) / 4) / 2 = (36 * u + 4) / 8 by omega]; exact F9
+  have F11 : IsP m (a + (m + 2) + (m + 2) + (4 * u + 0) / 2) ((4 * u + 0) / 2) := by
+    rw [show (4 * u + 0) / 2 = 2 * ((4 * u + 0) / 4) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2)) ((4 * u + 0) / 4) hmh hr1 hr2 F4 (by omega) (by omega) (by omega)).mpr F10
+  have F12 : ¬ IsP m (a + (m + 2) + (m + 2) + 4 * u) (4 * u) := by
+    rw [show 4 * u = 2 * ((4 * u + 0) / 2) by omega]
+    exact fun h => (o_half' m (4 * u) (a + (m + 2)) ((4 * u + 0) / 2) hmh hr1 hr2 F4 (by omega) (by omega) (by omega)).mp h F11
+  have hr3 : ∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 1)) p := row_next m (a + (m + 2) + (m + 2)) hr2 (by rw [hh]; exact F12)
+  have hb3 := blk1_direct m _ hr3 (odd_of_rows m _ hmo hr3 (Or.inr ⟨_, rfl, hr2⟩))
+  have F13 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (4 * u + 0) / 2) ((4 * u + 0) / 2) := by
+    have hv : v2 ((4 * u + 0) / 2) = 1 := by
+      have : ((4 * u + 0) / 2) % 4 = 2 := by omega
+      rw [v2_even ((4 * u + 0) / 2) (by omega) (by omega),
+        v2_odd ((4 * u + 0) / 2 / 2) (by omega)]
+    intro h; have := (hb3 _ (by omega) (by omega) (by omega)).mp h; omega
+  have F14 : IsP m (a + (108 * u + 12) / 16) ((108 * u + 12) / 16) := by
+    have hv : v2 ((108 * u + 12) / 16) = 2 := by
+      have : ((108 * u + 12) / 16) % 8 = 4 := by omega
+      rw [v2_even ((108 * u + 12) / 16) (by omega) (by omega),
+        v2_even ((108 * u + 12) / 16 / 2) (by omega) (by omega),
+        v2_odd ((108 * u + 12) / 16 / 2 / 2) (by omega)]
+    exact (hblk _ (by omega) (by omega) (by omega)).mpr (by omega)
+  have F15 : ¬ IsP m (a + (m + 2) + (44 * u + 4) / 8) ((44 * u + 4) / 8) := by
+    intro h; apply (o_odd_iff m (4 * u) (a) ((44 * u + 4) / 8) hmh hr0 hr1 F0 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (44 * u + 4) / 8) / 2 = (108 * u + 12) / 16 by omega]; exact F14
+  have F16 : IsP m (a + (m + 2) + (m + 2) + (12 * u + 0) / 4) ((12 * u + 0) / 4) := by
+    refine (o_odd_iff m (4 * u) (a + (m + 2)) ((12 * u + 0) / 4) hmh hr1 hr2 F4 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (12 * u + 0) / 4) / 2 = (44 * u + 4) / 8 by omega]; exact F15
+  have F17 : ¬ IsP m (a + (m + 2) + (m + 2) + (12 * u + 0) / 2) ((12 * u + 0) / 2) := by
+    rw [show (12 * u + 0) / 2 = 2 * ((12 * u + 0) / 4) by omega]
+    exact fun h => (o_half' m (4 * u) (a + (m + 2)) ((12 * u + 0) / 4) hmh hr1 hr2 F4 (by omega) (by omega) (by omega)).mp h F16
+  have F18 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + 4 * u) (4 * u) := by
+    refine (e_iff m (4 * u) (a + (m + 2) + (m + 2)) (4 * u) hmh hr2 hr3 (by omega) (by omega) (by omega)).mpr ⟨?_, ?_⟩
+    · rw [show 4 * u / 2 = (4 * u + 0) / 2 by omega]; exact F13
+    · rw [show 4 * u + 4 * u / 2 = (12 * u + 0) / 2 by omega]; exact F17
+  have hr4 : ∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2)) p := row_long m (a + (m + 2) + (m + 2) + (m + 1)) hmo (by omega) hr3 (by rw [hh]; exact F18)
+  have F25 : IsP m (a + (5220 * u + 644) / 1024) ((5220 * u + 644) / 1024) := by
+    have hv : v2 ((5220 * u + 644) / 1024) = 0 := by
+      have : ((5220 * u + 644) / 1024) % 2 = 1 := by omega
+      rw [v2_odd ((5220 * u + 644) / 1024) (by omega)]
+    exact (hblk _ (by omega) (by omega) (by omega)).mpr (by omega)
+  have F26 : ¬ IsP m (a + (m + 2) + (1124 * u + 132) / 512) ((1124 * u + 132) / 512) := by
+    intro h; apply (o_odd_iff m (4 * u) (a) ((1124 * u + 132) / 512) hmh hr0 hr1 F0 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (1124 * u + 132) / 512) / 2 = (5220 * u + 644) / 1024 by omega]; exact F25
+  have F27 : IsP m (a + (m + 2) + (1124 * u + 132) / 256) ((1124 * u + 132) / 256) := by
+    rw [show (1124 * u + 132) / 256 = 2 * ((1124 * u + 132) / 512) by omega]
+    exact (o_half' m (4 * u) (a) ((1124 * u + 132) / 512) hmh hr0 hr1 F0 (by omega) (by omega) (by omega)).mpr F26
+  have F28 : ¬ IsP m (a + (m + 2) + (m + 2) + (100 * u + 4) / 128) ((100 * u + 4) / 128) := by
+    intro h; apply (o_odd_iff m (4 * u) (a + (m + 2)) ((100 * u + 4) / 128) hmh hr1 hr2 F4 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (100 * u + 4) / 128) / 2 = (1124 * u + 132) / 256 by omega]; exact F27
+  have F29 : IsP m (a + (m + 2) + (m + 2) + (100 * u + 4) / 64) ((100 * u + 4) / 64) := by
+    rw [show (100 * u + 4) / 64 = 2 * ((100 * u + 4) / 128) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2)) ((100 * u + 4) / 128) hmh hr1 hr2 F4 (by omega) (by omega) (by omega)).mpr F28
+  have F30 : ¬ IsP m (a + (m + 2) + (m + 2) + (100 * u + 4) / 32) ((100 * u + 4) / 32) := by
+    rw [show (100 * u + 4) / 32 = 2 * ((100 * u + 4) / 64) by omega]
+    exact fun h => (o_half' m (4 * u) (a + (m + 2)) ((100 * u + 4) / 64) hmh hr1 hr2 F4 (by omega) (by omega) (by omega)).mp h F29
+  have F31 : IsP m (a + (m + 2) + (m + 2) + (100 * u + 4) / 16) ((100 * u + 4) / 16) := by
+    rw [show (100 * u + 4) / 16 = 2 * ((100 * u + 4) / 32) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2)) ((100 * u + 4) / 32) hmh hr1 hr2 F4 (by omega) (by omega) (by omega)).mpr F30
+  have F32 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (36 * u + 4) / 8) ((36 * u + 4) / 8) := by
+    intro h; apply ((e_iff m (4 * u) (a + (m + 2) + (m + 2)) ((36 * u + 4) / 8) hmh hr2 hr3 (by omega) (by omega) (by omega)).mp h).2
+    rw [show 4 * u + (36 * u + 4) / 8 / 2 = (100 * u + 4) / 16 by omega]; exact F31
+  have F33 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (4 * u + 0) / 4) ((4 * u + 0) / 4) := by
+    refine (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 1)) ((4 * u + 0) / 4) hmh hr3 hr4 F18 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (4 * u + 0) / 4) / 2 = (36 * u + 4) / 8 by omega]; exact F32
+  have F34 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (4 * u + 0) / 2) ((4 * u + 0) / 2) := by
+    rw [show (4 * u + 0) / 2 = 2 * ((4 * u + 0) / 4) by omega]
+    exact fun h => (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 1)) ((4 * u + 0) / 4) hmh hr3 hr4 F18 (by omega) (by omega) (by omega)).mp h F33
+  have F35 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + 4 * u) (4 * u) := by
+    rw [show 4 * u = 2 * ((4 * u + 0) / 2) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 1)) ((4 * u + 0) / 2) hmh hr3 hr4 F18 (by omega) (by omega) (by omega)).mpr F34
+  have hr5 : ∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2)) p := row_long m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2)) hmo (by omega) hr4 (by rw [hh]; exact F35)
+  have F36 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (548 * u + 68) / 256) ((548 * u + 68) / 256) := by
+    have hv : v2 ((548 * u + 68) / 256) = 1 := by
+      have : ((548 * u + 68) / 256) % 4 = 2 := by omega
+      rw [v2_even ((548 * u + 68) / 256) (by omega) (by omega),
+        v2_odd ((548 * u + 68) / 256 / 2) (by omega)]
+    intro h; have := (hb3 _ (by omega) (by omega) (by omega)).mp h; omega
+  have F37 : IsP m (a + (13860 * u + 1604) / 2048) ((13860 * u + 1604) / 2048) := by
+    have hv : v2 ((13860 * u + 1604) / 2048) = 2 := by
+      have : ((13860 * u + 1604) / 2048) % 8 = 4 := by omega
+      rw [v2_even ((13860 * u + 1604) / 2048) (by omega) (by omega),
+        v2_even ((13860 * u + 1604) / 2048 / 2) (by omega) (by omega),
+        v2_odd ((13860 * u + 1604) / 2048 / 2 / 2) (by omega)]
+    exact (hblk _ (by omega) (by omega) (by omega)).mpr (by omega)
+  have F38 : ¬ IsP m (a + (m + 2) + (5668 * u + 580) / 1024) ((5668 * u + 580) / 1024) := by
+    intro h; apply (o_odd_iff m (4 * u) (a) ((5668 * u + 580) / 1024) hmh hr0 hr1 F0 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (5668 * u + 580) / 1024) / 2 = (13860 * u + 1604) / 2048 by omega]; exact F37
+  have F39 : IsP m (a + (m + 2) + (m + 2) + (1572 * u + 68) / 512) ((1572 * u + 68) / 512) := by
+    refine (o_odd_iff m (4 * u) (a + (m + 2)) ((1572 * u + 68) / 512) hmh hr1 hr2 F4 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (1572 * u + 68) / 512) / 2 = (5668 * u + 580) / 1024 by omega]; exact F38
+  have F40 : ¬ IsP m (a + (m + 2) + (m + 2) + (1572 * u + 68) / 256) ((1572 * u + 68) / 256) := by
+    rw [show (1572 * u + 68) / 256 = 2 * ((1572 * u + 68) / 512) by omega]
+    exact fun h => (o_half' m (4 * u) (a + (m + 2)) ((1572 * u + 68) / 512) hmh hr1 hr2 F4 (by omega) (by omega) (by omega)).mp h F39
+  have F41 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (548 * u + 68) / 128) ((548 * u + 68) / 128) := by
+    refine (e_iff m (4 * u) (a + (m + 2) + (m + 2)) ((548 * u + 68) / 128) hmh hr2 hr3 (by omega) (by omega) (by omega)).mpr ⟨?_, ?_⟩
+    · rw [show (548 * u + 68) / 128 / 2 = (548 * u + 68) / 256 by omega]; exact F36
+    · rw [show 4 * u + (548 * u + 68) / 128 / 2 = (1572 * u + 68) / 256 by omega]; exact F40
+  have F42 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (36 * u + 4) / 64) ((36 * u + 4) / 64) := by
+    intro h; apply (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 1)) ((36 * u + 4) / 64) hmh hr3 hr4 F18 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (36 * u + 4) / 64) / 2 = (548 * u + 68) / 128 by omega]; exact F41
+  have F43 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (36 * u + 4) / 32) ((36 * u + 4) / 32) := by
+    rw [show (36 * u + 4) / 32 = 2 * ((36 * u + 4) / 64) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 1)) ((36 * u + 4) / 64) hmh hr3 hr4 F18 (by omega) (by omega) (by omega)).mpr F42
+  have F44 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (36 * u + 4) / 16) ((36 * u + 4) / 16) := by
+    rw [show (36 * u + 4) / 16 = 2 * ((36 * u + 4) / 32) by omega]
+    exact fun h => (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 1)) ((36 * u + 4) / 32) hmh hr3 hr4 F18 (by omega) (by omega) (by omega)).mp h F43
+  have F45 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (36 * u + 4) / 8) ((36 * u + 4) / 8) := by
+    rw [show (36 * u + 4) / 8 = 2 * ((36 * u + 4) / 16) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 1)) ((36 * u + 4) / 16) hmh hr3 hr4 F18 (by omega) (by omega) (by omega)).mpr F44
+  have F46 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (4 * u + 0) / 4) ((4 * u + 0) / 4) := by
+    intro h; apply (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2)) ((4 * u + 0) / 4) hmh hr4 hr5 F35 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (4 * u + 0) / 4) / 2 = (36 * u + 4) / 8 by omega]; exact F45
+  have F47 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (4 * u + 0) / 2) ((4 * u + 0) / 2) := by
+    rw [show (4 * u + 0) / 2 = 2 * ((4 * u + 0) / 4) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2)) ((4 * u + 0) / 4) hmh hr4 hr5 F35 (by omega) (by omega) (by omega)).mpr F46
+  have F48 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + 4 * u) (4 * u) := by
+    rw [show 4 * u = 2 * ((4 * u + 0) / 2) by omega]
+    exact fun h => (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2)) ((4 * u + 0) / 2) hmh hr4 hr5 F35 (by omega) (by omega) (by omega)).mp h F47
+  have hr6 : ∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 1)) p := row_next m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2)) hr5 (by rw [hh]; exact F48)
+  have hb6 := blk1_direct m _ hr6 (odd_of_rows m _ hmo hr6 (Or.inr ⟨_, rfl, hr5⟩))
+  have F51 : IsP m (a + (2796 * u + 332) / 512) ((2796 * u + 332) / 512) := by
+    have hv : v2 ((2796 * u + 332) / 512) = 0 := by
+      have : ((2796 * u + 332) / 512) % 2 = 1 := by omega
+      rw [v2_odd ((2796 * u + 332) / 512) (by omega)]
+    exact (hblk _ (by omega) (by omega) (by omega)).mpr (by omega)
+  have F52 : ¬ IsP m (a + (m + 2) + (748 * u + 76) / 256) ((748 * u + 76) / 256) := by
+    intro h; apply (o_odd_iff m (4 * u) (a) ((748 * u + 76) / 256) hmh hr0 hr1 F0 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (748 * u + 76) / 256) / 2 = (2796 * u + 332) / 512 by omega]; exact F51
+  have F53 : IsP m (a + (m + 2) + (748 * u + 76) / 128) ((748 * u + 76) / 128) := by
+    rw [show (748 * u + 76) / 128 = 2 * ((748 * u + 76) / 256) by omega]
+    exact (o_half' m (4 * u) (a) ((748 * u + 76) / 256) hmh hr0 hr1 F0 (by omega) (by omega) (by omega)).mpr F52
+  have F54 : ¬ IsP m (a + (m + 2) + (m + 2) + (236 * u + 12) / 64) ((236 * u + 12) / 64) := by
+    intro h; apply (o_odd_iff m (4 * u) (a + (m + 2)) ((236 * u + 12) / 64) hmh hr1 hr2 F4 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (236 * u + 12) / 64) / 2 = (748 * u + 76) / 128 by omega]; exact F53
+  have F55 : IsP m (a + (m + 2) + (m + 2) + (236 * u + 12) / 32) ((236 * u + 12) / 32) := by
+    rw [show (236 * u + 12) / 32 = 2 * ((236 * u + 12) / 64) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2)) ((236 * u + 12) / 64) hmh hr1 hr2 F4 (by omega) (by omega) (by omega)).mpr F54
+  have F56 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (108 * u + 12) / 16) ((108 * u + 12) / 16) := by
+    intro h; apply ((e_iff m (4 * u) (a + (m + 2) + (m + 2)) ((108 * u + 12) / 16) hmh hr2 hr3 (by omega) (by omega) (by omega)).mp h).2
+    rw [show 4 * u + (108 * u + 12) / 16 / 2 = (236 * u + 12) / 32 by omega]; exact F55
+  have F57 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (44 * u + 4) / 8) ((44 * u + 4) / 8) := by
+    refine (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 1)) ((44 * u + 4) / 8) hmh hr3 hr4 F18 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (44 * u + 4) / 8) / 2 = (108 * u + 12) / 16 by omega]; exact F56
+  have F58 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (12 * u + 0) / 4) ((12 * u + 0) / 4) := by
+    intro h; apply (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2)) ((12 * u + 0) / 4) hmh hr4 hr5 F35 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (12 * u + 0) / 4) / 2 = (44 * u + 4) / 8 by omega]; exact F57
+  have F59 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (12 * u + 0) / 2) ((12 * u + 0) / 2) := by
+    rw [show (12 * u + 0) / 2 = 2 * ((12 * u + 0) / 4) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2)) ((12 * u + 0) / 4) hmh hr4 hr5 F35 (by omega) (by omega) (by omega)).mpr F58
+  have F60 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 1) + 4 * u) (4 * u) := by
+    intro h; apply ((e_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2)) (4 * u) hmh hr5 hr6 (by omega) (by omega) (by omega)).mp h).2
+    rw [show 4 * u + 4 * u / 2 = (12 * u + 0) / 2 by omega]; exact F59
+  have hr7 : ∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 1) + (m + 1)) p := row_next m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 1)) hr6 (by rw [hh]; exact F60)
+  have hblk' := k68g7735_blk m u hmu hu _ hr6 hb6 hr7
+  rw [show a + (7 * m + 11) = a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 1) + (m + 1) by omega]
+  exact ⟨hr1, hr2, hr3, hr4, hr5, hr6, hr7, hblk', F0, F4, F18, F35⟩
+
+theorem k68g7735_rows : ∀ i, (∀ p, IsP m (i * (7 * m + 11)) p) ∧ Blk m 3 (i * (7 * m + 11)) := by
+  intro i
+  induction i with
+  | zero => rw [Nat.zero_mul]; exact ⟨isP_zero m, blk_zero m 3⟩
+  | succ i ih =>
+    obtain ⟨hrow, hblk⟩ := ih
+    obtain ⟨_, _, _, _, _, _, ha, hb, _⟩ := k68g7735_step m u hmu hu _ hrow hblk
+    rw [Nat.succ_mul]; exact ⟨ha, hb⟩
+
+end K68g7735
+
+/-- 予想 K68 の u ≡ 7735 (mod 8192)（1101100 型）：(n, 0) が P ⇔ n mod (7 * m + 11) が各行の始まり。-/
+theorem K68_7735 (m : Nat) (hm : (m + 1) % 65536 = 61880) (n : Nat) :
+    IsP m n 0 ↔ (n % (7 * m + 11) = 0 ∨ n % (7 * m + 11) = 1 * m + 2 ∨ n % (7 * m + 11) = 2 * m + 4 ∨ n % (7 * m + 11) = 3 * m + 5 ∨ n % (7 * m + 11) = 4 * m + 7 ∨ n % (7 * m + 11) = 5 * m + 9 ∨ n % (7 * m + 11) = 6 * m + 10) := by
+  have hmu : m + 1 = 8 * ((m + 1) / 8) := by omega
+  obtain ⟨hrow, hblk⟩ := k68g7735_rows m _ hmu (by omega) (n / (7 * m + 11))
+  obtain ⟨hq1, hq2, hq3, hq4, hq5, hq6, _, _, ht0, ht1, ht3, ht4⟩ := k68g7735_step m _ hmu (by omega) _ hrow hblk
+  have hdiv : n = (n / (7 * m + 11)) * (7 * m + 11) + n % (7 * m + 11) := by
+    have := Nat.div_add_mod n (7 * m + 11)
+    rw [Nat.mul_comm] at this; omega
+  have hlt : n % (7 * m + 11) < 7 * m + 11 := Nat.mod_lt n (by omega)
+  generalize hcc : n % (7 * m + 11) = c at hdiv hlt
+  generalize ha : n / (7 * m + 11) * (7 * m + 11) = a at hdiv hrow hq1 hq2 hq3 hq4 hq5 hq6 ht0 ht1 ht3 ht4
+  subst hdiv
+  have hmh : m + 1 = 2 * (4 * ((m + 1) / 8)) := by omega
+  constructor
+  · intro hP
+    apply Decidable.byContradiction
+    intro hne
+    by_cases c0 : c ≤ 0 + m
+    · rw [show a + c = a + (c - (0)) by omega] at hP
+      exact not_isP_of_row m _ (c - (0)) 0 hrow (by omega) (by omega) (by omega) hP
+    · by_cases d0 : c = 0 + (m + 1)
+      · rw [d0, show a + (0 + (m + 1)) = a + (m + 1) by omega] at hP
+        exact not_isP_near m _ _ 0 hmh (by omega) (by omega) ht0 (by omega) hP
+      · by_cases c1 : c ≤ 1 * m + 2 + m
+        · rw [show a + c = a + (m + 2) + (c - (1 * m + 2)) by omega] at hP
+          exact not_isP_of_row m _ (c - (1 * m + 2)) 0 hq1 (by omega) (by omega) (by omega) hP
+        · by_cases d1 : c = 1 * m + 2 + (m + 1)
+          · rw [d1, show a + (1 * m + 2 + (m + 1)) = a + (m + 2) + (m + 1) by omega] at hP
+            exact not_isP_near m _ _ 0 hmh (by omega) (by omega) ht1 (by omega) hP
+          · by_cases c2 : c ≤ 2 * m + 4 + m
+            · rw [show a + c = a + (m + 2) + (m + 2) + (c - (2 * m + 4)) by omega] at hP
+              exact not_isP_of_row m _ (c - (2 * m + 4)) 0 hq2 (by omega) (by omega) (by omega) hP
+            · by_cases c3 : c ≤ 3 * m + 5 + m
+              · rw [show a + c = a + (m + 2) + (m + 2) + (m + 1) + (c - (3 * m + 5)) by omega] at hP
+                exact not_isP_of_row m _ (c - (3 * m + 5)) 0 hq3 (by omega) (by omega) (by omega) hP
+              · by_cases d3 : c = 3 * m + 5 + (m + 1)
+                · rw [d3, show a + (3 * m + 5 + (m + 1)) = a + (m + 2) + (m + 2) + (m + 1) + (m + 1) by omega] at hP
+                  exact not_isP_near m _ _ 0 hmh (by omega) (by omega) ht3 (by omega) hP
+                · by_cases c4 : c ≤ 4 * m + 7 + m
+                  · rw [show a + c = a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (c - (4 * m + 7)) by omega] at hP
+                    exact not_isP_of_row m _ (c - (4 * m + 7)) 0 hq4 (by omega) (by omega) (by omega) hP
+                  · by_cases d4 : c = 4 * m + 7 + (m + 1)
+                    · rw [d4, show a + (4 * m + 7 + (m + 1)) = a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 1) by omega] at hP
+                      exact not_isP_near m _ _ 0 hmh (by omega) (by omega) ht4 (by omega) hP
+                    · by_cases c5 : c ≤ 5 * m + 9 + m
+                      · rw [show a + c = a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (c - (5 * m + 9)) by omega] at hP
+                        exact not_isP_of_row m _ (c - (5 * m + 9)) 0 hq5 (by omega) (by omega) (by omega) hP
+                      · rw [show a + c = a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 1) + (c - (6 * m + 10)) by omega] at hP
+                        exact not_isP_of_row m _ (c - (6 * m + 10)) 0 hq6 (by omega) (by omega) (by omega) hP
+  · intro h
+    rcases h with h | h | h | h | h | h | h
+    · rw [h, Nat.add_zero]; exact hrow 0
+    · rw [h, show a + (1 * m + 2) = a + (m + 2) by omega]; exact hq1 0
+    · rw [h, show a + (2 * m + 4) = a + (m + 2) + (m + 2) by omega]; exact hq2 0
+    · rw [h, show a + (3 * m + 5) = a + (m + 2) + (m + 2) + (m + 1) by omega]; exact hq3 0
+    · rw [h, show a + (4 * m + 7) = a + (m + 2) + (m + 2) + (m + 1) + (m + 2) by omega]; exact hq4 0
+    · rw [h, show a + (5 * m + 9) = a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) by omega]; exact hq5 0
+    · rw [h, show a + (6 * m + 10) = a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 1) by omega]; exact hq6 0
+
+section K68g7971
+
+variable (m u : Nat) (hmu : m + 1 = 8 * u) (hu : u % 8192 = 7971)
+include hmu hu
+
+theorem k68g7971_blk (c : Nat) (hc : ∀ p, IsP m c p) (hblkc : Blk m 1 c) (ha' : ∀ p, IsP m (c + (m + 1)) p) :
+    Blk m 3 (c + (m + 1)) := by
+  have hv4u : v2 (4 * u) = 2 := by
+    rw [show 4 * u = 2 * (2 * u) by omega, v2_two_mul _ (by omega), v2_two_mul _ (by omega), v2_odd u (by omega)]
+  intro d
+  induction d using Nat.strongRecOn with
+  | _ d ih =>
+    intro hd1 hdm hds
+    constructor
+    · intro hP
+      apply Decidable.byContradiction
+      intro hodd
+      have hde : d % 2 = 0 := even_of_v2_pos d (by omega)
+      have hv : v2 d = v2 (d / 2) + 1 := v2_even d (by omega) hde
+      rw [isP_iff] at hP
+      apply hP (d / 2) (by omega) (by omega) (by omega) (by omega)
+      rw [show c + (m + 1) + d - d / 2 = c + (m + 1) + d / 2 by omega]
+      exact (ih (d / 2) (by omega) (by omega) (by omega) (by omega)).mpr (by omega)
+    · intro hev
+      rw [isP_iff]
+      intro k hk1 hkm hkr hkd hPk
+      by_cases hlt : k < d
+      · rw [show c + (m + 1) + d - k = c + (m + 1) + (d - k) by omega] at hPk
+        by_cases hk : k = d - k
+        · have hde : d % 2 = 0 := by omega
+          have hd2 : d / 2 = k := by omega
+          have hv : v2 d = v2 k + 1 := by rw [v2_even d (by omega) hde, hd2]
+          rw [← hk] at hPk
+          have := (ih k hlt hk1 (by omega) (by omega)).mp hPk
+          omega
+        · exact not_isP_of_row m _ (d - k) k ha' (by omega) (by omega) hk hPk
+      · rw [show c + (m + 1) + d - k = c + (m + 1 + d - k) by omega] at hPk
+        by_cases hk : k = m + 1 + d - k
+        · have hde : d % 2 = 0 := by omega
+          have hv1 : v2 d = v2 (d / 2) + 1 := v2_even d (by omega) hde
+          have hkx : k = d / 2 + 4 * u := by omega
+          have hvk : v2 k = 1 := by rw [hkx, v2_add (d / 2) (4 * u) (by omega) (by omega) (by omega)]; omega
+          rw [← hk] at hPk
+          rw [hblkc k hk1 hkm (by omega), hvk] at hPk; omega
+        · exact not_isP_of_row m c (m + 1 + d - k) k hc (by omega) (by omega) hk hPk
+
+theorem k68g7971_step (a : Nat) (hrow : ∀ p, IsP m a p) (hblk : Blk m 3 a) :
+    (∀ p, IsP m (a + (m + 2)) p) ∧
+    (∀ p, IsP m (a + (m + 2) + (m + 2)) p) ∧
+    (∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 1)) p) ∧
+    (∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2)) p) ∧
+    (∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2)) p) ∧
+    (∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2)) p) ∧
+    (∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (m + 2)) p) ∧
+    (∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 1)) p) ∧
+    (∀ p, IsP m (a + (9 * m + 15)) p) ∧
+    Blk m 3 (a + (9 * m + 15)) ∧
+    IsP m (a + 4 * u) (4 * u) ∧
+    IsP m (a + (m + 2) + 4 * u) (4 * u) ∧
+    IsP m (a + (m + 2) + (m + 2) + (m + 1) + 4 * u) (4 * u) ∧
+    IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + 4 * u) (4 * u) ∧
+    IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + 4 * u) (4 * u) ∧
+    IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + 4 * u) (4 * u) := by
+  have hmh : m + 1 = 2 * (4 * u) := by omega
+  have hmo : m % 2 = 1 := by omega
+  have hh : (m + 1) / 2 = 4 * u := by omega
+  have hv4u : v2 (4 * u) = 2 := by
+    rw [show 4 * u = 2 * (2 * u) by omega, v2_two_mul _ (by omega), v2_two_mul _ (by omega), v2_odd u (by omega)]
+  have hr0 := hrow
+  have F0 : IsP m (a + 4 * u) (4 * u) := by
+    have hv : v2 (4 * u) = 2 := by
+      have : (4 * u) % 8 = 4 := by omega
+      rw [v2_even (4 * u) (by omega) (by omega),
+        v2_even (4 * u / 2) (by omega) (by omega),
+        v2_odd (4 * u / 2 / 2) (by omega)]
+    exact (hblk _ (by omega) (by omega) (by omega)).mpr (by omega)
+  have hr1 : ∀ p, IsP m (a + (m + 2)) p := row_long m (a) hmo (by omega) hr0 (by rw [hh]; exact F0)
+  have F1 : ¬ IsP m (a + (36 * u + 4) / 8) ((36 * u + 4) / 8) := by
+    have hv : v2 ((36 * u + 4) / 8) = 1 := by
+      have : ((36 * u + 4) / 8) % 4 = 2 := by omega
+      rw [v2_even ((36 * u + 4) / 8) (by omega) (by omega),
+        v2_odd ((36 * u + 4) / 8 / 2) (by omega)]
+    intro h; have := (hblk _ (by omega) (by omega) (by omega)).mp h; omega
+  have F2 : IsP m (a + (m + 2) + (4 * u + 0) / 4) ((4 * u + 0) / 4) := by
+    refine (o_odd_iff m (4 * u) (a) ((4 * u + 0) / 4) hmh hr0 hr1 F0 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (4 * u + 0) / 4) / 2 = (36 * u + 4) / 8 by omega]; exact F1
+  have F3 : ¬ IsP m (a + (m + 2) + (4 * u + 0) / 2) ((4 * u + 0) / 2) := by
+    rw [show (4 * u + 0) / 2 = 2 * ((4 * u + 0) / 4) by omega]
+    exact fun h => (o_half' m (4 * u) (a) ((4 * u + 0) / 4) hmh hr0 hr1 F0 (by omega) (by omega) (by omega)).mp h F2
+  have F4 : IsP m (a + (m + 2) + 4 * u) (4 * u) := by
+    rw [show 4 * u = 2 * ((4 * u + 0) / 2) by omega]
+    exact (o_half' m (4 * u) (a) ((4 * u + 0) / 2) hmh hr0 hr1 F0 (by omega) (by omega) (by omega)).mpr F3
+  have hr2 : ∀ p, IsP m (a + (m + 2) + (m + 2)) p := row_long m (a + (m + 2)) hmo (by omega) hr1 (by rw [hh]; exact F4)
+  have F5 : IsP m (a + (164 * u + 20) / 32) ((164 * u + 20) / 32) := by
+    have hv : v2 ((164 * u + 20) / 32) = 2 := by
+      have : ((164 * u + 20) / 32) % 8 = 4 := by omega
+      rw [v2_even ((164 * u + 20) / 32) (by omega) (by omega),
+        v2_even ((164 * u + 20) / 32 / 2) (by omega) (by omega),
+        v2_odd ((164 * u + 20) / 32 / 2 / 2) (by omega)]
+    exact (hblk _ (by omega) (by omega) (by omega)).mpr (by omega)
+  have F6 : ¬ IsP m (a + (m + 2) + (36 * u + 4) / 16) ((36 * u + 4) / 16) := by
+    intro h; apply (o_odd_iff m (4 * u) (a) ((36 * u + 4) / 16) hmh hr0 hr1 F0 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (36 * u + 4) / 16) / 2 = (164 * u + 20) / 32 by omega]; exact F5
+  have F7 : IsP m (a + (m + 2) + (36 * u + 4) / 8) ((36 * u + 4) / 8) := by
+    rw [show (36 * u + 4) / 8 = 2 * ((36 * u + 4) / 16) by omega]
+    exact (o_half' m (4 * u) (a) ((36 * u + 4) / 16) hmh hr0 hr1 F0 (by omega) (by omega) (by omega)).mpr F6
+  have F8 : ¬ IsP m (a + (m + 2) + (m + 2) + (4 * u + 0) / 4) ((4 * u + 0) / 4) := by
+    intro h; apply (o_odd_iff m (4 * u) (a + (m + 2)) ((4 * u + 0) / 4) hmh hr1 hr2 F4 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (4 * u + 0) / 4) / 2 = (36 * u + 4) / 8 by omega]; exact F7
+  have F9 : IsP m (a + (m + 2) + (m + 2) + (4 * u + 0) / 2) ((4 * u + 0) / 2) := by
+    rw [show (4 * u + 0) / 2 = 2 * ((4 * u + 0) / 4) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2)) ((4 * u + 0) / 4) hmh hr1 hr2 F4 (by omega) (by omega) (by omega)).mpr F8
+  have F10 : ¬ IsP m (a + (m + 2) + (m + 2) + 4 * u) (4 * u) := by
+    rw [show 4 * u = 2 * ((4 * u + 0) / 2) by omega]
+    exact fun h => (o_half' m (4 * u) (a + (m + 2)) ((4 * u + 0) / 2) hmh hr1 hr2 F4 (by omega) (by omega) (by omega)).mp h F9
+  have hr3 : ∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 1)) p := row_next m (a + (m + 2) + (m + 2)) hr2 (by rw [hh]; exact F10)
+  have hb3 := blk1_direct m _ hr3 (odd_of_rows m _ hmo hr3 (Or.inr ⟨_, rfl, hr2⟩))
+  have F11 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (4 * u + 0) / 2) ((4 * u + 0) / 2) := by
+    have hv : v2 ((4 * u + 0) / 2) = 1 := by
+      have : ((4 * u + 0) / 2) % 4 = 2 := by omega
+      rw [v2_even ((4 * u + 0) / 2) (by omega) (by omega),
+        v2_odd ((4 * u + 0) / 2 / 2) (by omega)]
+    intro h; have := (hb3 _ (by omega) (by omega) (by omega)).mp h; omega
+  have F12 : IsP m (a + (108 * u + 12) / 16) ((108 * u + 12) / 16) := by
+    have hv : v2 ((108 * u + 12) / 16) = 0 := by
+      have : ((108 * u + 12) / 16) % 2 = 1 := by omega
+      rw [v2_odd ((108 * u + 12) / 16) (by omega)]
+    exact (hblk _ (by omega) (by omega) (by omega)).mpr (by omega)
+  have F13 : ¬ IsP m (a + (m + 2) + (44 * u + 4) / 8) ((44 * u + 4) / 8) := by
+    intro h; apply (o_odd_iff m (4 * u) (a) ((44 * u + 4) / 8) hmh hr0 hr1 F0 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (44 * u + 4) / 8) / 2 = (108 * u + 12) / 16 by omega]; exact F12
+  have F14 : IsP m (a + (m + 2) + (m + 2) + (12 * u + 0) / 4) ((12 * u + 0) / 4) := by
+    refine (o_odd_iff m (4 * u) (a + (m + 2)) ((12 * u + 0) / 4) hmh hr1 hr2 F4 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (12 * u + 0) / 4) / 2 = (44 * u + 4) / 8 by omega]; exact F13
+  have F15 : ¬ IsP m (a + (m + 2) + (m + 2) + (12 * u + 0) / 2) ((12 * u + 0) / 2) := by
+    rw [show (12 * u + 0) / 2 = 2 * ((12 * u + 0) / 4) by omega]
+    exact fun h => (o_half' m (4 * u) (a + (m + 2)) ((12 * u + 0) / 4) hmh hr1 hr2 F4 (by omega) (by omega) (by omega)).mp h F14
+  have F16 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + 4 * u) (4 * u) := by
+    refine (e_iff m (4 * u) (a + (m + 2) + (m + 2)) (4 * u) hmh hr2 hr3 (by omega) (by omega) (by omega)).mpr ⟨?_, ?_⟩
+    · rw [show 4 * u / 2 = (4 * u + 0) / 2 by omega]; exact F11
+    · rw [show 4 * u + 4 * u / 2 = (12 * u + 0) / 2 by omega]; exact F15
+  have hr4 : ∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2)) p := row_long m (a + (m + 2) + (m + 2) + (m + 1)) hmo (by omega) hr3 (by rw [hh]; exact F16)
+  have F17 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (36 * u + 4) / 8) ((36 * u + 4) / 8) := by
+    have hv : v2 ((36 * u + 4) / 8) = 1 := by
+      have : ((36 * u + 4) / 8) % 4 = 2 := by omega
+      rw [v2_even ((36 * u + 4) / 8) (by omega) (by omega),
+        v2_odd ((36 * u + 4) / 8 / 2) (by omega)]
+    intro h; have := (hb3 _ (by omega) (by omega) (by omega)).mp h; omega
+  have F18 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (4 * u + 0) / 4) ((4 * u + 0) / 4) := by
+    refine (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 1)) ((4 * u + 0) / 4) hmh hr3 hr4 F16 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (4 * u + 0) / 4) / 2 = (36 * u + 4) / 8 by omega]; exact F17
+  have F19 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (4 * u + 0) / 2) ((4 * u + 0) / 2) := by
+    rw [show (4 * u + 0) / 2 = 2 * ((4 * u + 0) / 4) by omega]
+    exact fun h => (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 1)) ((4 * u + 0) / 4) hmh hr3 hr4 F16 (by omega) (by omega) (by omega)).mp h F18
+  have F20 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + 4 * u) (4 * u) := by
+    rw [show 4 * u = 2 * ((4 * u + 0) / 2) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 1)) ((4 * u + 0) / 2) hmh hr3 hr4 F16 (by omega) (by omega) (by omega)).mpr F19
+  have hr5 : ∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2)) p := row_long m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2)) hmo (by omega) hr4 (by rw [hh]; exact F20)
+  have F22 : IsP m (a + (5540 * u + 660) / 1024) ((5540 * u + 660) / 1024) := by
+    have hv : v2 ((5540 * u + 660) / 1024) = 0 := by
+      have : ((5540 * u + 660) / 1024) % 2 = 1 := by omega
+      rw [v2_odd ((5540 * u + 660) / 1024) (by omega)]
+    exact (hblk _ (by omega) (by omega) (by omega)).mpr (by omega)
+  have F23 : ¬ IsP m (a + (m + 2) + (1444 * u + 148) / 512) ((1444 * u + 148) / 512) := by
+    intro h; apply (o_odd_iff m (4 * u) (a) ((1444 * u + 148) / 512) hmh hr0 hr1 F0 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (1444 * u + 148) / 512) / 2 = (5540 * u + 660) / 1024 by omega]; exact F22
+  have F24 : IsP m (a + (m + 2) + (1444 * u + 148) / 256) ((1444 * u + 148) / 256) := by
+    rw [show (1444 * u + 148) / 256 = 2 * ((1444 * u + 148) / 512) by omega]
+    exact (o_half' m (4 * u) (a) ((1444 * u + 148) / 512) hmh hr0 hr1 F0 (by omega) (by omega) (by omega)).mpr F23
+  have F25 : ¬ IsP m (a + (m + 2) + (m + 2) + (420 * u + 20) / 128) ((420 * u + 20) / 128) := by
+    intro h; apply (o_odd_iff m (4 * u) (a + (m + 2)) ((420 * u + 20) / 128) hmh hr1 hr2 F4 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (420 * u + 20) / 128) / 2 = (1444 * u + 148) / 256 by omega]; exact F24
+  have F26 : IsP m (a + (m + 2) + (m + 2) + (420 * u + 20) / 64) ((420 * u + 20) / 64) := by
+    rw [show (420 * u + 20) / 64 = 2 * ((420 * u + 20) / 128) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2)) ((420 * u + 20) / 128) hmh hr1 hr2 F4 (by omega) (by omega) (by omega)).mpr F25
+  have F27 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (164 * u + 20) / 32) ((164 * u + 20) / 32) := by
+    intro h; apply ((e_iff m (4 * u) (a + (m + 2) + (m + 2)) ((164 * u + 20) / 32) hmh hr2 hr3 (by omega) (by omega) (by omega)).mp h).2
+    rw [show 4 * u + (164 * u + 20) / 32 / 2 = (420 * u + 20) / 64 by omega]; exact F26
+  have F28 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (36 * u + 4) / 16) ((36 * u + 4) / 16) := by
+    refine (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 1)) ((36 * u + 4) / 16) hmh hr3 hr4 F16 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (36 * u + 4) / 16) / 2 = (164 * u + 20) / 32 by omega]; exact F27
+  have F29 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (36 * u + 4) / 8) ((36 * u + 4) / 8) := by
+    rw [show (36 * u + 4) / 8 = 2 * ((36 * u + 4) / 16) by omega]
+    exact fun h => (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 1)) ((36 * u + 4) / 16) hmh hr3 hr4 F16 (by omega) (by omega) (by omega)).mp h F28
+  have F30 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (4 * u + 0) / 4) ((4 * u + 0) / 4) := by
+    refine (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2)) ((4 * u + 0) / 4) hmh hr4 hr5 F20 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (4 * u + 0) / 4) / 2 = (36 * u + 4) / 8 by omega]; exact F29
+  have F31 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (4 * u + 0) / 2) ((4 * u + 0) / 2) := by
+    rw [show (4 * u + 0) / 2 = 2 * ((4 * u + 0) / 4) by omega]
+    exact fun h => (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2)) ((4 * u + 0) / 4) hmh hr4 hr5 F20 (by omega) (by omega) (by omega)).mp h F30
+  have F32 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + 4 * u) (4 * u) := by
+    rw [show 4 * u = 2 * ((4 * u + 0) / 2) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2)) ((4 * u + 0) / 2) hmh hr4 hr5 F20 (by omega) (by omega) (by omega)).mpr F31
+  have hr6 : ∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2)) p := row_long m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2)) hmo (by omega) hr5 (by rw [hh]; exact F32)
+  have F33 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (1188 * u + 148) / 256) ((1188 * u + 148) / 256) := by
+    have hv : v2 ((1188 * u + 148) / 256) = 0 := by
+      have : ((1188 * u + 148) / 256) % 2 = 1 := by omega
+      rw [v2_odd ((1188 * u + 148) / 256) (by omega)]
+    exact (hb3 _ (by omega) (by omega) (by omega)).mpr (by omega)
+  have F34 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (164 * u + 20) / 128) ((164 * u + 20) / 128) := by
+    intro h; apply (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 1)) ((164 * u + 20) / 128) hmh hr3 hr4 F16 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (164 * u + 20) / 128) / 2 = (1188 * u + 148) / 256 by omega]; exact F33
+  have F35 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (164 * u + 20) / 64) ((164 * u + 20) / 64) := by
+    rw [show (164 * u + 20) / 64 = 2 * ((164 * u + 20) / 128) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 1)) ((164 * u + 20) / 128) hmh hr3 hr4 F16 (by omega) (by omega) (by omega)).mpr F34
+  have F36 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (164 * u + 20) / 32) ((164 * u + 20) / 32) := by
+    rw [show (164 * u + 20) / 32 = 2 * ((164 * u + 20) / 64) by omega]
+    exact fun h => (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 1)) ((164 * u + 20) / 64) hmh hr3 hr4 F16 (by omega) (by omega) (by omega)).mp h F35
+  have F37 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (36 * u + 4) / 16) ((36 * u + 4) / 16) := by
+    refine (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2)) ((36 * u + 4) / 16) hmh hr4 hr5 F20 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (36 * u + 4) / 16) / 2 = (164 * u + 20) / 32 by omega]; exact F36
+  have F38 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (36 * u + 4) / 8) ((36 * u + 4) / 8) := by
+    rw [show (36 * u + 4) / 8 = 2 * ((36 * u + 4) / 16) by omega]
+    exact fun h => (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2)) ((36 * u + 4) / 16) hmh hr4 hr5 F20 (by omega) (by omega) (by omega)).mp h F37
+  have F39 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (4 * u + 0) / 4) ((4 * u + 0) / 4) := by
+    refine (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2)) ((4 * u + 0) / 4) hmh hr5 hr6 F32 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (4 * u + 0) / 4) / 2 = (36 * u + 4) / 8 by omega]; exact F38
+  have F40 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (4 * u + 0) / 2) ((4 * u + 0) / 2) := by
+    rw [show (4 * u + 0) / 2 = 2 * ((4 * u + 0) / 4) by omega]
+    exact fun h => (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2)) ((4 * u + 0) / 4) hmh hr5 hr6 F32 (by omega) (by omega) (by omega)).mp h F39
+  have F41 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + 4 * u) (4 * u) := by
+    rw [show 4 * u = 2 * ((4 * u + 0) / 2) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2)) ((4 * u + 0) / 2) hmh hr5 hr6 F32 (by omega) (by omega) (by omega)).mpr F40
+  have hr7 : ∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (m + 2)) p := row_long m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2)) hmo (by omega) hr6 (by rw [hh]; exact F41)
+  have F42 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (3236 * u + 404) / 1024) ((3236 * u + 404) / 1024) := by
+    have hv : v2 ((3236 * u + 404) / 1024) = 1 := by
+      have : ((3236 * u + 404) / 1024) % 4 = 2 := by omega
+      rw [v2_even ((3236 * u + 404) / 1024) (by omega) (by omega),
+        v2_odd ((3236 * u + 404) / 1024 / 2) (by omega)]
+    intro h; have := (hb3 _ (by omega) (by omega) (by omega)).mp h; omega
+  have F43 : IsP m (a + (56484 * u + 6548) / 8192) ((56484 * u + 6548) / 8192) := by
+    have hv : v2 ((56484 * u + 6548) / 8192) = 0 := by
+      have : ((56484 * u + 6548) / 8192) % 2 = 1 := by omega
+      rw [v2_odd ((56484 * u + 6548) / 8192) (by omega)]
+    exact (hblk _ (by omega) (by omega) (by omega)).mpr (by omega)
+  have F44 : ¬ IsP m (a + (m + 2) + (23716 * u + 2452) / 4096) ((23716 * u + 2452) / 4096) := by
+    intro h; apply (o_odd_iff m (4 * u) (a) ((23716 * u + 2452) / 4096) hmh hr0 hr1 F0 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (23716 * u + 2452) / 4096) / 2 = (56484 * u + 6548) / 8192 by omega]; exact F43
+  have F45 : IsP m (a + (m + 2) + (m + 2) + (7332 * u + 404) / 2048) ((7332 * u + 404) / 2048) := by
+    refine (o_odd_iff m (4 * u) (a + (m + 2)) ((7332 * u + 404) / 2048) hmh hr1 hr2 F4 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (7332 * u + 404) / 2048) / 2 = (23716 * u + 2452) / 4096 by omega]; exact F44
+  have F46 : ¬ IsP m (a + (m + 2) + (m + 2) + (7332 * u + 404) / 1024) ((7332 * u + 404) / 1024) := by
+    rw [show (7332 * u + 404) / 1024 = 2 * ((7332 * u + 404) / 2048) by omega]
+    exact fun h => (o_half' m (4 * u) (a + (m + 2)) ((7332 * u + 404) / 2048) hmh hr1 hr2 F4 (by omega) (by omega) (by omega)).mp h F45
+  have F47 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (3236 * u + 404) / 512) ((3236 * u + 404) / 512) := by
+    refine (e_iff m (4 * u) (a + (m + 2) + (m + 2)) ((3236 * u + 404) / 512) hmh hr2 hr3 (by omega) (by omega) (by omega)).mpr ⟨?_, ?_⟩
+    · rw [show (3236 * u + 404) / 512 / 2 = (3236 * u + 404) / 1024 by omega]; exact F42
+    · rw [show 4 * u + (3236 * u + 404) / 512 / 2 = (7332 * u + 404) / 1024 by omega]; exact F46
+  have F48 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (1188 * u + 148) / 256) ((1188 * u + 148) / 256) := by
+    intro h; apply (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 1)) ((1188 * u + 148) / 256) hmh hr3 hr4 F16 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (1188 * u + 148) / 256) / 2 = (3236 * u + 404) / 512 by omega]; exact F47
+  have F49 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (164 * u + 20) / 128) ((164 * u + 20) / 128) := by
+    refine (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2)) ((164 * u + 20) / 128) hmh hr4 hr5 F20 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (164 * u + 20) / 128) / 2 = (1188 * u + 148) / 256 by omega]; exact F48
+  have F50 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (164 * u + 20) / 64) ((164 * u + 20) / 64) := by
+    rw [show (164 * u + 20) / 64 = 2 * ((164 * u + 20) / 128) by omega]
+    exact fun h => (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2)) ((164 * u + 20) / 128) hmh hr4 hr5 F20 (by omega) (by omega) (by omega)).mp h F49
+  have F51 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (164 * u + 20) / 32) ((164 * u + 20) / 32) := by
+    rw [show (164 * u + 20) / 32 = 2 * ((164 * u + 20) / 64) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2)) ((164 * u + 20) / 64) hmh hr4 hr5 F20 (by omega) (by omega) (by omega)).mpr F50
+  have F52 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (36 * u + 4) / 16) ((36 * u + 4) / 16) := by
+    intro h; apply (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2)) ((36 * u + 4) / 16) hmh hr5 hr6 F32 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (36 * u + 4) / 16) / 2 = (164 * u + 20) / 32 by omega]; exact F51
+  have F53 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (36 * u + 4) / 8) ((36 * u + 4) / 8) := by
+    rw [show (36 * u + 4) / 8 = 2 * ((36 * u + 4) / 16) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2)) ((36 * u + 4) / 16) hmh hr5 hr6 F32 (by omega) (by omega) (by omega)).mpr F52
+  have F54 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (4 * u + 0) / 4) ((4 * u + 0) / 4) := by
+    intro h; apply (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2)) ((4 * u + 0) / 4) hmh hr6 hr7 F41 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (4 * u + 0) / 4) / 2 = (36 * u + 4) / 8 by omega]; exact F53
+  have F55 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (4 * u + 0) / 2) ((4 * u + 0) / 2) := by
+    rw [show (4 * u + 0) / 2 = 2 * ((4 * u + 0) / 4) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2)) ((4 * u + 0) / 4) hmh hr6 hr7 F41 (by omega) (by omega) (by omega)).mpr F54
+  have F56 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + 4 * u) (4 * u) := by
+    rw [show 4 * u = 2 * ((4 * u + 0) / 2) by omega]
+    exact fun h => (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2)) ((4 * u + 0) / 2) hmh hr6 hr7 F41 (by omega) (by omega) (by omega)).mp h F55
+  have hr8 : ∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 1)) p := row_next m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (m + 2)) hr7 (by rw [hh]; exact F56)
+  have hb8 := blk1_direct m _ hr8 (odd_of_rows m _ hmo hr8 (Or.inr ⟨_, rfl, hr7⟩))
+  have F58 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (492 * u + 60) / 64) ((492 * u + 60) / 64) := by
+    have hv : v2 ((492 * u + 60) / 64) = 1 := by
+      have : ((492 * u + 60) / 64) % 4 = 2 := by omega
+      rw [v2_even ((492 * u + 60) / 64) (by omega) (by omega),
+        v2_odd ((492 * u + 60) / 64 / 2) (by omega)]
+    intro h; have := (hb3 _ (by omega) (by omega) (by omega)).mp h; omega
+  have F59 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (236 * u + 28) / 32) ((236 * u + 28) / 32) := by
+    refine (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 1)) ((236 * u + 28) / 32) hmh hr3 hr4 F16 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (236 * u + 28) / 32) / 2 = (492 * u + 60) / 64 by omega]; exact F58
+  have F60 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (108 * u + 12) / 16) ((108 * u + 12) / 16) := by
+    intro h; apply (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2)) ((108 * u + 12) / 16) hmh hr4 hr5 F20 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (108 * u + 12) / 16) / 2 = (236 * u + 28) / 32 by omega]; exact F59
+  have F61 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (44 * u + 4) / 8) ((44 * u + 4) / 8) := by
+    refine (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2)) ((44 * u + 4) / 8) hmh hr5 hr6 F32 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (44 * u + 4) / 8) / 2 = (108 * u + 12) / 16 by omega]; exact F60
+  have F62 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (12 * u + 0) / 4) ((12 * u + 0) / 4) := by
+    intro h; apply (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2)) ((12 * u + 0) / 4) hmh hr6 hr7 F41 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (12 * u + 0) / 4) / 2 = (44 * u + 4) / 8 by omega]; exact F61
+  have F63 : IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (12 * u + 0) / 2) ((12 * u + 0) / 2) := by
+    rw [show (12 * u + 0) / 2 = 2 * ((12 * u + 0) / 4) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2)) ((12 * u + 0) / 4) hmh hr6 hr7 F41 (by omega) (by omega) (by omega)).mpr F62
+  have F64 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 1) + 4 * u) (4 * u) := by
+    intro h; apply ((e_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (m + 2)) (4 * u) hmh hr7 hr8 (by omega) (by omega) (by omega)).mp h).2
+    rw [show 4 * u + 4 * u / 2 = (12 * u + 0) / 2 by omega]; exact F63
+  have hr9 : ∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 1) + (m + 1)) p := row_next m (a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 1)) hr8 (by rw [hh]; exact F64)
+  have hblk' := k68g7971_blk m u hmu hu _ hr8 hb8 hr9
+  rw [show a + (9 * m + 15) = a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 1) + (m + 1) by omega]
+  exact ⟨hr1, hr2, hr3, hr4, hr5, hr6, hr7, hr8, hr9, hblk', F0, F4, F16, F20, F32, F41⟩
+
+theorem k68g7971_rows : ∀ i, (∀ p, IsP m (i * (9 * m + 15)) p) ∧ Blk m 3 (i * (9 * m + 15)) := by
+  intro i
+  induction i with
+  | zero => rw [Nat.zero_mul]; exact ⟨isP_zero m, blk_zero m 3⟩
+  | succ i ih =>
+    obtain ⟨hrow, hblk⟩ := ih
+    obtain ⟨_, _, _, _, _, _, _, _, ha, hb, _⟩ := k68g7971_step m u hmu hu _ hrow hblk
+    rw [Nat.succ_mul]; exact ⟨ha, hb⟩
+
+end K68g7971
+
+/-- 予想 K68 の u ≡ 7971 (mod 8192)（110111100 型）：(n, 0) が P ⇔ n mod (9 * m + 15) が各行の始まり。-/
+theorem K68_7971 (m : Nat) (hm : (m + 1) % 65536 = 63768) (n : Nat) :
+    IsP m n 0 ↔ (n % (9 * m + 15) = 0 ∨ n % (9 * m + 15) = 1 * m + 2 ∨ n % (9 * m + 15) = 2 * m + 4 ∨ n % (9 * m + 15) = 3 * m + 5 ∨ n % (9 * m + 15) = 4 * m + 7 ∨ n % (9 * m + 15) = 5 * m + 9 ∨ n % (9 * m + 15) = 6 * m + 11 ∨ n % (9 * m + 15) = 7 * m + 13 ∨ n % (9 * m + 15) = 8 * m + 14) := by
+  have hmu : m + 1 = 8 * ((m + 1) / 8) := by omega
+  obtain ⟨hrow, hblk⟩ := k68g7971_rows m _ hmu (by omega) (n / (9 * m + 15))
+  obtain ⟨hq1, hq2, hq3, hq4, hq5, hq6, hq7, hq8, _, _, ht0, ht1, ht3, ht4, ht5, ht6⟩ := k68g7971_step m _ hmu (by omega) _ hrow hblk
+  have hdiv : n = (n / (9 * m + 15)) * (9 * m + 15) + n % (9 * m + 15) := by
+    have := Nat.div_add_mod n (9 * m + 15)
+    rw [Nat.mul_comm] at this; omega
+  have hlt : n % (9 * m + 15) < 9 * m + 15 := Nat.mod_lt n (by omega)
+  generalize hcc : n % (9 * m + 15) = c at hdiv hlt
+  generalize ha : n / (9 * m + 15) * (9 * m + 15) = a at hdiv hrow hq1 hq2 hq3 hq4 hq5 hq6 hq7 hq8 ht0 ht1 ht3 ht4 ht5 ht6
+  subst hdiv
+  have hmh : m + 1 = 2 * (4 * ((m + 1) / 8)) := by omega
+  constructor
+  · intro hP
+    apply Decidable.byContradiction
+    intro hne
+    by_cases c0 : c ≤ 0 + m
+    · rw [show a + c = a + (c - (0)) by omega] at hP
+      exact not_isP_of_row m _ (c - (0)) 0 hrow (by omega) (by omega) (by omega) hP
+    · by_cases d0 : c = 0 + (m + 1)
+      · rw [d0, show a + (0 + (m + 1)) = a + (m + 1) by omega] at hP
+        exact not_isP_near m _ _ 0 hmh (by omega) (by omega) ht0 (by omega) hP
+      · by_cases c1 : c ≤ 1 * m + 2 + m
+        · rw [show a + c = a + (m + 2) + (c - (1 * m + 2)) by omega] at hP
+          exact not_isP_of_row m _ (c - (1 * m + 2)) 0 hq1 (by omega) (by omega) (by omega) hP
+        · by_cases d1 : c = 1 * m + 2 + (m + 1)
+          · rw [d1, show a + (1 * m + 2 + (m + 1)) = a + (m + 2) + (m + 1) by omega] at hP
+            exact not_isP_near m _ _ 0 hmh (by omega) (by omega) ht1 (by omega) hP
+          · by_cases c2 : c ≤ 2 * m + 4 + m
+            · rw [show a + c = a + (m + 2) + (m + 2) + (c - (2 * m + 4)) by omega] at hP
+              exact not_isP_of_row m _ (c - (2 * m + 4)) 0 hq2 (by omega) (by omega) (by omega) hP
+            · by_cases c3 : c ≤ 3 * m + 5 + m
+              · rw [show a + c = a + (m + 2) + (m + 2) + (m + 1) + (c - (3 * m + 5)) by omega] at hP
+                exact not_isP_of_row m _ (c - (3 * m + 5)) 0 hq3 (by omega) (by omega) (by omega) hP
+              · by_cases d3 : c = 3 * m + 5 + (m + 1)
+                · rw [d3, show a + (3 * m + 5 + (m + 1)) = a + (m + 2) + (m + 2) + (m + 1) + (m + 1) by omega] at hP
+                  exact not_isP_near m _ _ 0 hmh (by omega) (by omega) ht3 (by omega) hP
+                · by_cases c4 : c ≤ 4 * m + 7 + m
+                  · rw [show a + c = a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (c - (4 * m + 7)) by omega] at hP
+                    exact not_isP_of_row m _ (c - (4 * m + 7)) 0 hq4 (by omega) (by omega) (by omega) hP
+                  · by_cases d4 : c = 4 * m + 7 + (m + 1)
+                    · rw [d4, show a + (4 * m + 7 + (m + 1)) = a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 1) by omega] at hP
+                      exact not_isP_near m _ _ 0 hmh (by omega) (by omega) ht4 (by omega) hP
+                    · by_cases c5 : c ≤ 5 * m + 9 + m
+                      · rw [show a + c = a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (c - (5 * m + 9)) by omega] at hP
+                        exact not_isP_of_row m _ (c - (5 * m + 9)) 0 hq5 (by omega) (by omega) (by omega) hP
+                      · by_cases d5 : c = 5 * m + 9 + (m + 1)
+                        · rw [d5, show a + (5 * m + 9 + (m + 1)) = a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 1) by omega] at hP
+                          exact not_isP_near m _ _ 0 hmh (by omega) (by omega) ht5 (by omega) hP
+                        · by_cases c6 : c ≤ 6 * m + 11 + m
+                          · rw [show a + c = a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (c - (6 * m + 11)) by omega] at hP
+                            exact not_isP_of_row m _ (c - (6 * m + 11)) 0 hq6 (by omega) (by omega) (by omega) hP
+                          · by_cases d6 : c = 6 * m + 11 + (m + 1)
+                            · rw [d6, show a + (6 * m + 11 + (m + 1)) = a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (m + 1) by omega] at hP
+                              exact not_isP_near m _ _ 0 hmh (by omega) (by omega) ht6 (by omega) hP
+                            · by_cases c7 : c ≤ 7 * m + 13 + m
+                              · rw [show a + c = a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (c - (7 * m + 13)) by omega] at hP
+                                exact not_isP_of_row m _ (c - (7 * m + 13)) 0 hq7 (by omega) (by omega) (by omega) hP
+                              · rw [show a + c = a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 1) + (c - (8 * m + 14)) by omega] at hP
+                                exact not_isP_of_row m _ (c - (8 * m + 14)) 0 hq8 (by omega) (by omega) (by omega) hP
+  · intro h
+    rcases h with h | h | h | h | h | h | h | h | h
+    · rw [h, Nat.add_zero]; exact hrow 0
+    · rw [h, show a + (1 * m + 2) = a + (m + 2) by omega]; exact hq1 0
+    · rw [h, show a + (2 * m + 4) = a + (m + 2) + (m + 2) by omega]; exact hq2 0
+    · rw [h, show a + (3 * m + 5) = a + (m + 2) + (m + 2) + (m + 1) by omega]; exact hq3 0
+    · rw [h, show a + (4 * m + 7) = a + (m + 2) + (m + 2) + (m + 1) + (m + 2) by omega]; exact hq4 0
+    · rw [h, show a + (5 * m + 9) = a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) by omega]; exact hq5 0
+    · rw [h, show a + (6 * m + 11) = a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) by omega]; exact hq6 0
+    · rw [h, show a + (7 * m + 13) = a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (m + 2) by omega]; exact hq7 0
+    · rw [h, show a + (8 * m + 14) = a + (m + 2) + (m + 2) + (m + 1) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 1) by omega]; exact hq8 0
+
+section K68g7987
+
+variable (m u : Nat) (hmu : m + 1 = 8 * u) (hu : u % 8192 = 7987)
+include hmu hu
+
+theorem k68g7987_blk (c : Nat) (hc : ∀ p, IsP m c p) (hblkc : Blk m 1 c) (ha' : ∀ p, IsP m (c + (m + 1)) p) :
+    Blk m 3 (c + (m + 1)) := by
+  have hv4u : v2 (4 * u) = 2 := by
+    rw [show 4 * u = 2 * (2 * u) by omega, v2_two_mul _ (by omega), v2_two_mul _ (by omega), v2_odd u (by omega)]
+  intro d
+  induction d using Nat.strongRecOn with
+  | _ d ih =>
+    intro hd1 hdm hds
+    constructor
+    · intro hP
+      apply Decidable.byContradiction
+      intro hodd
+      have hde : d % 2 = 0 := even_of_v2_pos d (by omega)
+      have hv : v2 d = v2 (d / 2) + 1 := v2_even d (by omega) hde
+      rw [isP_iff] at hP
+      apply hP (d / 2) (by omega) (by omega) (by omega) (by omega)
+      rw [show c + (m + 1) + d - d / 2 = c + (m + 1) + d / 2 by omega]
+      exact (ih (d / 2) (by omega) (by omega) (by omega) (by omega)).mpr (by omega)
+    · intro hev
+      rw [isP_iff]
+      intro k hk1 hkm hkr hkd hPk
+      by_cases hlt : k < d
+      · rw [show c + (m + 1) + d - k = c + (m + 1) + (d - k) by omega] at hPk
+        by_cases hk : k = d - k
+        · have hde : d % 2 = 0 := by omega
+          have hd2 : d / 2 = k := by omega
+          have hv : v2 d = v2 k + 1 := by rw [v2_even d (by omega) hde, hd2]
+          rw [← hk] at hPk
+          have := (ih k hlt hk1 (by omega) (by omega)).mp hPk
+          omega
+        · exact not_isP_of_row m _ (d - k) k ha' (by omega) (by omega) hk hPk
+      · rw [show c + (m + 1) + d - k = c + (m + 1 + d - k) by omega] at hPk
+        by_cases hk : k = m + 1 + d - k
+        · have hde : d % 2 = 0 := by omega
+          have hv1 : v2 d = v2 (d / 2) + 1 := v2_even d (by omega) hde
+          have hkx : k = d / 2 + 4 * u := by omega
+          have hvk : v2 k = 1 := by rw [hkx, v2_add (d / 2) (4 * u) (by omega) (by omega) (by omega)]; omega
+          rw [← hk] at hPk
+          rw [hblkc k hk1 hkm (by omega), hvk] at hPk; omega
+        · exact not_isP_of_row m c (m + 1 + d - k) k hc (by omega) (by omega) hk hPk
+
+theorem k68g7987_step (a : Nat) (hrow : ∀ p, IsP m a p) (hblk : Blk m 3 a) :
+    (∀ p, IsP m (a + (m + 2)) p) ∧
+    (∀ p, IsP m (a + (m + 2) + (m + 2)) p) ∧
+    (∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 2)) p) ∧
+    (∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 2) + (m + 2)) p) ∧
+    (∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 2)) p) ∧
+    (∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 1)) p) ∧
+    (∀ p, IsP m (a + (7 * m + 12)) p) ∧
+    Blk m 3 (a + (7 * m + 12)) ∧
+    IsP m (a + 4 * u) (4 * u) ∧
+    IsP m (a + (m + 2) + 4 * u) (4 * u) ∧
+    IsP m (a + (m + 2) + (m + 2) + 4 * u) (4 * u) ∧
+    IsP m (a + (m + 2) + (m + 2) + (m + 2) + 4 * u) (4 * u) ∧
+    IsP m (a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + 4 * u) (4 * u) := by
+  have hmh : m + 1 = 2 * (4 * u) := by omega
+  have hmo : m % 2 = 1 := by omega
+  have hh : (m + 1) / 2 = 4 * u := by omega
+  have hv4u : v2 (4 * u) = 2 := by
+    rw [show 4 * u = 2 * (2 * u) by omega, v2_two_mul _ (by omega), v2_two_mul _ (by omega), v2_odd u (by omega)]
+  have hr0 := hrow
+  have F0 : IsP m (a + 4 * u) (4 * u) := by
+    have hv : v2 (4 * u) = 2 := by
+      have : (4 * u) % 8 = 4 := by omega
+      rw [v2_even (4 * u) (by omega) (by omega),
+        v2_even (4 * u / 2) (by omega) (by omega),
+        v2_odd (4 * u / 2 / 2) (by omega)]
+    exact (hblk _ (by omega) (by omega) (by omega)).mpr (by omega)
+  have hr1 : ∀ p, IsP m (a + (m + 2)) p := row_long m (a) hmo (by omega) hr0 (by rw [hh]; exact F0)
+  have F1 : ¬ IsP m (a + (36 * u + 4) / 8) ((36 * u + 4) / 8) := by
+    have hv : v2 ((36 * u + 4) / 8) = 1 := by
+      have : ((36 * u + 4) / 8) % 4 = 2 := by omega
+      rw [v2_even ((36 * u + 4) / 8) (by omega) (by omega),
+        v2_odd ((36 * u + 4) / 8 / 2) (by omega)]
+    intro h; have := (hblk _ (by omega) (by omega) (by omega)).mp h; omega
+  have F2 : IsP m (a + (m + 2) + (4 * u + 0) / 4) ((4 * u + 0) / 4) := by
+    refine (o_odd_iff m (4 * u) (a) ((4 * u + 0) / 4) hmh hr0 hr1 F0 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (4 * u + 0) / 4) / 2 = (36 * u + 4) / 8 by omega]; exact F1
+  have F3 : ¬ IsP m (a + (m + 2) + (4 * u + 0) / 2) ((4 * u + 0) / 2) := by
+    rw [show (4 * u + 0) / 2 = 2 * ((4 * u + 0) / 4) by omega]
+    exact fun h => (o_half' m (4 * u) (a) ((4 * u + 0) / 4) hmh hr0 hr1 F0 (by omega) (by omega) (by omega)).mp h F2
+  have F4 : IsP m (a + (m + 2) + 4 * u) (4 * u) := by
+    rw [show 4 * u = 2 * ((4 * u + 0) / 2) by omega]
+    exact (o_half' m (4 * u) (a) ((4 * u + 0) / 2) hmh hr0 hr1 F0 (by omega) (by omega) (by omega)).mpr F3
+  have hr2 : ∀ p, IsP m (a + (m + 2) + (m + 2)) p := row_long m (a + (m + 2)) hmo (by omega) hr1 (by rw [hh]; exact F4)
+  have F5 : ¬ IsP m (a + (164 * u + 20) / 32) ((164 * u + 20) / 32) := by
+    have hv : v2 ((164 * u + 20) / 32) = 1 := by
+      have : ((164 * u + 20) / 32) % 4 = 2 := by omega
+      rw [v2_even ((164 * u + 20) / 32) (by omega) (by omega),
+        v2_odd ((164 * u + 20) / 32 / 2) (by omega)]
+    intro h; have := (hblk _ (by omega) (by omega) (by omega)).mp h; omega
+  have F6 : IsP m (a + (m + 2) + (36 * u + 4) / 16) ((36 * u + 4) / 16) := by
+    refine (o_odd_iff m (4 * u) (a) ((36 * u + 4) / 16) hmh hr0 hr1 F0 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (36 * u + 4) / 16) / 2 = (164 * u + 20) / 32 by omega]; exact F5
+  have F7 : ¬ IsP m (a + (m + 2) + (36 * u + 4) / 8) ((36 * u + 4) / 8) := by
+    rw [show (36 * u + 4) / 8 = 2 * ((36 * u + 4) / 16) by omega]
+    exact fun h => (o_half' m (4 * u) (a) ((36 * u + 4) / 16) hmh hr0 hr1 F0 (by omega) (by omega) (by omega)).mp h F6
+  have F8 : IsP m (a + (m + 2) + (m + 2) + (4 * u + 0) / 4) ((4 * u + 0) / 4) := by
+    refine (o_odd_iff m (4 * u) (a + (m + 2)) ((4 * u + 0) / 4) hmh hr1 hr2 F4 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (4 * u + 0) / 4) / 2 = (36 * u + 4) / 8 by omega]; exact F7
+  have F9 : ¬ IsP m (a + (m + 2) + (m + 2) + (4 * u + 0) / 2) ((4 * u + 0) / 2) := by
+    rw [show (4 * u + 0) / 2 = 2 * ((4 * u + 0) / 4) by omega]
+    exact fun h => (o_half' m (4 * u) (a + (m + 2)) ((4 * u + 0) / 4) hmh hr1 hr2 F4 (by omega) (by omega) (by omega)).mp h F8
+  have F10 : IsP m (a + (m + 2) + (m + 2) + 4 * u) (4 * u) := by
+    rw [show 4 * u = 2 * ((4 * u + 0) / 2) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2)) ((4 * u + 0) / 2) hmh hr1 hr2 F4 (by omega) (by omega) (by omega)).mpr F9
+  have hr3 : ∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 2)) p := row_long m (a + (m + 2) + (m + 2)) hmo (by omega) hr2 (by rw [hh]; exact F10)
+  have F11 : ¬ IsP m (a + (676 * u + 84) / 128) ((676 * u + 84) / 128) := by
+    have hv : v2 ((676 * u + 84) / 128) = 1 := by
+      have : ((676 * u + 84) / 128) % 4 = 2 := by omega
+      rw [v2_even ((676 * u + 84) / 128) (by omega) (by omega),
+        v2_odd ((676 * u + 84) / 128 / 2) (by omega)]
+    intro h; have := (hblk _ (by omega) (by omega) (by omega)).mp h; omega
+  have F12 : IsP m (a + (m + 2) + (164 * u + 20) / 64) ((164 * u + 20) / 64) := by
+    refine (o_odd_iff m (4 * u) (a) ((164 * u + 20) / 64) hmh hr0 hr1 F0 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (164 * u + 20) / 64) / 2 = (676 * u + 84) / 128 by omega]; exact F11
+  have F13 : ¬ IsP m (a + (m + 2) + (164 * u + 20) / 32) ((164 * u + 20) / 32) := by
+    rw [show (164 * u + 20) / 32 = 2 * ((164 * u + 20) / 64) by omega]
+    exact fun h => (o_half' m (4 * u) (a) ((164 * u + 20) / 64) hmh hr0 hr1 F0 (by omega) (by omega) (by omega)).mp h F12
+  have F14 : IsP m (a + (m + 2) + (m + 2) + (36 * u + 4) / 16) ((36 * u + 4) / 16) := by
+    refine (o_odd_iff m (4 * u) (a + (m + 2)) ((36 * u + 4) / 16) hmh hr1 hr2 F4 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (36 * u + 4) / 16) / 2 = (164 * u + 20) / 32 by omega]; exact F13
+  have F15 : ¬ IsP m (a + (m + 2) + (m + 2) + (36 * u + 4) / 8) ((36 * u + 4) / 8) := by
+    rw [show (36 * u + 4) / 8 = 2 * ((36 * u + 4) / 16) by omega]
+    exact fun h => (o_half' m (4 * u) (a + (m + 2)) ((36 * u + 4) / 16) hmh hr1 hr2 F4 (by omega) (by omega) (by omega)).mp h F14
+  have F16 : IsP m (a + (m + 2) + (m + 2) + (m + 2) + (4 * u + 0) / 4) ((4 * u + 0) / 4) := by
+    refine (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2)) ((4 * u + 0) / 4) hmh hr2 hr3 F10 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (4 * u + 0) / 4) / 2 = (36 * u + 4) / 8 by omega]; exact F15
+  have F17 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 2) + (4 * u + 0) / 2) ((4 * u + 0) / 2) := by
+    rw [show (4 * u + 0) / 2 = 2 * ((4 * u + 0) / 4) by omega]
+    exact fun h => (o_half' m (4 * u) (a + (m + 2) + (m + 2)) ((4 * u + 0) / 4) hmh hr2 hr3 F10 (by omega) (by omega) (by omega)).mp h F16
+  have F18 : IsP m (a + (m + 2) + (m + 2) + (m + 2) + 4 * u) (4 * u) := by
+    rw [show 4 * u = 2 * ((4 * u + 0) / 2) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2) + (m + 2)) ((4 * u + 0) / 2) hmh hr2 hr3 F10 (by omega) (by omega) (by omega)).mpr F17
+  have hr4 : ∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 2) + (m + 2)) p := row_long m (a + (m + 2) + (m + 2) + (m + 2)) hmo (by omega) hr3 (by rw [hh]; exact F18)
+  have F19 : ¬ IsP m (a + (2724 * u + 340) / 512) ((2724 * u + 340) / 512) := by
+    have hv : v2 ((2724 * u + 340) / 512) = 1 := by
+      have : ((2724 * u + 340) / 512) % 4 = 2 := by omega
+      rw [v2_even ((2724 * u + 340) / 512) (by omega) (by omega),
+        v2_odd ((2724 * u + 340) / 512 / 2) (by omega)]
+    intro h; have := (hblk _ (by omega) (by omega) (by omega)).mp h; omega
+  have F20 : IsP m (a + (m + 2) + (676 * u + 84) / 256) ((676 * u + 84) / 256) := by
+    refine (o_odd_iff m (4 * u) (a) ((676 * u + 84) / 256) hmh hr0 hr1 F0 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (676 * u + 84) / 256) / 2 = (2724 * u + 340) / 512 by omega]; exact F19
+  have F21 : ¬ IsP m (a + (m + 2) + (676 * u + 84) / 128) ((676 * u + 84) / 128) := by
+    rw [show (676 * u + 84) / 128 = 2 * ((676 * u + 84) / 256) by omega]
+    exact fun h => (o_half' m (4 * u) (a) ((676 * u + 84) / 256) hmh hr0 hr1 F0 (by omega) (by omega) (by omega)).mp h F20
+  have F22 : IsP m (a + (m + 2) + (m + 2) + (164 * u + 20) / 64) ((164 * u + 20) / 64) := by
+    refine (o_odd_iff m (4 * u) (a + (m + 2)) ((164 * u + 20) / 64) hmh hr1 hr2 F4 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (164 * u + 20) / 64) / 2 = (676 * u + 84) / 128 by omega]; exact F21
+  have F23 : ¬ IsP m (a + (m + 2) + (m + 2) + (164 * u + 20) / 32) ((164 * u + 20) / 32) := by
+    rw [show (164 * u + 20) / 32 = 2 * ((164 * u + 20) / 64) by omega]
+    exact fun h => (o_half' m (4 * u) (a + (m + 2)) ((164 * u + 20) / 64) hmh hr1 hr2 F4 (by omega) (by omega) (by omega)).mp h F22
+  have F24 : IsP m (a + (m + 2) + (m + 2) + (m + 2) + (36 * u + 4) / 16) ((36 * u + 4) / 16) := by
+    refine (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2)) ((36 * u + 4) / 16) hmh hr2 hr3 F10 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (36 * u + 4) / 16) / 2 = (164 * u + 20) / 32 by omega]; exact F23
+  have F25 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 2) + (36 * u + 4) / 8) ((36 * u + 4) / 8) := by
+    rw [show (36 * u + 4) / 8 = 2 * ((36 * u + 4) / 16) by omega]
+    exact fun h => (o_half' m (4 * u) (a + (m + 2) + (m + 2)) ((36 * u + 4) / 16) hmh hr2 hr3 F10 (by omega) (by omega) (by omega)).mp h F24
+  have F26 : IsP m (a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (4 * u + 0) / 4) ((4 * u + 0) / 4) := by
+    refine (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 2)) ((4 * u + 0) / 4) hmh hr3 hr4 F18 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (4 * u + 0) / 4) / 2 = (36 * u + 4) / 8 by omega]; exact F25
+  have F27 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (4 * u + 0) / 2) ((4 * u + 0) / 2) := by
+    rw [show (4 * u + 0) / 2 = 2 * ((4 * u + 0) / 4) by omega]
+    exact fun h => (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 2)) ((4 * u + 0) / 4) hmh hr3 hr4 F18 (by omega) (by omega) (by omega)).mp h F26
+  have F28 : IsP m (a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + 4 * u) (4 * u) := by
+    rw [show 4 * u = 2 * ((4 * u + 0) / 2) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 2)) ((4 * u + 0) / 2) hmh hr3 hr4 F18 (by omega) (by omega) (by omega)).mpr F27
+  have hr5 : ∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 2)) p := row_long m (a + (m + 2) + (m + 2) + (m + 2) + (m + 2)) hmo (by omega) hr4 (by rw [hh]; exact F28)
+  have F29 : IsP m (a + (10916 * u + 1364) / 2048) ((10916 * u + 1364) / 2048) := by
+    have hv : v2 ((10916 * u + 1364) / 2048) = 2 := by
+      have : ((10916 * u + 1364) / 2048) % 8 = 4 := by omega
+      rw [v2_even ((10916 * u + 1364) / 2048) (by omega) (by omega),
+        v2_even ((10916 * u + 1364) / 2048 / 2) (by omega) (by omega),
+        v2_odd ((10916 * u + 1364) / 2048 / 2 / 2) (by omega)]
+    exact (hblk _ (by omega) (by omega) (by omega)).mpr (by omega)
+  have F30 : ¬ IsP m (a + (m + 2) + (2724 * u + 340) / 1024) ((2724 * u + 340) / 1024) := by
+    intro h; apply (o_odd_iff m (4 * u) (a) ((2724 * u + 340) / 1024) hmh hr0 hr1 F0 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (2724 * u + 340) / 1024) / 2 = (10916 * u + 1364) / 2048 by omega]; exact F29
+  have F31 : IsP m (a + (m + 2) + (2724 * u + 340) / 512) ((2724 * u + 340) / 512) := by
+    rw [show (2724 * u + 340) / 512 = 2 * ((2724 * u + 340) / 1024) by omega]
+    exact (o_half' m (4 * u) (a) ((2724 * u + 340) / 1024) hmh hr0 hr1 F0 (by omega) (by omega) (by omega)).mpr F30
+  have F32 : ¬ IsP m (a + (m + 2) + (m + 2) + (676 * u + 84) / 256) ((676 * u + 84) / 256) := by
+    intro h; apply (o_odd_iff m (4 * u) (a + (m + 2)) ((676 * u + 84) / 256) hmh hr1 hr2 F4 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (676 * u + 84) / 256) / 2 = (2724 * u + 340) / 512 by omega]; exact F31
+  have F33 : IsP m (a + (m + 2) + (m + 2) + (676 * u + 84) / 128) ((676 * u + 84) / 128) := by
+    rw [show (676 * u + 84) / 128 = 2 * ((676 * u + 84) / 256) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2)) ((676 * u + 84) / 256) hmh hr1 hr2 F4 (by omega) (by omega) (by omega)).mpr F32
+  have F34 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 2) + (164 * u + 20) / 64) ((164 * u + 20) / 64) := by
+    intro h; apply (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2)) ((164 * u + 20) / 64) hmh hr2 hr3 F10 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (164 * u + 20) / 64) / 2 = (676 * u + 84) / 128 by omega]; exact F33
+  have F35 : IsP m (a + (m + 2) + (m + 2) + (m + 2) + (164 * u + 20) / 32) ((164 * u + 20) / 32) := by
+    rw [show (164 * u + 20) / 32 = 2 * ((164 * u + 20) / 64) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2) + (m + 2)) ((164 * u + 20) / 64) hmh hr2 hr3 F10 (by omega) (by omega) (by omega)).mpr F34
+  have F36 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (36 * u + 4) / 16) ((36 * u + 4) / 16) := by
+    intro h; apply (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 2)) ((36 * u + 4) / 16) hmh hr3 hr4 F18 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (36 * u + 4) / 16) / 2 = (164 * u + 20) / 32 by omega]; exact F35
+  have F37 : IsP m (a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (36 * u + 4) / 8) ((36 * u + 4) / 8) := by
+    rw [show (36 * u + 4) / 8 = 2 * ((36 * u + 4) / 16) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 2)) ((36 * u + 4) / 16) hmh hr3 hr4 F18 (by omega) (by omega) (by omega)).mpr F36
+  have F38 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (4 * u + 0) / 4) ((4 * u + 0) / 4) := by
+    intro h; apply (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 2) + (m + 2)) ((4 * u + 0) / 4) hmh hr4 hr5 F28 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (4 * u + 0) / 4) / 2 = (36 * u + 4) / 8 by omega]; exact F37
+  have F39 : IsP m (a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (4 * u + 0) / 2) ((4 * u + 0) / 2) := by
+    rw [show (4 * u + 0) / 2 = 2 * ((4 * u + 0) / 4) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 2) + (m + 2)) ((4 * u + 0) / 4) hmh hr4 hr5 F28 (by omega) (by omega) (by omega)).mpr F38
+  have F40 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + 4 * u) (4 * u) := by
+    rw [show 4 * u = 2 * ((4 * u + 0) / 2) by omega]
+    exact fun h => (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 2) + (m + 2)) ((4 * u + 0) / 2) hmh hr4 hr5 F28 (by omega) (by omega) (by omega)).mp h F39
+  have hr6 : ∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 1)) p := row_next m (a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 2)) hr5 (by rw [hh]; exact F40)
+  have hb6 := blk1_direct m _ hr6 (odd_of_rows m _ hmo hr6 (Or.inr ⟨_, rfl, hr5⟩))
+  have F42 : IsP m (a + (1004 * u + 124) / 128) ((1004 * u + 124) / 128) := by
+    have hv : v2 ((1004 * u + 124) / 128) = 0 := by
+      have : ((1004 * u + 124) / 128) % 2 = 1 := by omega
+      rw [v2_odd ((1004 * u + 124) / 128) (by omega)]
+    exact (hblk _ (by omega) (by omega) (by omega)).mpr (by omega)
+  have F43 : ¬ IsP m (a + (m + 2) + (492 * u + 60) / 64) ((492 * u + 60) / 64) := by
+    intro h; apply (o_odd_iff m (4 * u) (a) ((492 * u + 60) / 64) hmh hr0 hr1 F0 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (492 * u + 60) / 64) / 2 = (1004 * u + 124) / 128 by omega]; exact F42
+  have F44 : IsP m (a + (m + 2) + (m + 2) + (236 * u + 28) / 32) ((236 * u + 28) / 32) := by
+    refine (o_odd_iff m (4 * u) (a + (m + 2)) ((236 * u + 28) / 32) hmh hr1 hr2 F4 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (236 * u + 28) / 32) / 2 = (492 * u + 60) / 64 by omega]; exact F43
+  have F45 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 2) + (108 * u + 12) / 16) ((108 * u + 12) / 16) := by
+    intro h; apply (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2)) ((108 * u + 12) / 16) hmh hr2 hr3 F10 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (108 * u + 12) / 16) / 2 = (236 * u + 28) / 32 by omega]; exact F44
+  have F46 : IsP m (a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (44 * u + 4) / 8) ((44 * u + 4) / 8) := by
+    refine (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 2)) ((44 * u + 4) / 8) hmh hr3 hr4 F18 (by omega) (by omega) (by omega) (by omega)).mpr ?_
+    rw [show (m + 2 + (44 * u + 4) / 8) / 2 = (108 * u + 12) / 16 by omega]; exact F45
+  have F47 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (12 * u + 0) / 4) ((12 * u + 0) / 4) := by
+    intro h; apply (o_odd_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 2) + (m + 2)) ((12 * u + 0) / 4) hmh hr4 hr5 F28 (by omega) (by omega) (by omega) (by omega)).mp h
+    rw [show (m + 2 + (12 * u + 0) / 4) / 2 = (44 * u + 4) / 8 by omega]; exact F46
+  have F48 : IsP m (a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (12 * u + 0) / 2) ((12 * u + 0) / 2) := by
+    rw [show (12 * u + 0) / 2 = 2 * ((12 * u + 0) / 4) by omega]
+    exact (o_half' m (4 * u) (a + (m + 2) + (m + 2) + (m + 2) + (m + 2)) ((12 * u + 0) / 4) hmh hr4 hr5 F28 (by omega) (by omega) (by omega)).mpr F47
+  have F49 : ¬ IsP m (a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 1) + 4 * u) (4 * u) := by
+    intro h; apply ((e_iff m (4 * u) (a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 2)) (4 * u) hmh hr5 hr6 (by omega) (by omega) (by omega)).mp h).2
+    rw [show 4 * u + 4 * u / 2 = (12 * u + 0) / 2 by omega]; exact F48
+  have hr7 : ∀ p, IsP m (a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 1) + (m + 1)) p := row_next m (a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 1)) hr6 (by rw [hh]; exact F49)
+  have hblk' := k68g7987_blk m u hmu hu _ hr6 hb6 hr7
+  rw [show a + (7 * m + 12) = a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 1) + (m + 1) by omega]
+  exact ⟨hr1, hr2, hr3, hr4, hr5, hr6, hr7, hblk', F0, F4, F10, F18, F28⟩
+
+theorem k68g7987_rows : ∀ i, (∀ p, IsP m (i * (7 * m + 12)) p) ∧ Blk m 3 (i * (7 * m + 12)) := by
+  intro i
+  induction i with
+  | zero => rw [Nat.zero_mul]; exact ⟨isP_zero m, blk_zero m 3⟩
+  | succ i ih =>
+    obtain ⟨hrow, hblk⟩ := ih
+    obtain ⟨_, _, _, _, _, _, ha, hb, _⟩ := k68g7987_step m u hmu hu _ hrow hblk
+    rw [Nat.succ_mul]; exact ⟨ha, hb⟩
+
+end K68g7987
+
+/-- 予想 K68 の u ≡ 7987 (mod 8192)（1111100 型）：(n, 0) が P ⇔ n mod (7 * m + 12) が各行の始まり。-/
+theorem K68_7987 (m : Nat) (hm : (m + 1) % 65536 = 63896) (n : Nat) :
+    IsP m n 0 ↔ (n % (7 * m + 12) = 0 ∨ n % (7 * m + 12) = 1 * m + 2 ∨ n % (7 * m + 12) = 2 * m + 4 ∨ n % (7 * m + 12) = 3 * m + 6 ∨ n % (7 * m + 12) = 4 * m + 8 ∨ n % (7 * m + 12) = 5 * m + 10 ∨ n % (7 * m + 12) = 6 * m + 11) := by
+  have hmu : m + 1 = 8 * ((m + 1) / 8) := by omega
+  obtain ⟨hrow, hblk⟩ := k68g7987_rows m _ hmu (by omega) (n / (7 * m + 12))
+  obtain ⟨hq1, hq2, hq3, hq4, hq5, hq6, _, _, ht0, ht1, ht2, ht3, ht4⟩ := k68g7987_step m _ hmu (by omega) _ hrow hblk
+  have hdiv : n = (n / (7 * m + 12)) * (7 * m + 12) + n % (7 * m + 12) := by
+    have := Nat.div_add_mod n (7 * m + 12)
+    rw [Nat.mul_comm] at this; omega
+  have hlt : n % (7 * m + 12) < 7 * m + 12 := Nat.mod_lt n (by omega)
+  generalize hcc : n % (7 * m + 12) = c at hdiv hlt
+  generalize ha : n / (7 * m + 12) * (7 * m + 12) = a at hdiv hrow hq1 hq2 hq3 hq4 hq5 hq6 ht0 ht1 ht2 ht3 ht4
+  subst hdiv
+  have hmh : m + 1 = 2 * (4 * ((m + 1) / 8)) := by omega
+  constructor
+  · intro hP
+    apply Decidable.byContradiction
+    intro hne
+    by_cases c0 : c ≤ 0 + m
+    · rw [show a + c = a + (c - (0)) by omega] at hP
+      exact not_isP_of_row m _ (c - (0)) 0 hrow (by omega) (by omega) (by omega) hP
+    · by_cases d0 : c = 0 + (m + 1)
+      · rw [d0, show a + (0 + (m + 1)) = a + (m + 1) by omega] at hP
+        exact not_isP_near m _ _ 0 hmh (by omega) (by omega) ht0 (by omega) hP
+      · by_cases c1 : c ≤ 1 * m + 2 + m
+        · rw [show a + c = a + (m + 2) + (c - (1 * m + 2)) by omega] at hP
+          exact not_isP_of_row m _ (c - (1 * m + 2)) 0 hq1 (by omega) (by omega) (by omega) hP
+        · by_cases d1 : c = 1 * m + 2 + (m + 1)
+          · rw [d1, show a + (1 * m + 2 + (m + 1)) = a + (m + 2) + (m + 1) by omega] at hP
+            exact not_isP_near m _ _ 0 hmh (by omega) (by omega) ht1 (by omega) hP
+          · by_cases c2 : c ≤ 2 * m + 4 + m
+            · rw [show a + c = a + (m + 2) + (m + 2) + (c - (2 * m + 4)) by omega] at hP
+              exact not_isP_of_row m _ (c - (2 * m + 4)) 0 hq2 (by omega) (by omega) (by omega) hP
+            · by_cases d2 : c = 2 * m + 4 + (m + 1)
+              · rw [d2, show a + (2 * m + 4 + (m + 1)) = a + (m + 2) + (m + 2) + (m + 1) by omega] at hP
+                exact not_isP_near m _ _ 0 hmh (by omega) (by omega) ht2 (by omega) hP
+              · by_cases c3 : c ≤ 3 * m + 6 + m
+                · rw [show a + c = a + (m + 2) + (m + 2) + (m + 2) + (c - (3 * m + 6)) by omega] at hP
+                  exact not_isP_of_row m _ (c - (3 * m + 6)) 0 hq3 (by omega) (by omega) (by omega) hP
+                · by_cases d3 : c = 3 * m + 6 + (m + 1)
+                  · rw [d3, show a + (3 * m + 6 + (m + 1)) = a + (m + 2) + (m + 2) + (m + 2) + (m + 1) by omega] at hP
+                    exact not_isP_near m _ _ 0 hmh (by omega) (by omega) ht3 (by omega) hP
+                  · by_cases c4 : c ≤ 4 * m + 8 + m
+                    · rw [show a + c = a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (c - (4 * m + 8)) by omega] at hP
+                      exact not_isP_of_row m _ (c - (4 * m + 8)) 0 hq4 (by omega) (by omega) (by omega) hP
+                    · by_cases d4 : c = 4 * m + 8 + (m + 1)
+                      · rw [d4, show a + (4 * m + 8 + (m + 1)) = a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 1) by omega] at hP
+                        exact not_isP_near m _ _ 0 hmh (by omega) (by omega) ht4 (by omega) hP
+                      · by_cases c5 : c ≤ 5 * m + 10 + m
+                        · rw [show a + c = a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (c - (5 * m + 10)) by omega] at hP
+                          exact not_isP_of_row m _ (c - (5 * m + 10)) 0 hq5 (by omega) (by omega) (by omega) hP
+                        · rw [show a + c = a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 1) + (c - (6 * m + 11)) by omega] at hP
+                          exact not_isP_of_row m _ (c - (6 * m + 11)) 0 hq6 (by omega) (by omega) (by omega) hP
+  · intro h
+    rcases h with h | h | h | h | h | h | h
+    · rw [h, Nat.add_zero]; exact hrow 0
+    · rw [h, show a + (1 * m + 2) = a + (m + 2) by omega]; exact hq1 0
+    · rw [h, show a + (2 * m + 4) = a + (m + 2) + (m + 2) by omega]; exact hq2 0
+    · rw [h, show a + (3 * m + 6) = a + (m + 2) + (m + 2) + (m + 2) by omega]; exact hq3 0
+    · rw [h, show a + (4 * m + 8) = a + (m + 2) + (m + 2) + (m + 2) + (m + 2) by omega]; exact hq4 0
+    · rw [h, show a + (5 * m + 10) = a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 2) by omega]; exact hq5 0
+    · rw [h, show a + (6 * m + 11) = a + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 2) + (m + 1) by omega]; exact hq6 0
+
+end Rubidium
