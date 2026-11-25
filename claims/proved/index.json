@@ -1,5 +1,5 @@
 {
-  "count": 49,
+  "count": 58,
   "theorems": [
     {
       "name": "nat_all_iff",
@@ -258,6 +258,60 @@
       "kind": "theorem",
       "file": "lean/Rubidium/K6.lean",
       "line": 92
+    },
+    {
+      "name": "isP_big",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K7.lean",
+      "line": 20
+    },
+    {
+      "name": "window_step",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K7.lean",
+      "line": 27
+    },
+    {
+      "name": "window_all",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K7.lean",
+      "line": 44
+    },
+    {
+      "name": "pigeon",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K7.lean",
+      "line": 74
+    },
+    {
+      "name": "enc_lt",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K7.lean",
+      "line": 110
+    },
+    {
+      "name": "enc_inj",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K7.lean",
+      "line": 118
+    },
+    {
+      "name": "win_length",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K7.lean",
+      "line": 138
+    },
+    {
+      "name": "win_eq",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K7.lean",
+      "line": 141
+    },
+    {
+      "name": "K7'",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K7.lean",
+      "line": 157
     },
     {
       "name": "blkE_step",

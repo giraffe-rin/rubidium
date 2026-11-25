@@ -5,9 +5,9 @@
 ## Overview
 
 - **Main Theorem Target**: `MainTheorem` (OPEN)
-- **Lean-Verified Theorems & Lemmas**: 49
+- **Lean-Verified Theorems & Lemmas**: 58
 - **Recorded Dead Ends**: 3
-- **Stagnation Cycles**: 3 / 20
+- **Stagnation Cycles**: 0 / 20
 
 ## Lean-Verified Results (`claims/proved/index.json`)
 
@@ -56,6 +56,15 @@
 | `theorem` | `row_long` | `lean/Rubidium/K6.lean` | 37 |
 | `theorem` | `k6_rows` | `lean/Rubidium/K6.lean` | 53 |
 | `theorem` | `K6` | `lean/Rubidium/K6.lean` | 92 |
+| `theorem` | `isP_big` | `lean/Rubidium/K7.lean` | 20 |
+| `theorem` | `window_step` | `lean/Rubidium/K7.lean` | 27 |
+| `theorem` | `window_all` | `lean/Rubidium/K7.lean` | 44 |
+| `theorem` | `pigeon` | `lean/Rubidium/K7.lean` | 74 |
+| `theorem` | `enc_lt` | `lean/Rubidium/K7.lean` | 110 |
+| `theorem` | `enc_inj` | `lean/Rubidium/K7.lean` | 118 |
+| `theorem` | `win_length` | `lean/Rubidium/K7.lean` | 138 |
+| `theorem` | `win_eq` | `lean/Rubidium/K7.lean` | 141 |
+| `theorem` | `K7'` | `lean/Rubidium/K7.lean` | 157 |
 | `theorem` | `blkE_step` | `lean/Rubidium/K9.lean` | 23 |
 | `theorem` | `blkO_of_blk` | `lean/Rubidium/K9.lean` | 67 |
 | `theorem` | `k9_rows` | `lean/Rubidium/K9.lean` | 90 |
@@ -71,7 +80,7 @@
 | `SG-002` | Formalize small-m P-position characterizations (K3, K4, K4_even, K5_before, K6) | `proved` | 0 | no |
 | `SG-003` | Formalize medium-m block-rule characterizations (K9, K10a, K13) | `proved` | 0 | no |
 | `SG-004` | Formalize general even-m P-position structure and 2-adic valuation rules | `open` | 0 | no |
-| `SG-005` | Formalize periodicity and preperiod bounds for odd m >= 7 | `open` | 1 | no |
+| `SG-005` | Formalize periodicity and preperiod bounds for odd m >= 7 | `proved` | 1 | no |
 | `SG-006` | Characterize winning/losing positions for general states (r, p) | `open` | 0 | no |
 | `SG-007` | Prove MainTheorem characterizing starting positions (n, 0) for all m >= 1 | `open` | 0 | no |
 
