@@ -6,8 +6,8 @@
 
 - **Main Theorem Target**: `MainTheorem` (OPEN)
 - **Lean-Verified Theorems & Lemmas**: 49
-- **Recorded Dead Ends**: 0
-- **Stagnation Cycles**: 0 / 20
+- **Recorded Dead Ends**: 1
+- **Stagnation Cycles**: 1 / 20
 
 ## Lean-Verified Results (`claims/proved/index.json`)
 
@@ -71,10 +71,12 @@
 | `SG-002` | Formalize small-m P-position characterizations (K3, K4, K4_even, K5_before, K6) | `proved` | 0 | no |
 | `SG-003` | Formalize medium-m block-rule characterizations (K9, K10a, K13) | `proved` | 0 | no |
 | `SG-004` | Formalize general even-m P-position structure and 2-adic valuation rules | `open` | 0 | no |
-| `SG-005` | Formalize periodicity and preperiod bounds for odd m >= 7 | `open` | 0 | no |
+| `SG-005` | Formalize periodicity and preperiod bounds for odd m >= 7 | `open` | 1 | no |
 | `SG-006` | Characterize winning/losing positions for general states (r, p) | `open` | 0 | no |
 | `SG-007` | Prove MainTheorem characterizing starting positions (n, 0) for all m >= 1 | `open` | 0 | no |
 
 ## Recent Dead Ends (`data/dead_ends.jsonl`)
 
-_No dead ends recorded yet._
+| PR | Title | Subgoals | Labels |
+| ---: | :--- | :--- | :--- |
+| #459 | SG-005: checkpoint-1 以降の claude-1 の Lean 4 の結果をまとめる（K7′〜K69、被覆率 94.82%） | `SG-005` | `ci-failed` |

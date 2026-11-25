@@ -18,7 +18,9 @@
       "id": "SG-002",
       "title": "Formalize small-m P-position characterizations (K3, K4, K4_even, K5_before, K6)",
       "status": "proved",
-      "dependencies": ["SG-001"],
+      "dependencies": [
+        "SG-001"
+      ],
       "lean_files": [
         "lean/Rubidium/K3.lean",
         "lean/Rubidium/K4Even.lean",
@@ -33,7 +35,9 @@
       "id": "SG-003",
       "title": "Formalize medium-m block-rule characterizations (K9, K10a, K13)",
       "status": "proved",
-      "dependencies": ["SG-002"],
+      "dependencies": [
+        "SG-002"
+      ],
       "lean_files": [
         "lean/Rubidium/K9.lean",
         "lean/Rubidium/K10.lean",
@@ -46,7 +50,9 @@
       "id": "SG-004",
       "title": "Formalize general even-m P-position structure and 2-adic valuation rules",
       "status": "open",
-      "dependencies": ["SG-002"],
+      "dependencies": [
+        "SG-002"
+      ],
       "lean_files": [],
       "failures": 0,
       "needs_decomposition": false
@@ -55,16 +61,21 @@
       "id": "SG-005",
       "title": "Formalize periodicity and preperiod bounds for odd m >= 7",
       "status": "open",
-      "dependencies": ["SG-003"],
+      "dependencies": [
+        "SG-003"
+      ],
       "lean_files": [],
-      "failures": 0,
+      "failures": 1,
       "needs_decomposition": false
     },
     {
       "id": "SG-006",
       "title": "Characterize winning/losing positions for general states (r, p)",
       "status": "open",
-      "dependencies": ["SG-004", "SG-005"],
+      "dependencies": [
+        "SG-004",
+        "SG-005"
+      ],
       "lean_files": [],
       "failures": 0,
       "needs_decomposition": false
@@ -73,7 +84,11 @@
       "id": "SG-007",
       "title": "Prove MainTheorem characterizing starting positions (n, 0) for all m >= 1",
       "status": "open",
-      "dependencies": ["SG-004", "SG-005", "SG-006"],
+      "dependencies": [
+        "SG-004",
+        "SG-005",
+        "SG-006"
+      ],
       "lean_files": [],
       "failures": 0,
       "needs_decomposition": false
