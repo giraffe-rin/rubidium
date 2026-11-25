@@ -835,7 +835,11 @@ def cmd_next_task(args: argparse.Namespace) -> int:
 
     Priority: continue own valid claim > work on an unclaimed ready subgoal >
     decompose an unclaimed ready subgoal flagged needs_decomposition >
-    write red-team tests for registered conjectures > stop.
+    plan (split) an unclaimed blocked subgoal so that some part of it becomes
+    workable now > write red-team tests for registered conjectures > stop.
+
+    A claim on a subgoal whose dependencies are not all proved is a planning
+    claim: it stays valid and `continue` reports `mode: "plan"`.
     """
     repo_root = Path(args.repo_root).resolve()
     cfg = load_config(repo_root, args.config)
@@ -858,8 +862,14 @@ def cmd_next_task(args: argparse.Namespace) -> int:
             subgoals[sg_id] = sg
     proved = {sg_id for sg_id, sg in subgoals.items() if str(sg.get("status", "open")) == "proved"}
 
+    def unproved_deps(sg: dict[str, Any]) -> list[str]:
+        return sorted(
+            {str(d).upper() for d in sg.get("dependencies", []) or []} - proved,
+            key=subgoal_sort_key,
+        )
+
     def deps_proved(sg: dict[str, Any]) -> bool:
-        return all(str(d).upper() in proved for d in sg.get("dependencies", []) or [])
+        return not unproved_deps(sg)
 
     # Claims: the lowest-numbered open PR whose title starts with SG-xxx owns that subgoal.
     claims: dict[str, list[dict[str, Any]]] = {}
@@ -883,11 +893,12 @@ def cmd_next_task(args: argparse.Namespace) -> int:
             status = "already_proved"
         elif owners[sg_id]["number"] != pr["number"]:
             status = "lost"
-        elif not deps_proved(sg):
-            status = "blocked"
         else:
             status = "valid"
-        my_claims.append({"pr": pr["number"], "subgoal": sg_id, "status": status})
+        claim: dict[str, Any] = {"pr": pr["number"], "subgoal": sg_id, "status": status}
+        if status == "valid":
+            claim["mode"] = "work" if deps_proved(sg) else "plan"
+        my_claims.append(claim)
 
     open_non_draft = sum(1 for pr in prs if not pr["draft"])
     wip = {
@@ -914,12 +925,23 @@ def cmd_next_task(args: argparse.Namespace) -> int:
 
     valid = [c for c in my_claims if c["status"] == "valid"]
     if valid:
+        mine = valid[0]
+        sg = subgoals[mine["subgoal"]]
         result.update(
             action="continue",
-            subgoal=valid[0]["subgoal"],
-            pr=valid[0]["pr"],
-            reason="you own a valid claim on this subgoal",
+            subgoal=mine["subgoal"],
+            pr=mine["pr"],
+            mode=mine["mode"],
+            reason=(
+                "you own a valid claim on this subgoal"
+                if mine["mode"] == "work"
+                else "you own a planning claim on this blocked subgoal (blocked by "
+                + ", ".join(unproved_deps(sg))
+                + "); split it so that at least one new child depends only on proved subgoals"
+            ),
         )
+        if mine["mode"] == "plan":
+            result["blocked_by"] = unproved_deps(sg)
     else:
         ready = [
             sg_id
@@ -929,6 +951,23 @@ def cmd_next_task(args: argparse.Namespace) -> int:
         ready.sort(key=lambda s: (int(subgoals[s].get("failures", 0)), subgoal_sort_key(s)))
         work = [s for s in ready if not subgoals[s].get("needs_decomposition")]
         decompose = [s for s in ready if subgoals[s].get("needs_decomposition")]
+        # Blocked, unclaimed subgoals that may still be split into workable parts.
+        # Closest to unblocked first; `no_plan: true` marks "cannot be split further".
+        plannable = [
+            sg_id
+            for sg_id, sg in subgoals.items()
+            if sg_id not in proved
+            and sg_id not in owners
+            and not deps_proved(sg)
+            and not sg.get("no_plan")
+        ]
+        plannable.sort(
+            key=lambda s: (
+                len(unproved_deps(subgoals[s])),
+                int(subgoals[s].get("failures", 0)),
+                subgoal_sort_key(s),
+            )
+        )
         conjectures = sorted(conjectures_dir.rglob("*.json")) if conjectures_dir.is_dir() else []
 
         if work:
@@ -944,13 +983,27 @@ def cmd_next_task(args: argparse.Namespace) -> int:
                 subgoal=decompose[0],
                 reason="unclaimed ready subgoal flagged needs_decomposition; split it into smaller subgoals in data/dag.json",
             )
+        elif plannable:
+            target = plannable[0]
+            blocked_by = unproved_deps(subgoals[target])
+            result.update(
+                action="plan",
+                subgoal=target,
+                reason=(
+                    "no ready subgoal is free; this subgoal is blocked by "
+                    + ", ".join(blocked_by)
+                    + ". Claim it and split it in data/dag.json so that at least one new child "
+                    "depends only on proved subgoals (or set no_plan: true if it cannot be split)"
+                ),
+            )
+            result["blocked_by"] = blocked_by
         elif conjectures:
             result.update(
                 action="redteam",
                 reason=f"no claimable subgoal; {len(conjectures)} conjecture(s) registered for counterexample search",
             )
         else:
-            blocked = sorted(
+            unsplittable = sorted(
                 (s for s in subgoals if s not in proved and s not in owners),
                 key=subgoal_sort_key,
             )
@@ -958,7 +1011,11 @@ def cmd_next_task(args: argparse.Namespace) -> int:
                 action="stop",
                 reason=(
                     "no claimable subgoal (all ready subgoals are claimed"
-                    + (f"; blocked by dependencies: {', '.join(blocked)}" if blocked else "")
+                    + (
+                        f"; blocked and marked no_plan: {', '.join(unsplittable)}"
+                        if unsplittable
+                        else ""
+                    )
                     + ") and no conjectures to red-team"
                 ),
             )

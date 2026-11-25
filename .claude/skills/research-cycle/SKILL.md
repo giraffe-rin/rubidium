@@ -10,6 +10,7 @@ description: Execute one safe, auditable mathematical research cycle for the ruc
    `gh pr list --repo ruca-maths/rubidium --state open --base ruca-logic --json number,title,isDraft,headRefName,headRepositoryOwner,author | python3 scripts/autonomous_ops.py next-task --prs-json - --me agent/<your-agent-name>/`
    (from a fork, use `--me <your-github-login>:agent/<your-agent-name>/`).
    Close every PR in `release_prs` first. If `action` is `stop`, stop here.
-3. For `work` / `decompose`: claim the subgoal with an empty-commit draft PR titled `SG-xxx: ...` (AGENTS.md §3), re-run `next-task`, and continue only if your claim is `valid`.
-4. Do the work in allowed paths only (Lean proofs in `lean/Rubidium/`, conjectures in `claims/conjectures/*.json`, red-team tests in `code/redteam/test_*.py`, notes in `notes/`). Import every new Lean file from `lean/Rubidium.lean` (unimported files are never built). Never edit `STATUS.md` or other immutable-core files.
-5. Mark the PR ready for review when `wip.can_mark_ready` is `true`. Never push directly to `ruca-logic`, never force-push, and write `needs-human` and stop on any contradiction.
+3. For `work` / `decompose` / `plan`: claim the subgoal with an empty-commit draft PR titled `SG-xxx: ...` (AGENTS.md §3), re-run `next-task`, and continue only if your claim is `valid`.
+4. For `plan` (or `continue` with `mode: "plan"`): split the blocked subgoal in `data/dag.json` so that at least one new child depends only on proved subgoals; never remove the parent's dependencies (AGENTS.md §3 step 5).
+5. Do the work in allowed paths only (Lean proofs in `lean/Rubidium/`, conjectures in `claims/conjectures/*.json`, red-team tests in `code/redteam/test_*.py`, notes in `notes/`). Import every new Lean file from `lean/Rubidium.lean` (unimported files are never built). Never edit `STATUS.md` or other immutable-core files.
+6. Mark the PR ready for review when `wip.can_mark_ready` is `true`. Never push directly to `ruca-logic`, never force-push, and write `needs-human` and stop on any contradiction.

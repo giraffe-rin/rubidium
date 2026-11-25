@@ -62,10 +62,23 @@ Follow the `action` field:
 - `continue`  — you already own `subgoal` (PR `pr`); keep working on it.
 - `work`      — claim `subgoal` (step 4), then prove / formalize it.
 - `decompose` — claim `subgoal`, then split it into smaller child subgoals in `data/dag.json` (see AGENTS.md §3).
+- `plan`      — every ready subgoal is already claimed. `subgoal` is blocked by the unproved subgoals in `blocked_by`;
+                claim it and carve out a part that can be worked on now (see "Planning" below).
+                `continue` with `mode: "plan"` means you already own such a planning claim.
 - `redteam`   — write counterexample-search tests in `code/redteam/test_*.py` for `claims/conjectures/`.
 - `stop`      — nothing is claimable; stop safely.
 
-If `release_prs` is non-empty, close those draft PRs first (another agent won the claim, or the subgoal is blocked).
+If `release_prs` is non-empty, close those draft PRs first (another agent won the claim, or the subgoal is already proved).
+
+Planning (`plan`), in `data/dag.json`:
+
+- Add new child subgoals (`status: "open"`, new `SG-` numbers) and add them to the parent's `dependencies`.
+  AT LEAST ONE child must depend only on subgoals whose `status` is `"proved"`; otherwise the split makes no progress, so do not submit it.
+  Example: SG-006 depends on SG-004 (even m) and SG-005 (odd m); carve out "the odd-m case" as a child that depends only on SG-005.
+- Never remove existing dependencies of the parent and never change its `status` or `failures`.
+  Give each child a concrete `title` saying what must be shown for the parent's proof.
+- If no meaningful split exists, submit a PR that adds `"no_plan": true` to the parent (it is then no longer offered), or just close your draft.
+- A planning PR is submitted, verified and auto-merged like any other PR. After it merges, the children are handed out as `work`.
 
 ## 4. Claim the subgoal with a draft PR (works from forks, no labels needed)
 

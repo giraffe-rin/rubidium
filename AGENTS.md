@@ -39,13 +39,14 @@
 
    | `action` | すること |
    | :--- | :--- |
-   | `continue` | 自分が担当を確保済みの `subgoal`（PR `pr`）の作業を続ける |
+   | `continue` | 自分が担当を確保済みの `subgoal`（PR `pr`）の作業を続ける。`mode` が `"plan"` なら、依存先が未証明のサブゴールの計画担当なので、手順 5 の計画を続ける |
    | `work` | `subgoal` の担当を確保して（手順 2）、証明・形式化に取り組む |
    | `decompose` | `subgoal` の担当を確保して、より小さい子サブゴールに分解する（手順 4） |
+   | `plan` | 着手できるサブゴールがすべて担当済みのとき。依存先が未証明の `subgoal`（`blocked_by` が未証明の依存先）の担当を確保して、今すぐ着手できる部分を切り出す（手順 5） |
    | `redteam` | `claims/conjectures/` の予想に対する反例探索テストを書く（§4） |
    | `stop` | 取れる課題がないので、何もせずに安全に停止する |
 
-   `release_prs` に番号があれば、それは無効になった自分の担当（他の AI に先を越された、依存先が未証明など）です。その draft PR を先に閉じてください。
+   `release_prs` に番号があれば、それは無効になった自分の担当（他の AI に先を越された、サブゴールが証明済みになったなど）です。その draft PR を先に閉じてください。
 
 2. **担当の確保（claim）は draft PR で行う**。作業を始める前に、空のコミットでタイトルが `SG-xxx:` で始まる draft PR を開きます（Fork からでも可能です）。
 
@@ -61,7 +62,12 @@
    - draft のまま閉じた PR は担当の放棄として扱われ、`data/dead_ends.jsonl` には記録されません。
 3. **着手前に `data/dead_ends.jsonl` を必ず参照する**。過去に未マージクローズまたは Red Team により反証されたアプローチと同じ失敗を繰り返さないこと。
 4. **分解（`decompose`）の手順**: `data/dag.json` に、新しい番号の子サブゴール（`status: "open"`、親の依存先を引き継ぐ）を追加し、親の `dependencies` に子を加えて親の `needs_decomposition` を `false` に戻します。親の `failures` は変更しません。3 回失敗したサブゴールは自動的に `needs_decomposition: true` へ昇格します。
-5. **作業が終わったら Ready for review にする**。このとき draft でない open PR が **WIP 上限（`max_open_prs: 3`）** 以上なら（`next-task` 出力の `wip.can_mark_ready` が `false`）、空くまで draft のまま待ちます。draft PR は WIP に数えません。サブゴールを完成させた PR では、同じ PR で `data/dag.json` の該当サブゴールの `status` を `"proved"` にしてください。
+5. **計画（`plan`）の手順**: 依存先が未証明のサブゴール（親）を、今すぐ着手できる部分とそれ以外に分けます。例: SG-006 が SG-004（偶数 m）と SG-005（奇数 m）に依存しているなら、「奇数 m の場合」を SG-005 だけに依存する子として切り出す。
+   - `data/dag.json` に新しい番号の子サブゴール（`status: "open"`）を追加し、親の `dependencies` に子を加える。**子のうち少なくとも 1 つは、依存先がすべて証明済み（`status: "proved"`）であること**。そうでない分け方は進展にならないので提出しない。
+   - 親の既存の依存先は削除しない（親の主張を弱めない）。親の `status`・`failures` は変更しない。子の `title` には、何を示せば親の証明に使えるかを具体的に書く。
+   - 意味のある分け方が見つからないときは、親に `"no_plan": true` を加えた PR を出す（以後 `plan` の候補から外れる）。何も変えずに draft PR を閉じてもよい。
+   - 計画だけの PR も、通常どおり Ready for review にしてゲートキーパーの検証とマージを受ける。マージ後は子サブゴールが `work` として配られる。
+6. **作業が終わったら Ready for review にする**。このとき draft でない open PR が **WIP 上限（`max_open_prs: 3`）** 以上なら（`next-task` 出力の `wip.can_mark_ready` が `false`）、空くまで draft のまま待ちます。draft PR は WIP に数えません。サブゴールを完成させた PR では、同じ PR で `data/dag.json` の該当サブゴールの `status` を `"proved"` にしてください。
 
 ## 4. Prover / Red Team 分離ルール
 

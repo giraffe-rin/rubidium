@@ -487,14 +487,68 @@ class TestAutonomousOps(unittest.TestCase):
         self.assertEqual(other["my_claims"], [])
         self.assertEqual(other["subgoal"], "SG-005")
 
-    def test_next_task_blocked_claim_is_released(self) -> None:
+    def test_next_task_blocked_claim_is_a_planning_claim(self) -> None:
         self._base_dag()
         prs = [{"number": 480, "title": "SG-006: general (r, p)", "isDraft": True,
                 "headRefName": "agent/c/sg006", "headRepositoryOwner": {"login": "c"}}]
         result, _ = self._next_task(prs, me="agent/c/sg006")
-        self.assertEqual(result["my_claims"][0]["status"], "blocked")
-        self.assertEqual(result["release_prs"], [480])
-        self.assertEqual(result["action"], "work")
+        self.assertEqual(
+            result["my_claims"], [{"pr": 480, "subgoal": "SG-006", "status": "valid", "mode": "plan"}]
+        )
+        self.assertEqual(result["release_prs"], [])
+        self.assertEqual(result["action"], "continue")
+        self.assertEqual(result["mode"], "plan")
+        self.assertEqual(result["blocked_by"], ["SG-004", "SG-005"])
+
+    def test_next_task_plans_blocked_subgoal_when_ready_ones_are_claimed(self) -> None:
+        self._write_dag(
+            [
+                self._sg("SG-001", "proved"),
+                self._sg("SG-004", "open", ["SG-001"]),
+                self._sg("SG-005", "proved", ["SG-001"]),
+                self._sg("SG-006", "open", ["SG-004", "SG-005"]),
+                self._sg("SG-007", "open", ["SG-004", "SG-005", "SG-006"]),
+            ]
+        )
+        prs = [{"number": 460, "title": "SG-004: even m", "isDraft": False,
+                "headRefName": "agent/antigravity/sg004"}]
+        # SG-006 (1 unproved dependency) before SG-007 (2 unproved dependencies).
+        result, out = self._next_task(prs)
+        self.assertEqual(result["action"], "plan")
+        self.assertEqual(result["subgoal"], "SG-006")
+        self.assertEqual(result["blocked_by"], ["SG-004"])
+        self.assertEqual(out["action"], "plan")
+
+        # Once SG-006 is claimed for planning, the next agent plans SG-007.
+        prs.append({"number": 470, "title": "SG-006: plan", "isDraft": True, "headRefName": "agent/p/sg006"})
+        result, _ = self._next_task(prs)
+        self.assertEqual(result["action"], "plan")
+        self.assertEqual(result["subgoal"], "SG-007")
+
+        # Subgoals marked no_plan are not offered; nothing else left -> stop.
+        self._write_dag(
+            [
+                self._sg("SG-001", "proved"),
+                self._sg("SG-004", "open", ["SG-001"]),
+                dict(self._sg("SG-006", "open", ["SG-004"]), no_plan=True),
+            ]
+        )
+        result, _ = self._next_task(prs[:1])
+        self.assertEqual(result["action"], "stop")
+        self.assertIn("no_plan: SG-006", result["reason"])
+
+    def test_next_task_plan_takes_priority_over_redteam(self) -> None:
+        self._write_dag(
+            [self._sg("SG-001", "proved"), self._sg("SG-002", "open", ["SG-001"]),
+             self._sg("SG-003", "open", ["SG-002"])]
+        )
+        (self.root / "claims" / "conjectures" / "c1.json").write_text(
+            json.dumps({"id": "C1", "subgoal_id": "SG-002", "statement": "s"}), encoding="utf-8"
+        )
+        prs = [{"number": 9, "title": "SG-002: x", "isDraft": True, "headRefName": "x"}]
+        result, _ = self._next_task(prs)
+        self.assertEqual(result["action"], "plan")
+        self.assertEqual(result["subgoal"], "SG-003")
 
     def test_next_task_drafts_do_not_count_toward_wip(self) -> None:
         self._base_dag()
