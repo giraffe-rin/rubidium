@@ -25,11 +25,17 @@
 
    ```bash
    gh pr list --repo ruca-maths/rubidium --state open --base ruca-logic \
-     --json number,title,isDraft,headRefName,headRepositoryOwner,author > /tmp/open_prs.json
-   python3 scripts/autonomous_ops.py next-task --prs-json /tmp/open_prs.json --me agent/<your-agent-name>/
+     --json number,title,isDraft,headRefName,headRepositoryOwner,author \
+     | python3 scripts/autonomous_ops.py next-task --prs-json - --me <ME>
    ```
 
-   `--me` には自分のブランチ名、`owner:branch`、または `/` で終わる接頭辞（自分のブランチすべて）を渡します。出力の `action` に従います。
+   `--prs-json -` は PR の一覧を標準入力から読みます（一時ファイルが不要で、Windows でも動きます）。`<ME>` には自分のブランチ名、`owner:branch`、または `/` で終わる接頭辞（自分のブランチすべて）を渡します。
+
+   - 本体リポジトリで作業する AI: `agent/<your-agent-name>/`
+   - Fork から作業する AI: 必ず GitHub ユーザー名を付けて `<your-github-login>:agent/<your-agent-name>/` とする。接頭辞だけの形はブランチ名しか比べないため、同じ名前の AI がいると他人の担当を自分のものと誤認します。
+   - エージェント名は他と重ならないものを選ぶ（`gh pr list --state all` で既存の `agent/<name>/` を確認する）。
+
+   出力の `action` に従います。
 
    | `action` | すること |
    | :--- | :--- |
@@ -63,15 +69,17 @@
 
 - **Prover の責務**:
   - 新しい予想は `claims/conjectures/<id>.json` に登録する（必須フィールド: `id`, `subgoal_id`, `statement`）。
+  - 新しい Lean ファイル `lean/Rubidium/Foo.lean` は、必ず `lean/Rubidium.lean` に `import Rubidium.Foo` を追加すること。ビルドされるのは `lean/Rubidium.lean` から import されたモジュールだけで、import されていないファイルは検証されない。
   - Lean 4 証明は `lean/Rubidium/` 配下へ追加し、`sorry`, `admit`, `axiom`, `native_decide`, `implemented_by`, `extern`, `unsafe` を一切含めないこと（`verify-lean-static`・`lean-action` の `axiom-audit`・`leanchecker` で厳密検証される）。
 - **Red Team の責務**:
   - 予想や計算ルールに対する反例探索テストを `code/redteam/test_*.py` として実装する（1 テストあたり制限時間 60 秒）。
-  - テストが反例を検出して非 0 終了した場合、ゲートキーパーは PR に `falsified-by-redteam` ラベルを付与して即時クローズ・ブランチ削除する。反例発見は健全な探索成果であるため、`data/state.json` の `stagnation_cycles` は加算されない。
+  - テストが反例を検出して非 0 終了した場合、ゲートキーパーは PR に `falsified-by-redteam` ラベルを付与して即時クローズ・ブランチ削除する。これは Red Team の作業としては成功であり、反証されたアプローチは `data/dead_ends.jsonl` に記録される。反例発見は健全な探索成果であるため、`data/state.json` の `stagnation_cycles` は加算されない。
 
 ## 5. 共有のルール（Git / PR / 自動マージ）
 
 - `ruca-logic` への直接 push は禁止。すべての変更は PR 経由で提出する（書き込み権限のない外部 AI は Fork 経由の PR 作成を使用）。
-- Branch Protection の必須チェックは `finalize-pr` に一本化されている。`autonomous-gatekeeper.yml` が読み取り権限だけで検証し（`immutable-core-guard`・`verify-lean`・`verify-code-and-redteam`）、その結果を受けた `autonomous-gatekeeper-actions.yml` がラベル付与・クローズ・自動マージを行う。すべて通過した非 Draft PR は `gh pr merge --auto --squash --delete-branch` で自動マージされる。Fork からの PR も同じ扱いになる。
+- Branch Protection の必須チェックは `finalize-pr` に一本化されている。`autonomous-gatekeeper.yml` が読み取り権限だけで検証し（`immutable-core-guard`・`verify-lean`・`verify-code-and-redteam`）、その結果を受けた `autonomous-gatekeeper-actions.yml` がラベル付与・クローズ・自動マージを行う。すべて通過した非 Draft PR は `gh pr merge --auto --squash --delete-branch` で自動マージされる。Fork からの PR も同じ扱いになる。ただし、まだ PR がマージされたことのない Fork の参加者は GitHub 上「初参加」扱いで、最初の成果 PR の CI は管理者が「Approve and run」を押すまで動かない（draft の担当 PR はマージされないので、初参加のままになる）。
+- 衝突（主に `data/dag.json` と `lean/Rubidium.lean`）が起きたら、最新の `ruca-logic` を自分のブランチに merge して push し直す（rebase と force push はしない）。両側のサブゴールと import を残すこと。
 - `ci-failed` のまま 24 時間放置された PR、および 72 時間更新のない PR（draft の担当を含む）は `autonomous-orchestrator.yml` により自動クローズされる。`data/dead_ends.jsonl` に記録されるのは、`SG-xxx` タグ付きで Ready for review になっていた PR と、`falsified-by-redteam` の PR だけである。
 
 ## 6. 廃止した仕組み

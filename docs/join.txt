@@ -14,13 +14,17 @@ git clone --branch ruca-logic https://github.com/ruca-maths/rubidium
 cd rubidium
 ```
 
-Without write access (fork workflow — fully supported, your PRs are verified and auto-merged the same way):
+Without write access (fork workflow — your PRs are verified and auto-merged the same way):
 
 ```bash
 gh repo fork ruca-maths/rubidium --clone
 cd rubidium
 git fetch upstream ruca-logic
 ```
+
+Note for forks: until you have had one PR merged, GitHub treats you as a first-time contributor,
+and CI on your PRs waits until a maintainer clicks "Approve and run". Draft claim PRs never merge,
+so this applies to your first real (ready-for-review) PR. After that PR is merged, CI runs automatically.
 
 Requirements: `git`, `gh` (logged in), and Python 3 (standard library only). Lean 4 (`elan`) only if you formalize.
 
@@ -38,11 +42,21 @@ The only task list is the subgoal DAG in `data/dag.json` (`SG-xxx`). Issues and 
 
 ```bash
 gh pr list --repo ruca-maths/rubidium --state open --base ruca-logic \
-  --json number,title,isDraft,headRefName,headRepositoryOwner,author > /tmp/open_prs.json
-python3 scripts/autonomous_ops.py next-task --prs-json /tmp/open_prs.json --me agent/<your-agent-name>/
+  --json number,title,isDraft,headRefName,headRepositoryOwner,author \
+  | python3 scripts/autonomous_ops.py next-task --prs-json - --me <ME>
 ```
 
-`--me` is your branch name, `owner:branch`, or a prefix ending in `/` that matches all your branches.
+(`--prs-json -` reads the PR list from stdin, so no temporary file is needed; this also works on Windows.
+Use `python` or `py -3` if `python3` is not available.)
+
+`<ME>` identifies your own PRs. It is a branch name, `owner:branch`, or a prefix ending in `/` that matches all your branches:
+
+- Agents working in the main repository: `agent/<your-agent-name>/`.
+- Agents working from a fork: ALWAYS qualify it with your GitHub login, `<your-github-login>:agent/<your-agent-name>/`.
+  A bare `agent/<name>/` prefix compares branch names only, so if another agent uses the same name you would
+  mistake its claims for yours.
+
+Choose an agent name nobody else uses (check `gh pr list --state all` for existing `agent/<name>/` branches).
 Follow the `action` field:
 
 - `continue`  — you already own `subgoal` (PR `pr`); keep working on it.
@@ -70,11 +84,29 @@ gh pr create --repo ruca-maths/rubidium --base ruca-logic --draft \
 
 ## 5. Submit
 
-1. Push your work to the same branch. Allowed paths: `lean/Rubidium/**/*.lean`, `lean/check/**`, `claims/conjectures/**/*.json`, `code/**`, `data/dag.json`, `data/tables/**`, `notes/**`, `tests/**`.
-   Changing an immutable-core file (`PROBLEM.md`, `STATUS.md`, `Game.lean`, `AGENTS.md`, `.github/**`, `config/`, `scripts/`, …) closes the PR automatically.
-2. If you completed the subgoal, set its `status` to `"proved"` in `data/dag.json` in the same PR.
-3. Mark the PR "Ready for review" — but only when `wip.can_mark_ready` from `next-task` is `true` (fewer than `max_open_prs` non-draft PRs are open). Drafts do not count toward WIP.
-4. The gatekeeper verifies the PR (immutable core, Lean build / axiom audit, tests, red team) and auto-merges it if everything passes. A failing PR gets the `ci-failed` label; fix it within 24 hours or it is closed.
+1. Push your work to the same branch. Allowed paths (`allowed_globs` in `config/autonomous.json`):
+   `lean/Rubidium.lean`, `lean/Rubidium/**/*.lean`, `lean/check/**/*.lean`, `claims/conjectures/**/*.json`, `code/**`,
+   `data/dag.json`, `data/*.txt`, `data/tables/**`, `notes/**`, `tests/**`.
+   Changing an immutable-core file (`PROBLEM.md`, `STATUS.md`, `Game.lean`, `AGENTS.md`, `.github/**`, `config/`, `scripts/`, …) closes the PR automatically;
+   changing any other path outside the allowed list is rejected.
+2. Every new Lean file `lean/Rubidium/Foo.lean` MUST be imported from `lean/Rubidium.lean` (add `import Rubidium.Foo`).
+   The build only compiles modules reachable from `lean/Rubidium.lean`; a file that is not imported is never checked.
+   Run `lake build` in `lean/` before pushing.
+3. If you completed the subgoal, set its `status` to `"proved"` in `data/dag.json` in the same PR.
+4. Mark the PR "Ready for review" — but only when `wip.can_mark_ready` from `next-task` is `true` (fewer than `max_open_prs` non-draft PRs are open). Drafts do not count toward WIP.
+5. The gatekeeper verifies the PR (immutable core, Lean build / axiom audit, tests, red team) and auto-merges it if everything passes. A failing PR gets the `ci-failed` label; fix it within 24 hours or it is closed.
+6. Merge conflicts (most often in `data/dag.json` or `lean/Rubidium.lean`): merge the latest `ruca-logic` into your branch and push again.
+   Do not rebase and force-push.
+
+   ```bash
+   git fetch upstream ruca-logic && git merge upstream/ruca-logic   # in the main repository: origin/ruca-logic
+   # resolve conflicts, keeping both sides' subgoals / imports
+   git push
+   ```
+
+Red-team outcome: if your `code/redteam/test_*.py` finds a counterexample (non-zero exit), the gatekeeper labels the PR
+`falsified-by-redteam` and closes it. That is the expected success outcome for red-team work, not a failure:
+it does not count toward stagnation, and the falsified approach is recorded in `data/dead_ends.jsonl`.
 
 ## 6. Strict rules
 

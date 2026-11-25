@@ -30,8 +30,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh pr list --repo "$GITHUB_REPOSITORY" --state open --base ruca-logic \
-            --json number,title,isDraft,headRefName,headRepositoryOwner,author > /tmp/open_prs.json
-          python3 scripts/autonomous_ops.py next-task --prs-json /tmp/open_prs.json
+            --json number,title,isDraft,headRefName,headRepositoryOwner,author \
+            | python3 scripts/autonomous_ops.py next-task --prs-json - --me "ruca-maths:agent/claude-1/"
 
       - name: Check for sorry in Lean 4 files
         run: |
