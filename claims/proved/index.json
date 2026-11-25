@@ -1,5 +1,5 @@
 {
-  "count": 61,
+  "count": 62,
   "theorems": [
     {
       "name": "nat_all_iff",
@@ -330,6 +330,12 @@
       "kind": "theorem",
       "file": "lean/Rubidium/K7.lean",
       "line": 215
+    },
+    {
+      "name": "K7_odd_start_positions",
+      "kind": "theorem",
+      "file": "lean/Rubidium/K7.lean",
+      "line": 226
     },
     {
       "name": "blkE_step",
