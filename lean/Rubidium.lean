@@ -35,3 +35,5 @@ import Rubidium.K68f4
 import Rubidium.K68f5
 import Rubidium.K68f6
 import Rubidium.K68f7
+import Rubidium.K69a
+import Rubidium.K69b1
