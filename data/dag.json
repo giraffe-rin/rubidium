@@ -77,7 +77,8 @@
       "dependencies": [
         "SG-004",
         "SG-005",
-        "SG-008"
+        "SG-008",
+        "SG-009"
       ],
       "lean_files": [],
       "failures": 0,
@@ -106,6 +107,17 @@
       "lean_files": [
         "lean/Rubidium/K7.lean"
       ],
+      "failures": 0,
+      "needs_decomposition": false
+    },
+    {
+      "id": "SG-009",
+      "title": "Characterize winning and losing general states (r, p) for small odd m (m = 1, 3, 5)",
+      "status": "open",
+      "dependencies": [
+        "SG-002"
+      ],
+      "lean_files": [],
       "failures": 0,
       "needs_decomposition": false
     }
