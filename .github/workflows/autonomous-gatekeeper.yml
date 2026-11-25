@@ -1,5 +1,14 @@
 name: Autonomous Gatekeeper
 
+# 検証専用ワークフロー（書き込みは一切しない）。
+#
+# Fork からの PR では pull_request イベントの GITHUB_TOKEN が読み取り専用になり、
+# secrets も渡されないため、ラベル付け・コメント・クローズ・自動マージはここでは行わない。
+# それらは、このワークフローの完了を workflow_run で受ける
+# `autonomous-gatekeeper-actions.yml` が、PR のコードを checkout せずに実行する。
+#
+# Branch Protection の必須チェックは引き続き `finalize-pr`（このワークフローのジョブ）。
+
 on:
   pull_request:
     branches: [ruca-logic]
@@ -10,9 +19,8 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
+  contents: read
+  pull-requests: read
 
 jobs:
   immutable-core-guard:
@@ -30,6 +38,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ruca-logic
+          persist-credentials: false
 
       - name: Fetch changed PR files via GitHub API
         uses: actions/github-script@v7
@@ -52,67 +61,13 @@ jobs:
         run: |
           python3 scripts/autonomous_ops.py check-immutable --files-json /tmp/pr_files.json
 
-      - name: Enforce immutable core violation
+      - name: Report immutable core violation
         if: steps.check.outputs.violation == 'true'
-        uses: actions/github-script@v7
         env:
           VIOLATION_FILES: ${{ steps.check.outputs.violation_files }}
-        with:
-          script: |
-            const pr = context.payload.pull_request;
-            const files = (process.env.VIOLATION_FILES || '').split(',').filter(Boolean);
-            const listMd = files.map(f => `- \`${f}\``).join('\n');
-
-            try {
-              await github.rest.issues.createLabel({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                name: 'immutable-violation',
-                color: 'b60205',
-                description: 'PR attempted to modify immutable core or out-of-scope files'
-              });
-            } catch (_) {}
-
-            await github.rest.issues.addLabels({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: pr.number,
-              labels: ['immutable-violation']
-            });
-
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: pr.number,
-              body: [
-                '### Immutable Core Violation Detected',
-                '',
-                'This PR modified protected immutable core files or paths outside `allowed_globs` in `config/autonomous.json`:',
-                listMd,
-                '',
-                'Closing this PR and deleting its branch automatically without human review.'
-              ].join('\n')
-            });
-
-            await github.rest.pulls.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: pr.number,
-              state: 'closed'
-            });
-
-            if (pr.head.repo && pr.head.repo.full_name === `${context.repo.owner}/${context.repo.repo}`) {
-              try {
-                await github.rest.git.deleteRef({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  ref: `heads/${pr.head.ref}`
-                });
-              } catch (err) {
-                core.warning(`Branch deletion skipped: ${err.message}`);
-              }
-            }
-            core.setFailed(`Immutable core violation on: ${files.join(', ')}`);
+        run: |
+          echo "::error::Immutable core violation on: ${VIOLATION_FILES}"
+          exit 1
 
       - name: Fail on unexpected check-immutable error
         if: steps.check.outcome == 'failure' && steps.check.outputs.violation != 'true'
@@ -160,9 +115,6 @@ jobs:
     needs: immutable-core-guard
     if: needs.immutable-core-guard.outputs.has_code == 'true' || needs.immutable-core-guard.outputs.has_conjecture == 'true'
     runs-on: ubuntu-latest
-    outputs:
-      counterexample_found: ${{ steps.redteam.outputs.counterexample_found }}
-      counterexample_test: ${{ steps.redteam.outputs.counterexample_test }}
     steps:
       - name: Checkout PR head
         uses: actions/checkout@v4
@@ -199,11 +151,25 @@ jobs:
 
       - name: Run Red Team schema & counterexample check
         id: redteam
+        continue-on-error: true
         run: |
           git fetch origin ruca-logic --depth=1
           git show origin/ruca-logic:scripts/autonomous_ops.py > /tmp/autonomous_ops.py
           git show origin/ruca-logic:config/autonomous.json > /tmp/autonomous.json
           python3 /tmp/autonomous_ops.py --config /tmp/autonomous.json redteam-check --files-json /tmp/pr_files.json
+
+      # このステップ名は autonomous-gatekeeper-actions.yml が反例検出の判定に使う。変更する場合は両方を揃えること。
+      - name: Flag Red Team counterexample
+        if: steps.redteam.outputs.counterexample_found == 'true'
+        env:
+          COUNTEREXAMPLE_TEST: ${{ steps.redteam.outputs.counterexample_test }}
+        run: |
+          echo "::error::Counterexample detected by ${COUNTEREXAMPLE_TEST:-redteam test}"
+          exit 1
+
+      - name: Fail on Red Team check error
+        if: steps.redteam.outcome == 'failure' && steps.redteam.outputs.counterexample_found != 'true'
+        run: exit 1
 
   finalize-pr:
     name: finalize-pr
@@ -211,96 +177,21 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Handle Red Team counterexample
-        if: needs.verify-code-and-redteam.outputs.counterexample_found == 'true'
-        uses: actions/github-script@v7
+      - name: Evaluate verification results
         env:
-          COUNTEREXAMPLE_TEST: ${{ needs.verify-code-and-redteam.outputs.counterexample_test }}
-        with:
-          script: |
-            const pr = context.payload.pull_request;
-            try {
-              await github.rest.issues.createLabel({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                name: 'falsified-by-redteam',
-                color: 'd93f0b',
-                description: 'Conjecture falsified by automated Red Team test'
-              });
-            } catch (_) {}
-
-            await github.rest.issues.addLabels({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: pr.number,
-              labels: ['falsified-by-redteam']
-            });
-
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: pr.number,
-              body: `### Falsified by Red Team\n\nCounterexample detected by \`${process.env.COUNTEREXAMPLE_TEST || 'redteam test'}\`. Closing PR and deleting branch automatically.`
-            });
-
-            await github.rest.pulls.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: pr.number,
-              state: 'closed'
-            });
-
-            if (pr.head.repo && pr.head.repo.full_name === `${context.repo.owner}/${context.repo.repo}`) {
-              try {
-                await github.rest.git.deleteRef({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  ref: `heads/${pr.head.ref}`
-                });
-              } catch (err) {
-                core.warning(`Branch deletion skipped: ${err.message}`);
-              }
-            }
-            core.setFailed('Counterexample found by Red Team.');
-
-      - name: Handle CI failure
-        if: |
-          needs.verify-code-and-redteam.outputs.counterexample_found != 'true' &&
-          (needs.immutable-core-guard.result != 'success' ||
-           (needs.verify-lean.result != 'success' && needs.verify-lean.result != 'skipped') ||
-           (needs.verify-code-and-redteam.result != 'success' && needs.verify-code-and-redteam.result != 'skipped'))
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const pr = context.payload.pull_request;
-            try {
-              await github.rest.issues.createLabel({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                name: 'ci-failed',
-                color: 'e11d21',
-                description: 'Automated verification failed'
-              });
-            } catch (_) {}
-
-            if (pr.state === 'open') {
-              await github.rest.issues.addLabels({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: pr.number,
-                labels: ['ci-failed']
-              });
-            }
-            core.setFailed('One or more verification checks failed.');
-
-      - name: Enable auto-merge on passing non-draft PR
-        if: |
-          needs.immutable-core-guard.result == 'success' &&
-          (needs.verify-lean.result == 'success' || needs.verify-lean.result == 'skipped') &&
-          (needs.verify-code-and-redteam.result == 'success' || needs.verify-code-and-redteam.result == 'skipped') &&
-          github.event.pull_request.draft == false
-        env:
-          GH_TOKEN: ${{ secrets.AUTONOMOUS_BOT_TOKEN || secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GUARD_RESULT: ${{ needs.immutable-core-guard.result }}
+          LEAN_RESULT: ${{ needs.verify-lean.result }}
+          CODE_RESULT: ${{ needs.verify-code-and-redteam.result }}
         run: |
-          gh pr merge "$PR_NUMBER" --auto --squash --delete-branch
+          echo "immutable-core-guard: ${GUARD_RESULT}"
+          echo "verify-lean:          ${LEAN_RESULT}"
+          echo "verify-code:          ${CODE_RESULT}"
+          ok=true
+          [ "$GUARD_RESULT" = "success" ] || ok=false
+          case "$LEAN_RESULT" in success|skipped) ;; *) ok=false ;; esac
+          case "$CODE_RESULT" in success|skipped) ;; *) ok=false ;; esac
+          if [ "$ok" != "true" ]; then
+            echo "::error::One or more verification checks failed."
+            exit 1
+          fi
+          echo "All verification checks passed. Labels / close / auto-merge are handled by Autonomous Gatekeeper Actions."

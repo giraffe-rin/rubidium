@@ -30,6 +30,10 @@ jobs:
   research:
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    # secrets は step の if: から参照できないため、job の env で真偽値に変換して使う
+    env:
+      HAS_APP_CREDS: ${{ secrets.RUBIDIUM_APP_ID != '' && secrets.RUBIDIUM_APP_PRIVATE_KEY != '' }}
+      HAS_CLAUDE_CREDS: ${{ secrets.ANTHROPIC_API_KEY != '' || secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
     if: >-
       (github.event_name == 'schedule' && vars.AUTONOMOUS_ENABLED == 'true') ||
       (github.event_name == 'workflow_dispatch' && (inputs.force_run == true || vars.AUTONOMOUS_ENABLED == 'true'))
@@ -38,7 +42,7 @@ jobs:
       - name: Generate GitHub App Token (if configured)
         id: app_token
         continue-on-error: true
-        if: secrets.RUBIDIUM_APP_ID != '' && secrets.RUBIDIUM_APP_PRIVATE_KEY != ''
+        if: env.HAS_APP_CREDS == 'true'
         uses: actions/create-github-app-token@v1
         with:
           app-id: ${{ secrets.RUBIDIUM_APP_ID }}
@@ -74,7 +78,7 @@ jobs:
 
       - name: Run Claude Code autonomous research cycle
         if: >-
-          (secrets.ANTHROPIC_API_KEY != '' || secrets.CLAUDE_CODE_OAUTH_TOKEN != '') &&
+          env.HAS_CLAUDE_CREDS == 'true' &&
           (steps.wip.outputs.unreviewed_count < 5 || steps.wip.outputs.changes_requested != '' || inputs.mode == 'fix-only')
         uses: anthropics/claude-code-action@v1
         with:

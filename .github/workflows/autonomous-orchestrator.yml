@@ -9,7 +9,10 @@ on:
       - 'data/dead_ends.jsonl'
       - 'data/state.json'
       - 'data/dag.json'
-  pull_request:
+  # Fork PR のクローズでも dead end を記録して push できるよう pull_request_target を使う。
+  # このワークフローは ruca-logic だけを checkout し、PR のコードは実行しない
+  # （PR のタイトル・本文は env 経由でスクリプトに渡している）。
+  pull_request_target:
     branches: [ruca-logic]
     types: [closed]
   schedule:
@@ -44,7 +47,7 @@ jobs:
 
       - name: Record dead end for unmerged closed PR
         if: |
-          github.event_name == 'pull_request' &&
+          github.event_name == 'pull_request_target' &&
           github.event.action == 'closed' &&
           github.event.pull_request.merged == false
         env:
@@ -68,7 +71,7 @@ jobs:
 
       - name: Commit dead-end & status update (if changed)
         if: |
-          github.event_name == 'pull_request' &&
+          github.event_name == 'pull_request_target' &&
           github.event.action == 'closed' &&
           github.event.pull_request.merged == false
         run: |
